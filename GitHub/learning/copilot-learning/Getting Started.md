@@ -35,6 +35,6 @@ See [[Git and GitHub Cheatsheet]] for a full reference.
 
 ## Next time
 
-- [ ] Create a real custom agent ⏫ 📅 2026-06-19
-- [ ] Create a real skill ⏫ 📅 2026-06-19
+- [x] Create a real custom agent ⏫ 📅 2026-06-19 ✅ 2026-06-18
+- [x] Create a real skill ⏫ 📅 2026-06-19 ✅ 2026-06-18
 - [x] Explore Obsidian features ⏬ 📅 2026-06-25 ✅ 2026-06-18
