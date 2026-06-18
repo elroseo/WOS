@@ -6,5 +6,6 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 
 - [x] Sync between copilot cli and app ⏫ 📅 2026-06-18 ✅ 2026-06-18
 - [x] Complete Security trainings ⏫ 📅 2026-06-18 ✅ 2026-06-18
-- [ ] Seismic Revenue Training ⏫  📅 2026-06-18 
-- [ ] 
+- [ ] Seismic Revenue Training ⏫  📅 2026-06-19
+- [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-06-25
+- [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-06-25
