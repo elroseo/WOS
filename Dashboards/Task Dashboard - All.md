@@ -1,22 +1,32 @@
-# Task Dashboard - All
+```
+╔═══════════════════════════════════╗
+║       📋 ALL TASKS               ║
+╚═══════════════════════════════════╝
+```
 
-> Combined view of Work and Home tasks
+> Combined view of Work and Home
 
-## 🔴 Overdue
+---
+
+### 🔴 Overdue
 
 ```tasks
 not done
 due before today
 ```
 
-## 📌 Due Today
+---
+
+### 📌 Due Today
 
 ```tasks
 not done
 due today
 ```
 
-## 📅 Next 7 Days
+---
+
+### 📅 Next 7 Days
 
 ```tasks
 not done
@@ -24,7 +34,9 @@ due after today
 due before in 7 days
 ```
 
-## ⏫ High Priority (no date)
+---
+
+### ⏫ High Priority (No Date)
 
 ```tasks
 not done
@@ -34,8 +46,7 @@ no due date
 
 ---
 
-## Quick Links
-
-- [[Task Dashboard - Work]]
-- [[Task Dashboard - Home]]
-- [[Task Inbox]]
+> [!tip] Quick Links
+> - [[Task Dashboard - Work]]
+> - [[Task Dashboard - Home]]
+> - [[Task Inbox]]

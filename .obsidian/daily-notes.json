@@ -1,0 +1,6 @@
+{
+  "folder": "Home/Journal",
+  "template": "Home/Templates/Journal Entry.md",
+  "format": "YYYY-MM-DD",
+  "autorun": false
+}

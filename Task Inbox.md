@@ -10,3 +10,5 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Start GitHub Foundations course ⏫️ 📅2026-06-24
 - [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-06-25
 - [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-06-25
+- [ ] Ask Melanie about PTO for roadtrip (Oct 16 - Nov 1) 📅 2026-06-29
+- [ ] Ask Melanie about PTO Aug 6-7 📅 2026-06-29

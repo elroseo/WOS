@@ -1,8 +1,14 @@
-# Task Dashboard - Home
+```
+╔═══════════════════════════════════╗
+║         🏠 HOME TASKS             ║
+╚═══════════════════════════════════╝
+```
 
-> ⌘+P then "Tasks" to quickly add new tasks from anywhere
+> ⌘+P > "Tasks" to quickly add new tasks from anywhere
 
-## 🔴 Overdue
+---
+
+### 🔴 Overdue
 
 ```tasks
 not done
@@ -10,7 +16,9 @@ due before today
 path includes Home
 ```
 
-## 📌 Due Today
+---
+
+### 📌 Due Today
 
 ```tasks
 not done
@@ -18,7 +26,9 @@ due today
 path includes Home
 ```
 
-## 📅 Next 7 Days
+---
+
+### 📅 Next 7 Days
 
 ```tasks
 not done
@@ -27,7 +37,9 @@ due before in 7 days
 path includes Home
 ```
 
-## ⏫ High Priority (no date)
+---
+
+### ⏫ High Priority (No Date)
 
 ```tasks
 not done
@@ -36,7 +48,9 @@ no due date
 path includes Home
 ```
 
-## ✅ Recently Completed
+---
+
+### ✅ Recently Completed
 
 ```tasks
 done
