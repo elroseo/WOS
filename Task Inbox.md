@@ -12,3 +12,4 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-06-25
 - [ ] Ask Melanie about PTO for roadtrip (Oct 16 - Nov 1) 📅 2026-06-29
 - [ ] Ask Melanie about PTO Aug 6-7 📅 2026-06-29
+- [ ] Check PR for PagerDuty and TextExpander 📅 2026-06-23
