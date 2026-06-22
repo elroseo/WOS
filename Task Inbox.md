@@ -13,3 +13,4 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Ask Melanie about PTO for roadtrip (Oct 16 - Nov 1) 📅 2026-06-29
 - [ ] Ask Melanie about PTO Aug 6-7 📅 2026-06-29
 - [ ] Check PR for PagerDuty and TextExpander 📅 2026-06-23
+- [ ] Seismic: Support Foundations - New Hubbers (assigned by Kyle Schmidt) ⏫ 📅 2026-07-03
