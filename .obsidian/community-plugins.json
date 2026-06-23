@@ -1,6 +1,6 @@
 [
-  "obsidian-local-rest-api",
   "obsidian-tasks-plugin",
   "obsidian-git",
-  "templater-obsidian"
+  "templater-obsidian",
+  "obsidian-local-rest-api"
 ]
