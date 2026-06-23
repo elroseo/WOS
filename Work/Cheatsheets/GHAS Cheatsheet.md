@@ -10,6 +10,12 @@ GitHub Advanced Security (GHAS) is a suite of security features for finding and 
 4. **Security overview** - org/enterprise-wide security dashboard
 5. **Push protection** - blocks secrets before they're committed
 
+GitHub’s Advanced Security products:
+
+- Help organizations shift security left in a way that integrates seamlessly and painlessly into a developer’s workflow
+- Prevent secrets and a range of other vulnerabilities from being introduced into code
+- Offer on-point, concise suggestions for how to remediate any potential problems
+- Provide accurate results, low false positive rates, and the ability to keep developers in the tool they’re already using
 ---
 
 ## GHAS on GHEC vs GHES
