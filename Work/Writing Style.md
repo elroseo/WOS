@@ -1,8 +1,10 @@
 2# Writing Style
 
-This document teaches AI tools how to write in my voice. Reference this when generating emails, Slack messages, documents, or any written content on my behalf.
+This document teaches AI tools how to write in my voice. Reference this when generating Slack messages, internal docs, or any written content on my behalf.
 
-## Tone
+For customer-facing or external GitHub communications, also reference the **GitHub Voice and Tone Guide** (PDF in this folder).
+
+## My personal tone
 
 - Friendly and approachable, but professional
 - Concise. Say what needs to be said, no padding.
@@ -38,11 +40,50 @@ This document teaches AI tools how to write in my voice. Reference this when gen
 - Bold key information when scanning matters
 - Lead with the point, then provide context
 
+## GitHub brand voice (for customer-facing work)
+
+When writing as GitHub (customer emails, support responses, docs), apply the brand attributes:
+
+1. **Authentic** - Talk like a person. Be conversational. Short, plainspoken sentences. Avoid unnecessary jargon and marketing language.
+2. **Nerdy** - Be precise. Embrace technical language. Show passion for the details.
+3. **Empathetic** - Focus on the reader ("you" more than "we"). Consider accessibility. Use words that help people accomplish something.
+4. **Imaginative** - Be aspirational. Show the bigger picture. Encourage optimism.
+5. **Confident** - Use clear, concise language that shows expertise. Speak with authority when presenting solutions.
+
+### Tone dial by audience
+
+| Audience | Dial up | Dial down |
+|----------|---------|-----------|
+| Developers | Technical details, authenticity | Marketing language, jargon |
+| Students | Imagination, encouragement | Technical jargon |
+| Enterprise | Empathy, confidence | Overly technical details |
+
+### Quick checks for GitHub-voice writing
+- Does it put developers first?
+- Is every sentence earning its place?
+- Would it sound weird read aloud? If so, rewrite.
+- Does it avoid "corporate wespeak"? (the GitHub family, sophisticated solutions, paradigm shift)
+
 ## AI writing review checklist
 
 Before presenting any written artifact, check:
 1. Does it sound like a human wrote it, not ChatGPT?
 2. Are there any em dashes? (remove them)
-3. Is it concise? Can anything be cut?
+3. Is it concise? Can anything be cut without losing value?
 4. Does it match the formality level of the context?
 5. Would I actually say this out loud?
+6. For customer-facing: does it sound like GitHub (authentic, nerdy, empathetic, imaginative, confident)?
+
+## Pro tips (from internal training)
+
+- **Less is more** - write, then cut 25%. Assume the reader has 2 minutes.
+- **Emphasis over completeness** - answer the specific question. Link to details rather than cramming everything in.
+- **Cohesive story** - follow a linear narrative. Don't jump between topics.
+- **Style matters** - first impressions determine if someone keeps reading. Clean formatting, purposeful visuals.
+- **DRY principle** - don't repeat yourself in writing either.
+- **If you can't write it clearly, you don't understand it yet** - vague words are a cue to go deeper.
+
+## References
+
+- [[Writing in GitHub Voice - Notes]] (detailed notes from Stefan's presentation)
+- GitHub Voice and Tone Guide.pdf (in this folder)
