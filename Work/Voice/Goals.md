@@ -23,8 +23,10 @@
 - **Customer**: Practice customer communication, empathy, and problem-solving
 
 ### 4. Establish good working habits
-- Daily briefing routine (/today skill)
-- End-of-day summary for visibility
+- Morning: run `/today` for daily briefing
+- Before meetings: run `/meeting [name]` for prep
+- End of day: run `/eod` for summary and shareable update
+- Friday: run `/week` for weekly review
 - Keep Obsidian vault organised and useful
 - Regular 1-on-1 prep and follow-through
 
