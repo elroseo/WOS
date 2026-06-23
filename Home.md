@@ -7,20 +7,20 @@ Welcome to your Work Operating System.
 ### Daily
 - [[Task Dashboard - Work]] - current tasks
 - [[Task Inbox]] - quick capture
-- Today's daily file: [[Work/Daily/]]
+- Today's daily file: [[Daily/]]
 
 ### Prep
-- [[Work/People/]] - people notes
-- [[Work/Notes/Meeting Notes/]] - meeting notes
-- [[Work/Notes/Hub Notes/]] - hub notes
+- [[People/]] - people notes
+- [[Notes/Meeting Notes/]] - meeting notes
+- [[Notes/Hub Notes/]] - hub notes
 
 ### Learn
-- [[Work/GitHub/Training & Development/Certifications/GitHub_Foundations/00_Plan/Study Plan|GitHub Foundations Study Plan]]
-- [[Work/Cheatsheets/]]
+- [[GitHub/Training & Development/Certifications/GitHub_Foundations/00_Plan/Study Plan|GitHub Foundations Study Plan]]
+- [[Cheatsheets/]]
 
 ### Reference
-- [[Work/Voice/Writing Style|Writing Style]]
-- [[Work/Voice/Goals|Goals]]
+- [[Voice/Writing Style|Writing Style]]
+- [[Voice/Goals|Goals]]
 
 ---
 
