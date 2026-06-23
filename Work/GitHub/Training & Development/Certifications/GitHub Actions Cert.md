@@ -57,10 +57,4 @@ Actions is one of the most common sources of enterprise customer questions. Unde
 
 ## Notes
 
-**How do Actions benefit dev teams?**
-
-1. **Actions frees up time and effort for humans.** A developer's job is to write or modify code and then commit it to their source control repository. However, before that commit, they must scan, compile, package, test, and deploy the code to production. Developers can save time by automating these tasks with Actions.
-
-2. **Actions speeds up the software shipping process and lowers risk**. Delivering high-quality code requires taking routine steps which must be done in a specific order. Computers are less error-prone and more efficient at executing these tasks quickly. This eliminates the need for manual intervention and saves time for higher value tasks.
-
-![[Pasted image 20260623141638.png]]
+See [[GitHub Actions Deep Dive]] in Cheatsheets for detailed reference notes on runners, billing, security, and enterprise features.
