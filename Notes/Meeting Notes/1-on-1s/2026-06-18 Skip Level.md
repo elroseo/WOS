@@ -25,7 +25,7 @@ with: Mike  Bruce
 ## Notes
 
 - [ ] senior CREs do all CRE work in 80% of the time, staff in 40% time
-- [ ] speak to Steven Bennet (LLM assist set up)
+- [x] speak to Steven Bennet (LLM assist set up) ✅ 2026-06-23
 - [ ] 6 pillars for growth within CRE structure
 - [ ] depth & quality 
 - [ ] COGS based department - cost of goods sold
