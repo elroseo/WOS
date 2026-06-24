@@ -37,67 +37,67 @@
 **Target:** Rebuild mental model from first principles.
 
 **Session 1 (30 min) - Mon June 22:**
-- [ ] Git vs GitHub - what lives where 📅 2026-06-22
-- [ ] Repositories: init, clone, fork - when to use each 📅 2026-06-22
+- [ ] Git vs GitHub - what lives where 📅 2026-06-29
+- [ ] Repositories: init, clone, fork - when to use each 📅 2026-06-29
 
 **Session 2 (30 min) - Tue June 24:**
-- [ ] Commits, branches, HEAD, and the commit graph 📅 2026-06-24
-- [ ] Merge options: merge commit / squash / rebase 📅 2026-06-24
+- [ ] Commits, branches, HEAD, and the commit graph 📅 2026-07-01
+- [ ] Merge options: merge commit / squash / rebase 📅 2026-07-01
 
 **Session 3 (30 min) - Thu June 26:**
-- [ ] PR lifecycle: draft, review, approve, merge 📅 2026-06-26
-- [ ] Lab 01 + Lab 02 (hands-on) 📅 2026-06-26
+- [ ] PR lifecycle: draft, review, approve, merge 📅 2026-07-03
+- [ ] Lab 01 + Lab 02 (hands-on) 📅 2026-07-03
 
 **Session 4 (30 min) - Fri June 27:**
-- [ ] Baseline quiz (20 questions) 📅 2026-06-27
-- [ ] Review answers, log mistakes 📅 2026-06-27
+- [ ] Baseline quiz (20 questions) 📅 2026-07-04
+- [ ] Review answers, log mistakes 📅 2026-07-04
 
 **Weekend Review (10 min) - Sun June 28:**
-- [ ] Skim notes, re-read mistake log, write 3 "rules to remember" 📅 2026-06-28
+- [ ] Skim notes, re-read mistake log, write 3 "rules to remember" 📅 2026-07-05
 
 ### Week 2: Collaboration, Project Management, and Automation (June 29 - July 5) - 2 hrs
 **Target:** Collaboration features and Actions fundamentals.
 
 **Session 1 (30 min) - Mon June 29:**
-- [ ] Issues: templates, labels, milestones, assignees 📅 2026-06-29
-- [ ] Linking PRs to Issues (Fixes/Closes keywords) 📅 2026-06-29
+- [ ] Issues: templates, labels, milestones, assignees 📅 2026-07-06
+- [ ] Linking PRs to Issues (Fixes/Closes keywords) 📅 2026-07-06
 
 **Session 2 (30 min) - Tue July 1:**
-- [ ] Projects, CODEOWNERS, notifications, mentions 📅 2026-07-01
-- [ ] Lab 03 (issue linking hands-on) 📅 2026-07-01
+- [ ] Projects, CODEOWNERS, notifications, mentions 📅 2026-07-08
+- [ ] Lab 03 (issue linking hands-on) 📅 2026-07-08
 
 **Session 3 (30 min) - Thu July 3:**
-- [ ] GitHub Actions: workflow, trigger, runner, job, step 📅 2026-07-03
-- [ ] Lab 04 (basic workflow hands-on) 📅 2026-07-03
+- [ ] GitHub Actions: workflow, trigger, runner, job, step 📅 2026-07-10
+- [ ] Lab 04 (basic workflow hands-on) 📅 2026-07-10
 
 **Session 4 (30 min) - Fri July 4:**
-- [ ] Week 2 quiz (15-20 questions) 📅 2026-07-04
-- [ ] Review answers, log mistakes 📅 2026-07-04
+- [ ] Week 2 quiz (15-20 questions) 📅 2026-07-11
+- [ ] Review answers, log mistakes 📅 2026-07-11
 
 **Weekend Review (10 min) - Sun July 5:**
-- [ ] Skim notes, re-read mistake log, write 3 "rules to remember" 📅 2026-07-05
+- [ ] Skim notes, re-read mistake log, write 3 "rules to remember" 📅 2026-07-12
 
 ### Week 3: Security, Permissions, and Exam Readiness (July 6-12) - 2 hrs
 **Target:** Fill gaps, reinforce weak areas, lock in exam date.
 
 **Session 1 (30 min) - Mon July 7:**
-- [ ] Org/repo roles and permissions (read, triage, write, maintain, admin) 📅 2026-07-07
-- [ ] GHEC vs GHES vs GHAE basics 📅 2026-07-07
+- [ ] Org/repo roles and permissions (read, triage, write, maintain, admin) 📅 2026-07-14
+- [ ] GHEC vs GHES vs GHAE basics 📅 2026-07-14
 
 **Session 2 (30 min) - Tue July 8:**
-- [ ] Security features: Dependabot, secret scanning, code scanning 📅 2026-07-08
-- [ ] Lab 05 (branch protection hands-on) 📅 2026-07-08
+- [ ] Security features: Dependabot, secret scanning, code scanning 📅 2026-07-15
+- [ ] Lab 05 (branch protection hands-on) 📅 2026-07-15
 
 **Session 3 (30 min) - Thu July 10:**
-- [ ] Final mixed practice quiz (25 questions) 📅 2026-07-10
-- [ ] Review all mistake log entries 📅 2026-07-10
+- [ ] Final mixed practice quiz (25 questions) 📅 2026-07-17
+- [ ] Review all mistake log entries 📅 2026-07-17
 
 **Session 4 (30 min) - Fri July 11:**
-- [ ] Weak topic deep-dive (based on mistake log patterns) 📅 2026-07-11
-- [ ] Decide exam date window 📅 2026-07-11
+- [ ] Weak topic deep-dive (based on mistake log patterns) 📅 2026-07-18
+- [ ] Decide exam date window 📅 2026-07-18
 
 **Weekend Review (10 min) - Sun July 12:**
-- [ ] Final confidence check: can you explain each priority topic in one sentence? 📅 2026-07-12
+- [ ] Final confidence check: can you explain each priority topic in one sentence? 📅 2026-07-19
 
 ## Resources
 
@@ -120,5 +120,5 @@
 ## Getting Started (today)
 
 - [x] Create `Certs/GitHub_Foundations/` folder structure ✅ 2026-06-19
-- [ ] Create sandbox repo on personal GitHub for labs 📅 2026-06-19
-- [ ] Add starter notes for Week 1 Session A 📅 2026-06-22
+- [ ] Create sandbox repo on personal GitHub for labs 📅 2026-06-26
+- [ ] Add starter notes for Week 1 Session A 📅 2026-06-29

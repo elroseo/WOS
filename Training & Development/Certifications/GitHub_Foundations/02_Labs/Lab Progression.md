@@ -7,7 +7,7 @@ All labs use a single sandbox repo: `github-foundations-sandbox`
 ## Lab 01: Initialize Repo and Commit History
 **Topics:** repo creation, README, commit basics, `git log`
 
-- [ ] Create repo on GitHub with README 📅 2026-06-25
+- [ ] Create repo on GitHub with README 📅 2026-07-02
 - [ ] Clone locally, edit README, commit with meaningful message
 - [ ] Make 3-4 commits to build history
 - [ ] Explore `git log --oneline` and commit SHAs

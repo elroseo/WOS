@@ -9,7 +9,6 @@
 ```tasks
 not done
 due before today
-path includes Work
 ```
 
 ---
@@ -19,7 +18,6 @@ path includes Work
 ```tasks
 not done
 due today
-path includes Work
 ```
 
 ---
@@ -30,7 +28,6 @@ path includes Work
 not done
 due after today
 due before in 7 days
-path includes Work
 ```
 
 ---
@@ -41,7 +38,6 @@ path includes Work
 not done
 priority is high
 no due date
-path includes Work
 ```
 
 ---
@@ -51,6 +47,5 @@ path includes Work
 ```tasks
 done
 done after 7 days ago
-path includes Work
 limit 10
 ```
