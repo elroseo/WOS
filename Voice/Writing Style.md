@@ -40,6 +40,15 @@ For customer-facing or external GitHub communications, also reference the **GitH
 - Bold key information when scanning matters
 - Lead with the point, then provide context
 
+## GitHub core values
+
+These guide how GitHub works, influence decision-making, and empower risk-taking and accountability:
+
+1. **Customer obsessed** - Anticipate, exceed, and validate customer needs. Developers' success is GitHub's success.
+2. **Ship to learn** - Value rapid iteration, reversible decisions, learning from both failures and successes.
+3. **Growth mindset** - See challenges as opportunities to learn and improve. Take an inquisitive approach before acting.
+4. **Own the outcome** - Take responsibility for work, words, and actions. Share success and accountability for challenges.
+
 ## GitHub brand voice (for customer-facing work)
 
 When writing as GitHub (customer emails, support responses, docs), apply the brand attributes:
