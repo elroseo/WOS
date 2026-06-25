@@ -9,7 +9,9 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Seismic Revenue Training ⏫ 📅 2026-06-22 ✅ 2026-06-24
 - [ ] Start GitHub Foundations course ⏫️ 📅 2026-06-29
 - [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-06-29
+	- 📝 Study aid ready: [[Kusto-KQL Cheatsheet]]
 - [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-06-29
+	- 📝 Study aid ready: [[Splunk Cheatsheet]] (see also [[Support Bundles Cheatsheet]])
 - [ ] Ask Melanie about PTO for roadtrip (Oct 16 - Nov 1) 📅 2026-06-30
 - [ ] Ask Melanie about PTO Aug 6-7 📅 2026-06-30
 - [x] Check PR for PagerDuty and TextExpander 📅 2026-06-23 ✅ 2026-06-24
