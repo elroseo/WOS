@@ -11,12 +11,6 @@ Markdown is a lightweight plain-text formatting syntax that converts to HTML. **
 - Authoring wikis and discussions
 - Writing release notes and changelogs
 
-## CRE perspective
-
-Clear, well-formatted writing in issues, PRs, and customer-facing docs makes troubleshooting faster and reduces back-and-forth. Knowing GFM lets you build readable repro steps (code blocks + numbered lists), structured comparisons (tables), collapsible logs (`<details>`), and prominent warnings (alerts) — all of which make support threads and internal notes easier to scan.
-
-> **Note:** GitHub renders Markdown slightly differently across contexts. Alerts (`> [!NOTE]`) render on github.com but not in plain Markdown viewers. Raw HTML is allowed in GitHub but sanitized (no scripts).
-
 ---
 
 ## Headings
