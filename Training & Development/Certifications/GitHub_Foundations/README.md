@@ -43,3 +43,14 @@ The Foundations cert validates your understanding of the GitHub platform, which 
 
 ## Notes
 
+
+Core notes, one page per exam domain (in `01_Core_Notes/`):
+
+- [[Domain_1_Intro_to_Git_and_GitHub]]
+- [[Domain_2_Working_with_Repositories]]
+- [[Domain_3_Collaboration_Features]]
+- [[Domain_4_Modern_Development]]
+- [[Domain_5_Project_Management]]
+- [[Domain_6_Privacy_Security_Administration]]
+- [[Domain_7_GitHub_Community]]
+- [[2026-06-22_core_workflow]] — hands-on Git/PR workflow (supplements Domain 1)
