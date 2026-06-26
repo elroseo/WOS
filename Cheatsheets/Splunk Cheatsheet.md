@@ -49,6 +49,7 @@ Or use the time-range picker in the UI — it applies the same bounds.
 
 ---
 
+
 ## Core SPL commands
 
 | Command | What it does |

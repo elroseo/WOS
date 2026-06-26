@@ -2,5 +2,6 @@
   "obsidian-tasks-plugin",
   "obsidian-git",
   "templater-obsidian",
-  "obsidian-local-rest-api"
+  "obsidian-local-rest-api",
+  "owen-editor"
 ]
