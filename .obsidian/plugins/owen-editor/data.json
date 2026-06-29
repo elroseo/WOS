@@ -1,0 +1,23 @@
+{
+  "showFloatingToolbar": true,
+  "showSelectionToolbar": true,
+  "showStatusBarButton": true,
+  "insertHtmlTables": true,
+  "showGraphiteThemeNotice": true,
+  "toolbarPosition": "top",
+  "toolbarPreset": "full",
+  "toolbarCollapsed": true,
+  "toolbarScale": 90,
+  "toolbarDensity": "balanced",
+  "favoriteDisplay": "hover",
+  "mobileCompactToolbar": true,
+  "contextAwareToolbar": true,
+  "commandFeedback": true,
+  "favoriteCommandIds": [
+    "insert-link",
+    "mark-selection",
+    "open-table-builder",
+    "insert-graphite-summary-callout"
+  ],
+  "recentCommandIds": []
+}
