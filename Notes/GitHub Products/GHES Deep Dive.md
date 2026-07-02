@@ -166,3 +166,61 @@ Key points:
 > - Separate **HA**, **backup**, and **disaster recovery**. Customers often conflate them.
 > - Ask whether the customer wants **self-hosting forever** or **self-hosting for now**. That changes the migration conversation.
 > - If a customer asks for a cloud feature on GHES, answer with **version, dependency, and parity caveat**, not a yes or no guess.
+
+---
+
+## Services architecture (under the hood)
+
+Source: internal training "GitHub Enterprise Server Services Breakdown" (Loom), Thomas Hughes and John Weebach (Professional Services / DevOps). Run `ghe-service-list` on an instance to see the live service list. Note: this session reflects an older GHES generation (Debian Jessie/Stretch, GHES 2.x era terms), so verify against the current version before relying on specifics.
+
+> [!important] Key points to remember
+> - **Everything enters through the external HAProxy, which is also where SSL terminates.** There are two HAProxy instances: external and internal. Seeing `localhost` in logs is normal because requests are proxied between internal processes.
+> - **MySQL is why upgrades and failovers need downtime.** It does not support live rolling migrations or instant primary switchover. GitHub.com avoids this with Orchestrator (instant failover) and gh-ost (online schema migrations), but those are not on GHES yet.
+> - **`babeld` is the single entry point for all Git connections** (HTTP, SSH, raw git protocol, SVN). Auth happens in `git-auth` before any repo data is served; `git-daemon` sits at the bottom of the stack.
+> - **The biggest real-world cause of tickets is artificial load** (CI systems, API polling) that the per-seat sizing guidance does not account for. Fix is scale the instance or fix the noisy process.
+> - **Worker tuning has almost no downside except cost.** Add Unicorn/Resque/Hookshot workers if there is spare CPU and memory. There is no hard max beyond what the instance can resource.
+> - **HA replication uses OpenVPN between primary and replica.** The `/credits` page on any instance lists all open source software, versions, and licenses.
+> - Reference artifacts (slide deck, service repo links, architecture PDF, recording) live in the internal GitHub Services repo issue (referenced in the session as #3656).
+
+### Base platform
+
+- **OS**: Debian (Jessie 8, moving to Stretch 9 around GHES 2.17).
+- **Open source components**: OpenSSL/BoringSSL, OpenSSH, OpenVPN, HAProxy, nginx, Elasticsearch, Consul, Redis, MySQL, Memcached. Full list with versions and licenses at `https://<instance>/credits`.
+- **Unicorn**: Ruby web server for Rack apps. Workers auto-die and restart on timeouts, errors, or exceptions, so one bad request does not take down the app. You set a worker count instead of managing threads/processes. The "angry unicorn" page means your request's worker died mid-request and you should retry.
+
+### Core services
+
+| Service | What it does | Notes / language |
+| --- | --- | --- |
+| **alambic** | Serves assets: avatars, Git LFS objects, release/issue attachments, uploaded GIFs | Data can move to a separate fast volume/tier but **not NFS**. Log: `/var/log/alambic` |
+| **babeld** | Unified Git proxy, endpoint for all Git connections (HTTP, SSH, git protocol, SVN) | Written in C. Switched OpenSSL to BoringSSL for more throughput (cut PayPal from 6 instances). Log: `/var/log/babeld` |
+| **codeload** | Generates and serves release tarballs via `git archive` | Caches ~1 hour then deletes to save space. C |
+| **consul** | HashiCorp service discovery | Currently logging only; integration ongoing toward Kubernetes-based GHES |
+| **elasticsearch** | Powers search and the audit log; each replica holds a full copy of the indices | Apache Lucene, Java. Some version jumps need a manual index migration script before upgrade |
+| **enterprise-manage** | Runs the Management Console and everything under `/setup` (initial config, LDAP/SAML changes) | Sinatra app. Lives outside github/github in the enterprise2 repo |
+| **ghe-user-disk** | Creates the `/data` volume on first build and triggers all other services to start | If the data volume is lost, nothing else starts |
+| **git-auth** | Authenticates every request (SSH keys, PATs, passwords, deploy keys) before repo data is served, then runs the permission check | Works with babeld |
+| **git-daemon** | Bottom of the Git stack; serves push data and port 9418 (anonymous/unauthenticated cloning) | Part of Git itself |
+| **github-unicorn** | The main GitHub Rails app (github/github); API side via Sinatra | Now uses official Ruby/Rails releases. Scales with CPU/memory. ~8 logs under `/var/log/github` |
+| **github-ernicorn** | Thrift RPC server (based on Ernie/Erlang) to run Git operations on remote nodes in clusters/replicas without SSH | Log: `/var/log/github-ernicorn` |
+| **git-governor** (was gitmon) | Analytics and quotas for Git: rate limiting, records clones/pulls/pushes | Retains up to 2 weeks or 1 GB. Query with `ghg-governor`. Great for performance investigations |
+| **gpgverify** | Commit signature verification (the "Verified" badge) | Written in Go. Usually all-or-nothing: it works or it is down |
+| **grafana / graphite / collectd** | Metrics monitoring behind `/setup/monitor` | collectd collects, graphite stores/translates, grafana displays. Only collectd can forward metrics externally |
+| **haproxy** | Proxies connections to internal services; **SSL termination point** (certs live here) | Two instances: external and internal |
+| **hookshot** | Webhook delivery; runs its own unicorns and job queue | Sinatra. Logs moved from Elasticsearch to MySQL as of GHES 2.16 for longer retention |
+| **longpoll** | Live page updates (e.g. issue comments without refresh) | Replaced on GitHub.com because it did not scale to many/long-lived connections |
+| **mysql** | Core RDBMS storing all metadata: users, orgs, teams, issues, PRs, comments | See key points: main reason upgrades/failovers need downtime |
+| **openvpn** | Secure node-to-node connection | Used **only** for replication (replica to primary) |
+| **resqued** | Redis-backed background job queue (~30-40 queues, tunable workers and priorities) | Log: `/var/log/resqued` |
+| **render** | Renders file types like PSDs instead of showing raw code/diff | Kicks off a background job on request |
+| **slumlord** | Rack server that terminates SVN client requests into Git backends | Started as an April Fools joke, kept because it worked |
+
+### Request flow
+
+External request to **external HAProxy** to the process responsible for it. That process may call the **internal HAProxy** to reach downstream services (e.g. git-auth, babeld, git-daemon). Tracing a broken request means following it across these processes, which is why logs show `localhost` hops.
+
+### Operational takeaways for support
+
+- **Sizing** is guidance per seat (e.g. ~4 CPU / 32 GB per 1000 seats), but does not model CI/API polling load. Most performance tickets trace back to that unaccounted artificial load.
+- **Scaling workers**: auto-scaling by instance size is minimal. If there is free CPU/memory, add workers (Unicorn, Hookshot, Resque). No downside except infrastructure cost.
+- **The `D` suffix** on service names (resqued, collectd, longpoll-d) just means daemon, the Linux convention for background services.

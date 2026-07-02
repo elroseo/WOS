@@ -207,3 +207,10 @@ curl -H "Authorization: token TOKEN" https://HOSTNAME/api/v3/enterprise/settings
 - [GHES release notes](https://docs.github.com/en/enterprise-server/admin/release-notes)
 - [Backup utils](https://github.com/github/backup-utils)
 - [GHES API reference](https://docs.github.com/en/enterprise-server/rest)
+
+
+---
+
+## Related notes
+
+- [[GHES Deep Dive#Services architecture (under the hood)]] - internal services breakdown (Unicorn, babeld, git-auth, MySQL, HAProxy, and the full service list), with key operational points for support.
