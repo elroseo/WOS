@@ -226,3 +226,126 @@ External request to **external HAProxy** to the process responsible for it. That
 - **Sizing** is guidance per seat (e.g. ~4 CPU / 32 GB per 1000 seats), but does not model CI/API polling load. Most performance tickets trace back to that unaccounted artificial load.
 - **Scaling workers**: auto-scaling by instance size is minimal. If there is free CPU/memory, add workers (Unicorn, Hookshot, Resque). No downside except infrastructure cost.
 - **The `D` suffix** on service names (resqued, collectd, longpoll-d) just means daemon, the Linux convention for background services.
+
+
+---
+
+## Cluster architecture (training session)
+
+Source: internal training "GHES Cluster Training – Session I" (Loom). Diagrams below are reproduced from the session slides.
+Note: this session reflects a **modern, containerized GHES** (3.14.x era, Nomad + Docker). It supersedes the older "Services architecture (under the hood)" section above, which describes the pre-container GHES 2.x generation. Reconcile against the customer's exact version.
+
+> [!important] Key points to remember
+> - **Most services now run as Docker containers orchestrated by Nomad.** Never drive Docker directly — use `nomad status` to inspect and Nomad to bounce a service; it manages the Docker backend. A container's UUID first segment matches its Nomad allocation ID.
+> - **Learn GHES as a cluster first.** A standalone instance is just *all roles and services running on one node*; a cluster spreads those same roles across nodes.
+> - **In a true cluster the only single point of failure is the MySQL primary** (it is also the **Nomad leader**, and many admin commands must run there). Web/job nodes are **stateless**; storage survives losing 1 of 3 replicas.
+> - **You assign roles, not individual services.** Roles group services onto nodes via `cluster.conf`.
+> - **Geo/active replicas are NOT horizontal scaling.** They only accelerate **Git-read** ops; web/API requests proxy back to the primary. Correct customers who plan to "load-balance users across geo replicas."
+> - **`ghe-config-apply` and `ghe-cluster-config-apply` resolve to the same thing.** The cluster wrapper just checks the `ha`/cluster settings. Don't run a full config-apply for a minor change (can be ~40 min on a large cluster) — restart the specific Nomad service instead.
+> - **`ha = true` in `cluster.conf` means an HA replica pair, not a true cluster.** A true cluster omits that flag and lists per-node roles.
+> - **Git data (and alambic/pages) is replicated 3×**, which is why a true cluster needs a minimum of 3 storage/data nodes. Spokes uses a 3-way handshake to commit a push across all three replicas.
+
+### Core services (the foundation wheel)
+
+These are the services no GHES install runs without. Everything except Elasticsearch below is a community/OSS component GitHub packaged; babeld, spokes and alambic are GitHub-built.
+
+```mermaid
+flowchart TB
+    subgraph CORE[" "]
+        C(("Core<br/>Services"))
+    end
+    ES["elasticsearch<br/><i>search + audit log</i>"]
+    ND["Nomad + Docker<br/><i>orchestration</i>"]
+    SQL["MySQL<br/><i>metadata RDBMS</i>"]
+    HA["HAProxy (front)<br/><i>entry + SSL term</i>"]
+    UNI["Unicorn<br/><i>Rails web server</i>"]
+    GIT["babeld<br/><i>unified Git proxy</i>"]
+    SPK["Spokes<br/><i>Git data replication</i>"]
+    ALM["Alambic<br/><i>object storage / LFS</i>"]
+    C --- ES
+    C --- ND
+    C --- SQL
+    C --- HA
+    C --- UNI
+    C --- GIT
+    C --- SPK
+    C --- ALM
+```
+
+**Request paths:**
+- **Web/API** → HAProxy (front) → **Unicorn** (Ruby on Rails). Backend down → HAProxy returns `503`.
+- **Git** (HTTP/SSH/git proto) → HAProxy (front) → **babeld** → gitrpcd → **spokes** (looks up and serves the replicated data).
+- There are **three HAProxy flavors** (front / cluster-proxy / internal). A front-end node uses **agproxy cluster-proxy** to forward a request to a service hosted on another node.
+
+### Roles (grouping services onto nodes)
+
+There are ~90+ services; you never hand-place them. Instead you assign these **8 roles** to nodes in `cluster.conf`, and Nomad/Consul spin up the role's services on that node.
+
+```mermaid
+flowchart LR
+    WS[web-server] --> WSs["unicorn<br/>babeld<br/>gitauth<br/>lfs-server<br/>spokesd"]
+    JS[job-server] --> JSs["aqueduct<br/>resqued<br/>hookshot-go<br/>turboscan<br/>pages"]
+    MS[mysql-server] --> MSs["MySQL"]
+    GS[git-server] --> GSs["git-daemon<br/>gitrpcd<br/>governor<br/>ernicorn"]
+    PS[pages-server] --> PSs["timerd<br/>nginx"]
+    SS[storage-server] --> SSs["minio<br/>alambic"]
+    ELS[elasticsearch-server] --> ELSs["elasticsearch"]
+    ACS["actions-server<br/>(optional)"] --> ACSs["actions<br/>artifact-cache<br/>mps<br/>token"]
+```
+
+| Role | Key services | Notes |
+| --- | --- | --- |
+| **web-server** | unicorn, babeld, gitauth, lfs-server, spokesd | Front-end / stateless |
+| **job-server** | aqueduct, resqued, hookshot-go, turboscan, pages | Background jobs |
+| **mysql-server** | MySQL | One node is the **primary** (SPOF + Nomad leader) |
+| **git-server** | git-daemon, gitrpcd, governor, ernicorn | Git backend |
+| **pages-server** | timerd, nginx | GitHub Pages |
+| **storage-server** | minio, alambic | Object storage / LFS |
+| **elasticsearch-server** | elasticsearch | Search + audit |
+| **actions-server** *(optional)* | actions, artifact-cache, mps, token | Only if Actions is enabled |
+
+### Deployment & replication options
+
+```mermaid
+flowchart TB
+    subgraph S1[Single instance]
+        P1[Primary<br/>all roles on 1 node]
+    end
+    subgraph S2["HA (passive replica)"]
+        P2[Primary] -->|"mirrors every MySQL txn + repo data"| R2["Passive replica<br/><i>manual promote on failover</i>"]
+    end
+    subgraph S3["Geo / active replica"]
+        P3[Primary] -->|replicates| R3["Active replica<br/><i>Git-READ only, web/API proxy back to primary</i>"]
+    end
+    subgraph S4[True cluster]
+        LB[Load balancer]
+        LB --> FE1["Front-end tier<br/>web + job + cache"]
+        LB --> FE2[Front-end tier]
+        FE1 & FE2 --> DB[("Database tier<br/>MySQL/Consul/Redis")]
+        FE1 & FE2 --> ST["Storage tier<br/>Git/pages/alambic ×3"]
+        FE1 & FE2 --> SR[Search tier<br/>elasticsearch]
+    end
+```
+
+- **Reference architecture:** 3 of each backend tier (DB/storage/search) + 2 front-end nodes for redundancy. Each tier scales **independently** (e.g. IBM ran ~16 storage nodes; add web nodes as user load grows).
+- **Why customers cluster:** horizontal scaling once a single appliance can't grow further (the SAP scenario). Not for the average customer.
+- **A/B partition upgrades:** each VM has an **OS disk** (root, `A`/`B` partitions) and a **data disk** (`/data/user`). An upgrade re-images the *inactive* partition, swaps the bootloader, and reboots — user data on the data disk is untouched.
+
+### Configuring a cluster (`cluster.conf`)
+
+- One file at `/data/user/common/cluster.conf` drives **HA, geo, and true cluster** — the difference is the entries and the `ha` flag.
+- **`ha = true`** under the `[cluster]` block ⇒ HA replica pair. Omit it ⇒ true cluster with explicit per-node role assignments.
+- Rollout on the **MySQL primary node**: create `cluster.conf` → `ghe-cluster-config-init` (reachability + SSH key exchange across nodes) → `ghe-config-apply` (each node runs its own config-apply).
+- `ghe-config-apply` renders Nomad HCL templates per service, then starts them; the final phase **validates services** and names any that failed. Unicorn and Git services take longest to come up. Config-apply log: `/data/user/common/ghe-config.log`.
+
+### Repositories & code-version tips (for troubleshooting)
+
+| Repo | Purpose |
+| --- | --- |
+| **github/github** | Shared codebase with .com. Match a customer's version via the release **tag** (e.g. browse `3.14.7`) before trusting a line number in a stack trace. |
+| **github/enterprise2** | GHES-specific wrapper scripts (e.g. `ghe-config-apply`). |
+| **github/ghes** | Engineering issues, feature tracking, and support escalations. |
+
+- **MySQL scale:** ~1,200 tables ship with GHES; nearly every UI action is many DB ops. Port errors (3306/3307) → `nomad status mysql`.
+- **Upgrade migrations:** schema changes live in `github/github` under `db/migrate`. On huge databases a post-upgrade migration/backfill can run **10–20+ hours** — set customer expectations.
+- **Useful commands seen in the session:** `nomad status`, `nomad status <service>`, `ghe-spokes` (which nodes hold a repo), `ghe-repo <owner>/<repo>` (jump to on-disk path), `ghe-cluster-config-init`, `ghe-config-apply`.
