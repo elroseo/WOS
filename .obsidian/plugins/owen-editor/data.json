@@ -19,5 +19,8 @@
     "open-table-builder",
     "insert-graphite-summary-callout"
   ],
-  "recentCommandIds": []
+  "recentCommandIds": [
+    "redo-edit",
+    "undo-edit"
+  ]
 }
