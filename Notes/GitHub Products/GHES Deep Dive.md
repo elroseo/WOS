@@ -171,7 +171,9 @@ Key points:
 
 ## Services architecture (under the hood)
 
-Source: internal training "GitHub Enterprise Server Services Breakdown" (Loom), Thomas Hughes and John Weebach (Professional Services / DevOps). Run `ghe-service-list` on an instance to see the live service list. Note: this session reflects an older GHES generation (Debian Jessie/Stretch, GHES 2.x era terms), so verify against the current version before relying on specifics.
+Source: internal training "GitHub Enterprise Server Services Breakdown" (Loom).
+Run `ghe-service-list` on an instance to see the live service list. 
+Note: this session reflects an older GHES generation (Debian Jessie/Stretch, GHES 2.x era terms), so verify against the current version before relying on specifics.
 
 > [!important] Key points to remember
 > - **Everything enters through the external HAProxy, which is also where SSL terminates.** There are two HAProxy instances: external and internal. Seeing `localhost` in logs is normal because requests are proxied between internal processes.
