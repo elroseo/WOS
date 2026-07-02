@@ -214,3 +214,5 @@ curl -H "Authorization: token TOKEN" https://HOSTNAME/api/v3/enterprise/settings
 ## Related notes
 
 - [[GHES Deep Dive#Services architecture (under the hood)]] - internal services breakdown (Unicorn, babeld, git-auth, MySQL, HAProxy, and the full service list), with key operational points for support.
+- [[GHES Deep Dive#Cluster architecture (training session)]] - cluster roles, tiers, deployment/replication diagrams, and `cluster.conf` rollout.
+- [[Nomad Cheatsheet]] - orchestrator commands for inspecting and bouncing GHES services.

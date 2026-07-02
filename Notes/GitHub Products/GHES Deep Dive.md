@@ -306,28 +306,64 @@ flowchart LR
 
 ### Deployment & replication options
 
+**HA (passive)** — a passive replica mirrors the primary and does nothing until a **manual failover** flips DNS/load-balancer to it.
+
 ```mermaid
-flowchart TB
-    subgraph S1[Single instance]
-        P1[Primary<br/>all roles on 1 node]
+flowchart LR
+    subgraph LM[Local machine]
+        B1[Browser]
+        T1[Terminal]
+        G1[Git Client]
     end
-    subgraph S2["HA (passive replica)"]
-        P2[Primary] -->|"mirrors every MySQL txn + repo data"| R2["Passive replica<br/><i>manual promote on failover</i>"]
-    end
-    subgraph S3["Geo / active replica"]
-        P3[Primary] -->|replicates| R3["Active replica<br/><i>Git-READ only, web/API proxy back to primary</i>"]
-    end
-    subgraph S4[True cluster]
-        LB[Load balancer]
-        LB --> FE1["Front-end tier<br/>web + job + cache"]
-        LB --> FE2[Front-end tier]
-        FE1 & FE2 --> DB[("Database tier<br/>MySQL/Consul/Redis")]
-        FE1 & FE2 --> ST["Storage tier<br/>Git/pages/alambic ×3"]
-        FE1 & FE2 --> SR[Search tier<br/>elasticsearch]
-    end
+    LB1{{"DNS /<br/>Load balancer"}}
+    B1 & T1 & G1 --> LB1
+    LB1 ==>|active| P["SITE A – PRIMARY"]
+    P -.->|"mirrors every MySQL txn + repo data"| R["SITE A – SECONDARY<br/>Replica (standby)"]
+    LB1 -.->|only after manual promote| R
 ```
 
-- **Reference architecture:** 3 of each backend tier (DB/storage/search) + 2 front-end nodes for redundancy. Each tier scales **independently** (e.g. IBM ran ~16 storage nodes; add web nodes as user load grows).
+**Geo (active)** — an active replica placed near a second dev site serves **Git reads/clones/archives locally**, but Git **writes** and **web/API** requests are proxied back to the primary. This is **not** horizontal scaling.
+
+```mermaid
+flowchart LR
+    subgraph M1["Machine close to Site A"]
+        A1[Browser / Terminal / Git Client<br/>ghe.example.com]
+    end
+    subgraph M2["Machine close to Site B"]
+        A2[Browser / Terminal / Git Client<br/>ghe.example.com]
+    end
+    P["SITE A – PRIMARY"]
+    R["SITE B – SECONDARY<br/>Replica"]
+    A1 -->|writes, LFS, release binaries| P
+    A2 -->|"git clones / reads / archives"| R
+    A2 -.->|proxied web + API queries| P
+    P ==>|"replication of MySQL, Redis, Elasticsearch"| R
+```
+
+**True cluster (reference architecture)** — a load balancer fronts a **web tier ×2** and three backend tiers **×3** each; every tier scales independently.
+
+```mermaid
+flowchart LR
+    LB{{Load balancer}}
+    subgraph FE["Front-end tier ×2"]
+        FEs["web-server<br/>job-server<br/>memcache-server"]
+    end
+    subgraph ST["Storage tier ×3"]
+        STs["git-server<br/>pages-server<br/>storage-server<br/>metrics-server"]
+    end
+    subgraph DB["Database tier ×3"]
+        DBs["consul-server<br/>mysql-server<br/>redis-server"]
+    end
+    subgraph SR["Search tier ×3"]
+        SRs["elasticsearch-server"]
+    end
+    LB --> FE
+    FE --> ST
+    FE --> DB
+    FE --> SR
+```
+
+- **Reference architecture:** 3 of each backend tier (storage/database/search) + 2 front-end nodes for redundancy. Each tier scales **independently** (e.g. IBM ran ~16 storage nodes; add web nodes as user load grows). The lab uses a trimmed 5-node layout (2 app + 3 data).
 - **Why customers cluster:** horizontal scaling once a single appliance can't grow further (the SAP scenario). Not for the average customer.
 - **A/B partition upgrades:** each VM has an **OS disk** (root, `A`/`B` partitions) and a **data disk** (`/data/user`). An upgrade re-images the *inactive* partition, swaps the bootloader, and reboots — user data on the data disk is untouched.
 
