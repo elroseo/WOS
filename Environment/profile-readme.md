@@ -9,25 +9,25 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, system
 ## Where I came from
 
 - Most recently worked at LiveU in the video broadcast and production space 🎦⏯️
-- Multi-modal experienced technical support engineer and technical account manager across global markets
+- Experience as a multi-modal technical support engineer and technical account manager across global markets
 
 ---
 
 ## Values
 
-| | |
-|---|---|
-| **💡 Curious** | Open-minded, listen first, and asking "what if?" |
-| **🚀 Dynamic** | Systems thinking, solutions oriented, continuous learning |
-| **🎯 Integrity** | Thorough, dependable, and I own what I commit to |
-| **💎 Honest** | True collaboration, transparent communication, accessibility |
+|                  |                                                              |
+| ---------------- | ------------------------------------------------------------ |
+| **💡 Curious**   | Open-minded, listen first, and asking "what if?"             |
+| **🚀 Dynamic**   | Systems thinking, solutions oriented, continuous learning    |
+| **🎯 Integrity** | Thorough, dependable, and own my commitments                 |
+| **💎 Honest**    | True collaboration, transparent communication, accessibility |
 
 ---
 
 ## Best Practices
 
 - Asynchronous first
-- Enjoy independent work, both value and understand the benefits of team syncs (async or in real time)
+- Enjoy independent work, but also value and understand the benefits of team syncs (async or in real time)
 - Strive to solve problems systemically
 - Prefer receiving positive or negative feedback in private first
 - Appreciate any additional context on requests (forewarned is forearmed!)
@@ -66,10 +66,10 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, system
 
 ## How to reach me
 
-| Method | When |
-|---|---|
-| **Slack** | Quick or urgent questions |
-| **Email** | More thorough responses |
+| Method       | When                                    |
+| ------------ | --------------------------------------- |
+| **Slack**    | Quick or urgent questions               |
+| **Email**    | More thorough responses                 |
 | **Calendar** | Drop a meeting or send a heads up first |
 
 Generally available between **7am - 7pm EST**, always happy to flex as needed.
