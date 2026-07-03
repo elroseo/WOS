@@ -16,3 +16,4 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Ask Melanie about PTO Aug 6-7 📅 2026-06-30 ✅ 2026-07-02
 - [x] Check PR for PagerDuty and TextExpander 📅 2026-06-23 ✅ 2026-06-24
 - [x] Seismic: Support Foundations - New Hubbers (assigned by Kyle Schmidt) ⏫ 📅 2026-07-03 ✅ 2026-07-02
+- [ ] Book in 1:1s with senior CREs on my team (Carlos Naranjo, Peter Kovacs, Jessica Widener) 📅 2026-07-07
