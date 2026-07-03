@@ -15,7 +15,7 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE III at GitHub | Curious, honest, sy
 
 ## Values
 
-|                  |                                                              |
+| Value            | What it means                                                |
 | ---------------- | ------------------------------------------------------------ |
 | **💡 Curious**   | Open-minded, listen first, and asking "what if?"             |
 | **🚀 Dynamic**   | Systems thinking, solutions oriented, continuous learning    |
@@ -27,8 +27,8 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE III at GitHub | Curious, honest, sy
 ## How I work
 
 - **Asynchronous first.** I enjoy independent work and working asynchronously lets me structure my work in the way that works best for me and my brain. My neurodivergence means that sometimes I can hyperfocus for long periods and other times it takes more effort to do sustained focus work. 
-- **Collaborative and team-oriented.** I value and understand the benefits of team syncs and working collaboratively (async or in real time). I'll always try to make myself available to help other out when I can.
-- **Systemic and informed**. I like to work through things in a logical order and consider where my work fits into the broader context. When possible, I like to have any additional context on requests upfront (forewarned is forearmed).
+- **Collaborative and team-oriented.** I value and understand the benefits of team syncs and working collaboratively (async or in real time). I'll always try to make myself available to help others out when I can.
+- **Systemic and informed.** I like to work through things in a logical order and consider where my work fits into the broader context. When possible, I like to have any additional context on requests upfront (forewarned is forearmed).
 
 ---
 
@@ -67,10 +67,10 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE III at GitHub | Curious, honest, sy
 
 | Method        | When                                                                                                                                                                                                                           |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Asynchonously | You can reach out to me on slack for quick/urgent questions or more thorough requests. I will try to get back to you ASAP on urgent things, but it may take additional time for me to follow up with a more thorough response. |
+| Asynchronously | You can reach out to me on slack for quick/urgent questions or more thorough requests. I will try to get back to you ASAP on urgent things, but it may take additional time for me to follow up with a more thorough response. |
 | Synchronously | When possible, I prefer a bit of notice if you want to meet or chat. Feel free to drop a meeting invite into my calendar.                                                                                                      |
 
-Generally available between **7am - 7pm EST**, always happy to flex as needed.
+Generally available between **7am - 7pm ET**, always happy to flex as needed.
 Usually have my video on but you do whatever works for you.
 
 ---
@@ -83,4 +83,4 @@ Usually have my video on but you do whatever works for you.
 
 ---
 
-*This is a living document. Last updated: June 2026.*
+*This is a living document. Last updated: July 2026.*
