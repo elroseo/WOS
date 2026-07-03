@@ -17,22 +17,19 @@ Manager: [[Melanie King]]
 
 ```mermaid
 flowchart TB
-    RW["reversaw<br/>(skip+2)"] --> MB
     MB["Michael Bruce<br/>Dir, CRE"] --> MK["Melanie King<br/>Sr. Mgr, CRE"]
-    MB --> DL["Danny LeBlanc<br/>Mgr, CRE (peer team)"]
     MK --> ME["Ellie Oliver ⭐<br/>CRE III (me)"]
-    DL --> IJ["IJ Chikwekwem<br/>CRE III (mentor contact)"]
 ```
 
-| Level | Person | Login | Title |
-|---|---|---|---|
-| Manager | Melanie King | `melanie-king` | Sr. Mgr, CRE |
-| Skip (Director) | Michael Bruce | `michael-bruce` | Dir, CRE |
-| Skip+2 | — | `reversaw` | (above Michael) |
+| Level           | Person        | Login           | Title           |
+| --------------- | ------------- | --------------- | --------------- |
+| Manager         | Melanie King  | `melanie-king`  | Sr. Mgr, CRE    |
+| Skip (Director) | Michael Bruce | `michael-bruce` | Dir, CRE        |
+
 
 ---
 
-## My team (Melanie King's directs)
+## My team
 
 | Person | Login | Title | Location |
 |---|---|---|---|
@@ -51,13 +48,7 @@ flowchart TB
 
 ---
 
-## Key cross-team contacts
-
-| Person | Login | Title | Why they matter |
-|---|---|---|---|
-| [[IJ Chikwekwem]] | `ij-chikwekwem` | CRE III | Mentor contact for **Kusto/KQL, Splunk, GHES**. On Danny LeBlanc's team. Note: doesn't reliably get Slack notifications. |
-
-### Peer managers (Michael Bruce's other directs)
+## Peer managers (Michael Bruce's other directs)
 
 `brandonaus` · `dannyleblanc` · `mwiesen` · `swedabl` — sibling CRE teams under Michael Bruce. Useful when routing an escalation to another pod.
 
@@ -65,7 +56,7 @@ flowchart TB
 
 ## Notes
 
-- People I have dedicated profiles for: [[Melanie King]], [[IJ Chikwekwem]].
+- People I have dedicated profiles for: [[Melanie King]].
 - To refresh this from the directory: ask Copilot to "rebuild my CRE team note from HubbersMCP."
 - Consider adding profiles for teammates I pair with often (e.g. Munish Suri, Kurtis Foley).
 
