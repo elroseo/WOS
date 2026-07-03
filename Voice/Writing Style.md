@@ -94,5 +94,6 @@ Before presenting any written artifact, check:
 
 ## References
 
+- [[Orwell's Rules for Writing]] (five rules for clear writing, backs my concise/plain-language voice)
 - [[Writing in GitHub Voice - Notes]] (detailed notes from Stefan's presentation)
 - GitHub Voice and Tone Guide.pdf (in this folder)
