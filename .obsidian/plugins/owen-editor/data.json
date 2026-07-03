@@ -6,7 +6,7 @@
   "showGraphiteThemeNotice": true,
   "toolbarPosition": "top",
   "toolbarPreset": "full",
-  "toolbarCollapsed": false,
+  "toolbarCollapsed": true,
   "toolbarScale": 90,
   "toolbarDensity": "balanced",
   "favoriteDisplay": "hover",
