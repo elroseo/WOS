@@ -1,8 +1,8 @@
-# Hi, I'm Ellie 👋
+# Hi, I'm Ellie 👋🏻
 
-## TLDR
+## TL;DR
 
-Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, systems thinker | Dog mum to Lucy the Goosey 🐶
+Brit living in Canada 🇬🇧🇨🇦 | CRE III at GitHub | Curious, honest, systems thinker | Dog mum to Lucy the Goosey 🐶
 
 ---
 
@@ -26,9 +26,9 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, system
 
 ## How I work
 
-- **Asynchronous first.** I enjoy independent work and working asynchronously lets me structure my work in the way that works best for me. 
+- **Asynchronous first.** I enjoy independent work and working asynchronously lets me structure my work in the way that works best for me and my brain. My neurodivergence means that sometimes I can hyperfocus for long periods and other times it takes more effort to do sustained focus work. 
 - **Collaborative and team-oriented.** I value and understand the benefits of team syncs and working collaboratively (async or in real time). I'll always try to make myself available to help other out when I can.
-- **Systemically** **and informed**. I like to work through things in a logical order and consider where my work fits into the braoder context. When possible, I like to have any additional context on requests upfront (forewarned is forearmed).
+- **Systemic and informed**. I like to work through things in a logical order and consider where my work fits into the broader context. When possible, I like to have any additional context on requests upfront (forewarned is forearmed).
 
 ---
 
@@ -65,11 +65,10 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, system
 
 ## How to reach me
 
-| Method       | When                                    |
-| ------------ | --------------------------------------- |
-| **Slack**    | Quick or urgent questions               |
-| **Email**    | More thorough responses                 |
-| **Calendar** | Drop a meeting or send a heads up first |
+| Method        | When                                                                                                                                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Asynchonously | You can reach out to me on slack for quick/urgent questions or more thorough requests. I will try to get back to you ASAP on urgent things, but it may take additional time for me to follow up with a more thorough response. |
+| Synchronously | When possible, I prefer a bit of notice if you want to meet or chat. Feel free to drop a meeting invite into my calendar.                                                                                                      |
 
 Generally available between **7am - 7pm EST**, always happy to flex as needed.
 Usually have my video on but you do whatever works for you.
