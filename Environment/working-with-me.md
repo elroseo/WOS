@@ -15,7 +15,7 @@ Hi, I'm Ellie. This is my human user guide: how I work, communicate, and collabo
 | **🎯 Reliable** | I strive to be thorough, dependable, and own my commitments                                              |
 | **💎 Honest**   | I'm committed to communicating openly, transparently, and accessibly in the spirit of true collaboration |
 
---
+---
 
 ## How I work
 
@@ -48,10 +48,8 @@ Hi, I'm Ellie. This is my human user guide: how I work, communicate, and collabo
 
 ## How to reach me
 
-|                |                                                                                                                                                                                                                              |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Asynchronously | You can reach out to me on slack for quick/urgent questions or more thorough requests. I will try to get back to you ASAP on urgent things, but it may take additional time for me to follow up with a more thorough response. |
-| Synchronously  | When possible, I prefer a bit of notice if you want to meet or chat. Feel free to drop a meeting invite into my calendar.                                                                                                     |
+- **Asynchronously:** You can reach out to me on slack for quick/urgent questions or more thorough requests. I will try to get back to you ASAP on urgent things, but it may take additional time for me to follow up with a more thorough response.
+- **Synchronously:** When possible, I prefer a bit of notice if you want to meet or chat. Feel free to drop a meeting invite into my calendar.
 
 Generally available between **7am - 7pm ET**, always happy to flex as needed.
 Usually have my video on but you do whatever works for you.
