@@ -24,22 +24,21 @@ Brit living in Canada 🇬🇧🇨🇦 | CRE at GitHub | Curious, honest, system
 
 ---
 
-## Best Practices
+## How I work
 
-- Asynchronous first
-- Enjoy independent work, but also value and understand the benefits of team syncs (async or in real time)
-- Strive to solve problems systemically
-- Prefer receiving positive or negative feedback in private first
-- Appreciate any additional context on requests (forewarned is forearmed!)
+- **Asynchronous first.** I enjoy independent work and working asynchronously lets me structure my work in the way that works best for me. 
+- **Collaborative and team-oriented.** I value and understand the benefits of team syncs and working collaboratively (async or in real time). I'll always try to make myself available to help other out when I can.
+- **Systemically** **and informed**. I like to work through things in a logical order and consider where my work fits into the braoder context. When possible, I like to have any additional context on requests upfront (forewarned is forearmed).
 
 ---
 
 ## Things I like at work
 
-- Team sync calls
+- Team syncs calls
 - Good documentation
 - Honest and realistic communication
 - Meetings that have a clear objective
+- Receiving positive or negative feedback in private first
 - Data driven decisions
 - Fun Slack emojis
 
