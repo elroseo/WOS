@@ -1,4 +1,4 @@
-# Hi, I'm Ellie 👋🏻
+# Hi, I'm Ellie (or El, either works)👋🏻
 
 ## TL;DR
 
@@ -6,14 +6,14 @@ Brit living in Canada 🇬🇧🇨🇦 | Customer Reliability Engineer III at Gi
 
 ---
 
-## Where I came from
+## Where I came from 🗺️
 
 - Most recently worked at LiveU in the video broadcast and production space 🎦⏯️
 - Experience as a multi-modal technical support engineer and technical account manager across global markets
 
 ---
 
-## A little more about me
+## A little more about me ℹ️
 
 - Chasing a ball around a court (or more recently a golf course) ⛳
 - Most things with an engine and "How It's Made" reruns
@@ -23,7 +23,7 @@ Brit living in Canada 🇬🇧🇨🇦 | Customer Reliability Engineer III at Gi
 
 ---
 
-## 🤝 Working with me
+## Working with me 👥
 
 I've written a short guide on how I work, communicate, and collaborate best.
 
