@@ -2,7 +2,7 @@
 
 ## TL;DR
 
-Brit living in Canada 🇬🇧🇨🇦 | CRE III at GitHub | Curious, honest, systems thinker | Dog mum to Lucy the Goosey 🐶
+Brit living in Canada 🇬🇧🇨🇦 | Customer Reliability Engineer III at GitHub | Curious, honest, systems thinker | Dog mum to Lucy the Goosey 🐶
 
 ---
 
