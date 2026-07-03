@@ -142,6 +142,8 @@ Repeat
 | `gh auth login` | Authenticate GitHub CLI |
 | `gh auth status` | Check login status |
 
+> **How auth works on this machine:** you authenticate once with `gh auth login` (HTTPS), and `gh` installs itself as git's credential helper (`credential.https://github.com.helper = !gh auth git-credential`). After that, `git clone`/`pull`/`push` over HTTPS "just work" with no tokens to paste, because git asks `gh` for credentials automatically. No SSH key needed for GitHub.com pushes.
+
 ---
 
 ## Repos
@@ -304,6 +306,7 @@ Then use `git st`, `git co`, `git br`, `git lg`.
 
 ## Quick reference links
 
+- [Set up Git (GitHub Docs)](https://docs.github.com/en/get-started/git-basics/set-up-git)
 - [Git docs](https://git-scm.com/doc)
 - [GitHub CLI manual](https://cli.github.com/manual/)
 - [GitHub Docs](https://docs.github.com)
