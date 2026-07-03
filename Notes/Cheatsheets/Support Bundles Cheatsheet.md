@@ -170,4 +170,5 @@ grep -in "applying\|finished\|failed" configuration-logs/* enterprise-manage-log
 - [Providing data to GitHub Support](https://docs.github.com/en/enterprise-server@latest/support/contacting-github-support/providing-data-to-github-support)
 - [Command-line utilities (`ghe-support-bundle`, `ghe-cluster-support-bundle`)](https://docs.github.com/en/enterprise-server@latest/admin/administering-your-instance/administering-your-instance-from-the-command-line/command-line-utilities)
 - [About the audit log for your enterprise](https://docs.github.com/en/enterprise-server@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/about-the-audit-log-for-your-enterprise)
+- [[ESB Support Bundle Workflow]] - pulling a bundle down via esbtools (extract first, then scp)
 - [[GHES Cheatsheet]]
