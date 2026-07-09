@@ -1,3 +1,9 @@
+<div align="center">
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&duration=3000&pause=1000&color=2F81F7&center=true&vCenter=true&width=750&lines=Hi,+I'm+Ellie+%F0%9F%91%8B%F0%9F%8F%BB;Customer+Reliability+Engineer+III;Brit+living+in+Canada+%F0%9F%87%AC%F0%9F%87%A7%F0%9F%87%A8%F0%9F%87%A6;Curious,+honest,+systems+thinker)](https://git.io/typing-svg)
+
+</div>
+
 # Hi, I'm Ellie (or El, either works)👋🏻
 
 ## TL;DR
@@ -30,5 +36,20 @@ I've written a short guide on how I work, communicate, and collaborate best.
 **→ [How to work with me](working-with-me.md)**
 
 ---
+
+
+---
+
+<div align="center">
+
+### 🐍 Watch the snake eat my contributions
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/elroseo/elroseo/output/github-snake-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/elroseo/elroseo/output/github-snake.svg">
+  <img alt="github contribution snake animation" src="https://raw.githubusercontent.com/elroseo/elroseo/output/github-snake.svg">
+</picture>
+
+</div>
 
 *This is a living document. Last updated: July 2026.*
