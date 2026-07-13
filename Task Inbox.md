@@ -18,3 +18,4 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Seismic: Support Foundations - New Hubbers (assigned by Kyle Schmidt) ⏫ 📅 2026-07-03 ✅ 2026-07-02
 - [ ] Book in 1:1s with senior CREs on my team (Carlos Naranjo, Peter Kovacs, Jessica Widener) 📅 2026-07-13
 - [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-15
+- [ ] 
