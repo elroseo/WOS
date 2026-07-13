@@ -19,3 +19,7 @@
 
 - [x] Ask about PTO for roadtrip (Oct 16 - Nov 1) ✅ 2026-07-02
 - [x] Ask about PTO Aug 6-7 ✅ 2026-07-02
+
+## 1:1 - 2026-07-13
+- Working style: open and honest communication, collaborative, flexible.
+- Preferred contact: Slack is best.
