@@ -6,7 +6,7 @@
   "showGraphiteThemeNotice": true,
   "toolbarPosition": "top",
   "toolbarPreset": "full",
-  "toolbarCollapsed": true,
+  "toolbarCollapsed": false,
   "toolbarScale": 90,
   "toolbarDensity": "balanced",
   "favoriteDisplay": "hover",
@@ -20,6 +20,7 @@
     "insert-graphite-summary-callout"
   ],
   "recentCommandIds": [
+    "toggle-task",
     "unwrap-markdown-selection",
     "open-table-builder",
     "redo-edit",
