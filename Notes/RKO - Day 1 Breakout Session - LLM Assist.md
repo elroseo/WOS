@@ -7,3 +7,9 @@ Saved queries - step up from skills, reusable common scenarios
 Hero path LLM Assist workshop 
 
 - [ ] LLM Assist workshop 'Hero Track' 🔼 📅 2026-08-10
+	- [ ] https://github.com/github/support/blob/main/tools/llm-assist/training/rko-breakout/llm-assist-workshop.md
+
+**How to use: 
+- Open Codespace 
+- Run /welcome 
+- 
