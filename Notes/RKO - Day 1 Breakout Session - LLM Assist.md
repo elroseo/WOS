@@ -15,7 +15,10 @@ Hero path LLM Assist workshop
 - Log in using elroseo@githubazure.com
 	- use `/quickstart` for a faster startup. Type `/status` anytime to refresh your dashboard.
 
-*Tips*
+
+
+
+**Tips
 💡 **TIP 1:** If you don't see the chat panel, click the Copilot icon or press `Ctrl+Alt+I`.
 
 💡 **TIP 2:** Previous chat sessions live under **Sessions** in the chat header.
