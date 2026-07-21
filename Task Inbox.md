@@ -17,6 +17,7 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Check PR for PagerDuty and TextExpander 📅 2026-06-23 ✅ 2026-06-24
 - [x] Seismic: Support Foundations - New Hubbers (assigned by Kyle Schmidt) ⏫ 📅 2026-07-03 ✅ 2026-07-02
 - [ ] Book in 1:1s with senior CREs on my team (Peter Kovacs, Jessica Widener) 📅 2026-07-13
-	- ✅ Carlos Naranjo booked 2026-07-14
+	- ✅ Carlos Naranjo booked 2026-07-14 - rescheduled 
+	- Book with outside team 
 - [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-15
 - [ ] 
