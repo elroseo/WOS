@@ -16,8 +16,6 @@ Hero path LLM Assist workshop
 	- use `/quickstart` for a faster startup. Type `/status` anytime to refresh your dashboard.
 
 
-
-
 **Tips
 💡 **TIP 1:** If you don't see the chat panel, click the Copilot icon or press `Ctrl+Alt+I`.
 
