@@ -1,0 +1,20 @@
+{
+  "$schema_notes": "CRE account registry. One entry per managed account. 'slug' is the folder name and the seed for 'session_uuid' (deterministic uuid5). Add/edit entries with Accounts/bin/cre.sh -> `cre-new`, or by hand. sf_id must be the canonical Salesforce (parent) account id so account360/revenue-mcp queries hit the right account.",
+  "namespace_uuid": "08d5946b-44c2-5557-a653-eaa23d8769e9",
+  "accounts": [
+    {
+      "slug": "acme-corp",
+      "display_name": "Acme Corporation",
+      "sf_id": "PLACEHOLDER-SF-ID",
+      "aliases": [
+        "acme",
+        "acmecorp"
+      ],
+      "parent": null,
+      "tier": "strategic",
+      "renewal_date": "2026-12-31",
+      "session_uuid": "098c6216-0d99-5825-8cef-c3fff9228f3e",
+      "placeholder": true
+    }
+  ]
+}
