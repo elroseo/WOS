@@ -8,7 +8,7 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Complete Security trainings ⏫ 📅 2026-06-18 ✅ 2026-06-18
 - [x] Seismic Revenue Training ⏫ 📅 2026-06-22 ✅ 2026-06-24
 - [ ] Start GitHub Foundations course ⏫ 📅 2026-07-27
-- [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-07-31
+- [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-09-01
 	- 📝 Study aid ready: [[Kusto-KQL Cheatsheet]]
 - [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-07-31
 	- 📝 Study aid ready: [[Splunk Cheatsheet]] (see also [[Support Bundles Cheatsheet]])
@@ -19,5 +19,6 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Book in 1:1s with senior CREs on my team (Peter Kovacs, Jessica Widener) 📅 2026-07-29
 	- ✅ Carlos Naranjo booked 2026-07-14 - rescheduled 
 	- Book with outside team (Louis)
-- [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-27
+- [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-29
+- [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-27 ✅ 2026-07-27
 - [ ] 

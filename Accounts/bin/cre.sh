@@ -13,6 +13,9 @@
 #   seed prompt forces a live data refresh so numbers are never stale.
 # - Directory scoping PRIMES context; it does not isolate global MCPs/memory. The seed
 #   prompt names the canonical account + SF id to reduce cross-account mistakes.
+# - Templating and registry writes are done in Python (not sed) so account names
+#   containing &, |, /, quotes, etc. are handled safely, and the registry is updated
+#   atomically (temp file + os.replace) only after files are written successfully.
 
 # Root of the Accounts area (override with CRE_ACCOUNTS_DIR).
 : "${CRE_ACCOUNTS_DIR:=/Users/elroseo/Work GitHub/Accounts}"
@@ -20,35 +23,58 @@ export CRE_ACCOUNTS_DIR
 
 _cre_registry() { printf '%s/_registry.json' "$CRE_ACCOUNTS_DIR"; }
 
-# Resolve an alias/slug to a JSON object (or empty). Args: <alias>
+# Resolve an alias/slug to a JSON object.
+# exit 0 = printed match; 1 = no match; 3 = registry error; 4 = ambiguous.
 _cre_resolve() {
   python3 - "$(_cre_registry)" "$1" <<'PY'
 import json, sys
-reg, needle = sys.argv[1], sys.argv[2].lower()
+reg, needle = sys.argv[1], sys.argv[2].casefold()
 try:
     data = json.load(open(reg))
+except FileNotFoundError:
+    sys.stderr.write(f"cre: registry not found: {reg}\n"); sys.exit(3)
 except Exception as e:
-    print("", end=""); sys.exit(0)
+    sys.stderr.write(f"cre: registry unreadable: {e}\n"); sys.exit(3)
+matches = []
 for a in data.get("accounts", []):
-    keys = [a.get("slug","").lower()] + [x.lower() for x in a.get("aliases",[])] + [a.get("display_name","").lower()]
+    keys = [a.get("slug", "").casefold()] \
+        + [x.casefold() for x in a.get("aliases", [])] \
+        + [a.get("display_name", "").casefold()]
     if needle in keys:
-        print(json.dumps(a)); break
+        matches.append(a)
+if len(matches) > 1:
+    names = ", ".join(m.get("slug", "?") for m in matches)
+    sys.stderr.write(f"cre: '{needle}' is ambiguous — matches: {names}\n"); sys.exit(4)
+if not matches:
+    sys.exit(1)
+print(json.dumps(matches[0]))
 PY
 }
 
 cre() {
   local alias="$1"
   if [[ -z "$alias" ]]; then echo "usage: cre <alias>   (see: cre-ls)"; return 2; fi
-  local obj; obj="$(_cre_resolve "$alias")"
-  if [[ -z "$obj" ]]; then echo "cre: no account matching '$alias'. Try: cre-ls"; return 1; fi
+  local obj rc
+  obj="$(_cre_resolve "$alias")"; rc=$?
+  if [[ $rc -ne 0 ]]; then
+    [[ $rc -eq 1 ]] && echo "cre: no account matching '$alias'. Try: cre-ls"
+    return $rc
+  fi
+
+  # Parse all needed fields once; fail loudly if slug or session_uuid is missing.
+  local parsed
+  parsed="$(python3 - "$obj" <<'PY'
+import json, sys
+a = json.loads(sys.argv[1])
+if not a.get("slug") or not a.get("session_uuid"):
+    sys.stderr.write("cre: registry entry missing slug or session_uuid\n"); sys.exit(1)
+print(a["slug"]); print(a.get("sf_id", "")); print(a.get("display_name", "")); print(a["session_uuid"])
+PY
+)" || return 1
 
   local slug sf_id display uuid dir
-  slug="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1])["slug"])' "$obj")"
-  sf_id="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1]).get("sf_id",""))' "$obj")"
-  display="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1]).get("display_name",""))' "$obj")"
-  uuid="$(python3 -c 'import json,sys;print(json.loads(sys.argv[1])["session_uuid"])' "$obj")"
+  { IFS= read -r slug; IFS= read -r sf_id; IFS= read -r display; IFS= read -r uuid; } <<< "$parsed"
   dir="$CRE_ACCOUNTS_DIR/$slug"
-
   if [[ ! -d "$dir" ]]; then echo "cre: folder missing for '$slug' ($dir)"; return 1; fi
 
   local seed="You are assisting @elroseo (a GitHub CRE) on the account: ${display} (Salesforce id: ${sf_id}). \
@@ -65,46 +91,99 @@ cre-new() {
   if [[ -z "$slug" || -z "$display" || -z "$sf_id" ]]; then
     echo 'usage: cre-new <slug> "<Display Name>" <sf_id> [alias1,alias2]'; return 2
   fi
-  local root="$CRE_ACCOUNTS_DIR" reg; reg="$(_cre_registry)"
-  local tmpl="$root/_templates/index.template.md"
-  local dir="$root/$slug"
-  if [[ -d "$dir" ]]; then echo "cre-new: '$slug' already exists"; return 1; fi
+  # All validation, rendering, and the atomic registry write happen in one Python
+  # step so a partial failure never leaves the registry and filesystem inconsistent.
+  python3 - "$CRE_ACCOUNTS_DIR" "$slug" "$display" "$sf_id" "$aliases" <<'PY'
+import json, os, re, sys, tempfile, uuid
+root, slug, display, sf_id, aliases = sys.argv[1:6]
 
-  # Register (computes deterministic uuid5 from the namespace + slug).
-  python3 - "$reg" "$slug" "$display" "$sf_id" "$aliases" <<'PY'
-import json, sys, uuid
-reg, slug, display, sf_id, aliases = sys.argv[1:6]
-data = json.load(open(reg))
+if slug in (".", "..") or not re.fullmatch(r"[A-Za-z0-9._-]+", slug):
+    sys.exit(f"cre-new: invalid slug '{slug}' (allowed: letters, digits, . _ - ; not . or ..)")
+
+reg  = os.path.join(root, "_registry.json")
+tmpl = os.path.join(root, "_templates", "index.template.md")
+adir = os.path.join(root, slug)
+
+if os.path.exists(adir):
+    sys.exit(f"cre-new: folder '{slug}' already exists")
+try:
+    data = json.load(open(reg))
+except Exception as e:
+    sys.exit(f"cre-new: cannot read registry: {e}")
+
+alias_list = [a for a in aliases.split(",") if a]
+existing = set()
+for a in data.get("accounts", []):
+    existing.add(a.get("slug", "").casefold())
+    existing.update(x.casefold() for x in a.get("aliases", []))
+for key in [slug] + alias_list:
+    if key.casefold() in existing:
+        sys.exit(f"cre-new: key '{key}' already registered")
+
+try:
+    tpl = open(tmpl).read()
+except Exception as e:
+    sys.exit(f"cre-new: cannot read template: {e}")
+
+rendered = (tpl.replace("{{SLUG}}", slug)
+               .replace("{{DISPLAY_NAME}}", display)
+               .replace("{{SF_ID}}", sf_id)
+               .replace("{{TIER}}", "")
+               .replace("{{RENEWAL_DATE}}", ""))
+
 ns = uuid.UUID(data["namespace_uuid"])
-if any(a["slug"] == slug for a in data["accounts"]):
-    sys.exit("slug already registered")
-data["accounts"].append({
+entry = {
     "slug": slug, "display_name": display, "sf_id": sf_id,
-    "aliases": [a for a in aliases.split(",") if a],
-    "parent": None, "tier": "", "renewal_date": "",
+    "aliases": alias_list, "parent": None, "tier": "", "renewal_date": "",
     "session_uuid": str(uuid.uuid5(ns, slug)), "placeholder": False,
-})
-json.dump(data, open(reg, "w"), indent=2); open(reg,"a").write("\n")
-PY
-  [[ $? -ne 0 ]] && return 1
+}
 
-  # Render the template.
-  mkdir -p "$dir"
-  sed -e "s|{{SLUG}}|$slug|g" -e "s|{{DISPLAY_NAME}}|$display|g" \
-      -e "s|{{SF_ID}}|$sf_id|g" -e "s|{{TIER}}||g" -e "s|{{RENEWAL_DATE}}||g" \
-      "$tmpl" > "$dir/index.md"
-  echo "✓ created $dir/index.md and registered '$slug'. Open it with:  cre $slug"
+# 1) write the account files first; roll back the folder on any failure.
+os.makedirs(adir)
+try:
+    with open(os.path.join(adir, "index.md"), "w") as f:
+        f.write(rendered)
+except Exception as e:
+    try:
+        os.remove(os.path.join(adir, "index.md"))
+    except FileNotFoundError:
+        pass
+    os.rmdir(adir)
+    sys.exit(f"cre-new: failed to write index.md: {e}")
+
+# 2) update the registry atomically LAST; roll back the folder if it fails.
+data["accounts"].append(entry)
+try:
+    fd, tmp = tempfile.mkstemp(dir=root, suffix=".json")
+    with os.fdopen(fd, "w") as f:
+        json.dump(data, f, indent=2); f.write("\n")
+    os.replace(tmp, reg)
+except Exception as e:
+    try: os.remove(tmp)
+    except Exception: pass
+    os.remove(os.path.join(adir, "index.md")); os.rmdir(adir)
+    sys.exit(f"cre-new: failed to update registry (folder rolled back): {e}")
+
+print(f"OK {adir}/index.md")
+PY
+  local rc=$?
+  [[ $rc -ne 0 ]] && return $rc
+  echo "✓ created account '$slug'. Open it with:  cre $slug"
 }
 
 cre-ls() {
   python3 - "$(_cre_registry)" <<'PY'
 import json, sys
-data = json.load(open(sys.argv[1]))
-rows = [(a["slug"], a.get("display_name",""), a.get("sf_id",""),
-         "placeholder" if a.get("placeholder") else "") for a in data.get("accounts",[])]
+try:
+    data = json.load(open(sys.argv[1]))
+except Exception as e:
+    sys.stderr.write(f"cre-ls: cannot read registry: {e}\n"); sys.exit(3)
+rows = [(a["slug"], a.get("display_name", ""), a.get("sf_id", ""),
+         "placeholder" if a.get("placeholder") else "") for a in data.get("accounts", [])]
 w = max((len(r[0]) for r in rows), default=4)
 for slug, disp, sf, flag in rows:
     print(f"{slug:<{w}}  {disp}  ({sf}) {flag}".rstrip())
-if not rows: print("(no accounts yet — add one with cre-new)")
+if not rows:
+    print("(no accounts yet — add one with cre-new)")
 PY
 }
