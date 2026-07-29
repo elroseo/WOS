@@ -28,3 +28,6 @@ Hero path LLM Assist workshop
 💡 **TIP 5:** The terminal is your status board. You usually do not need to type there.
 
 💡 **TIP 6:** If the layout feels crowded, hide the Explorer, drag the chat divider left, or toggle the terminal with `Ctrl+``.
+
+****
+copilot zd ticket topicvs - guided learnings (kusto) llm assis
