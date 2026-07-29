@@ -14,7 +14,9 @@ Hero path LLM Assist workshop
 - Run /welcome 
 - Log in using elroseo@githubazure.com
 	- use `/quickstart` for a faster startup. Type `/status` anytime to refresh your dashboard.
-
+**How to use in CLI**
+'cd "/Users/elroseo/GitHub work/llm-assist"
+copilot --yolo --disable-mcp-server github
 
 **Tips
 💡 **TIP 1:** If you don't see the chat panel, click the Copilot icon or press `Ctrl+Alt+I`.
@@ -30,4 +32,5 @@ Hero path LLM Assist workshop
 💡 **TIP 6:** If the layout feels crowded, hide the Explorer, drag the chat divider left, or toggle the terminal with `Ctrl+``.
 
 ****
-copilot zd ticket topicvs - guided learnings (kusto) llm assis
+- [ ] use copilot to analyse most common zd ticket topics - guided learnings (kusto) llm assist ⏫ 📅 2026-07-31
+
