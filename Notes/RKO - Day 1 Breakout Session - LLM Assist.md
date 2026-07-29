@@ -9,13 +9,13 @@ Hero path LLM Assist workshop
 - [ ] LLM Assist workshop 'Hero Track' 🔼 📅 2026-08-10
 	- [ ] https://github.com/github/support/blob/main/tools/llm-assist/training/rko-breakout/llm-assist-workshop.md
 
-**How to use: 
+**How to use Codespace: 
 - Open Codespace 
 - Run /welcome 
 - Log in using elroseo@githubazure.com
 	- use `/quickstart` for a faster startup. Type `/status` anytime to refresh your dashboard.
 **How to use in CLI**
-'cd "/Users/elroseo/GitHub work/llm-assist"
+cd "/Users/elroseo/GitHub work/llm-assist"
 copilot --yolo --disable-mcp-server github
 
 **Tips
