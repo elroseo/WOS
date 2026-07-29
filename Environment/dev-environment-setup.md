@@ -2,7 +2,7 @@
 
 Tracking everything installed and configured on this machine.
 
-**Last updated:** 2026-06-17
+**Last updated:** 2026-07-29
 
 ---
 
@@ -71,6 +71,23 @@ All installed via [Homebrew](https://brew.sh) unless noted.
 
 - Vault location: `~/Obsidian`
 - Installed: 2026-06-17
+
+---
+
+## LLM Assist
+
+GitHub CRE + Kusto toolkit repo, run through Copilot CLI.
+
+| Item | Detail |
+|---|---|
+| Repo location | `~/GitHub work/llm-assist` |
+| GitHub URL | https://github.com/github/llm-assist |
+| Launch (CLI) | `cd "~/GitHub work/llm-assist" && copilot --yolo --disable-mcp-server github` |
+
+- `--yolo` auto-approves tool calls for the session.
+- `--disable-mcp-server github` suppresses the VS Code OAuth GitHub MCP error (CLI has its own built-in GitHub MCP).
+
+See [[LLM Assist in CLI]] for details.
 
 ---
 
