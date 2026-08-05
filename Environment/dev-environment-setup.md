@@ -98,4 +98,4 @@ See [[LLM Assist in CLI]] for details.
 - [x] Create first real custom agent ⏫ 📅 2026-06-19 ✅ 2026-06-18
 - [x] Create first real skill ⏫ 📅 2026-06-19 ✅ 2026-06-18
 - [x] Set up GitHub Hub / Docs access for Copilot ⏩ 📅 2026-06-20 ✅ 2026-06-18
-- [ ] Create custom ASCII art for agents/skills (ascii-motion.app) ⏬ 📅 2026-08-10
+- [ ] Create custom ASCII art for agents/skills (ascii-motion.app) ⏬ 📅 2026-10-26
