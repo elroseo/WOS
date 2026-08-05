@@ -146,5 +146,5 @@ Done: topic volume, time-to-close, reopen rate, escalation rate. Remaining from 
 
 ## Related
 
-- Full artifact in repo: `generated-assets/2026-08-05_pplus_common_ticket_topics.md`
+- This note is the single source of truth (repo copy removed).
 - [[LLM Assist Skills and Agents]] · relevant skills: `pplus-cre-value-report`, `qbr-report`, `ticket-priority-triage`
