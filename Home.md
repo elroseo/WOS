@@ -15,8 +15,9 @@ Welcome to your Work Operating System.
 - [[Notes/Hub Notes/]] - hub notes
 
 ### Learn
-- [[GitHub/Training & Development/Certifications/GitHub_Foundations/00_Plan/Study Plan|GitHub Foundations Study Plan]]
-- [[Cheatsheets/]]
+- [[Training & Development/Certifications/GitHub_Foundations/00_Plan/Study Plan|GitHub Foundations Study Plan]]
+- [[CRE-Learning/]]
+- [[Notes/Cheatsheets/]]
 
 ### Reference
 - [[Voice/Writing Style|Writing Style]]
