@@ -24,3 +24,7 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-27 ✅ 2026-07-27
 - [ ] 
 - [ ] Review [[CRE Assistant]] setup once I have assigned accounts (bundle/GHEC health + monthly reports) 📅 2026-08-31
+
+- [ ] Consolidate Splunk course notes for Pooja Reddypalle 📅 2026-08-17
+	- 📝 Use [[Splunk Cheatsheet]] as the reusable reference.
+- [ ] Share the completed Splunk notes with Pooja Reddypalle 📅 2026-08-17
