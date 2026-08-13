@@ -135,7 +135,6 @@ index=prod-esbtools host="<host>" sourcetype=esb_babeld earliest=-1h latest=now
 Schema varies by GHES version. Verify the fields present in each bundle.
 
 ## GHEC staff telemetry starting points
-
 These are starting points, not universal routes. Confirm the owning service and current schema.
 
 | Starting search | Typical use |
@@ -143,13 +142,16 @@ These are starting points, not universal routes. Confirm the owning service and 
 | `index=rails` | GitHub.com web and API request activity |
 | `index=prod-exceptions` | Application and background-job exceptions |
 | `index=prod-resque` | Background-job execution |
-| `index=catchall gh.infra.app=<service>` | Service-specific application logs |
-| `index=glb` | Global load-balancer traffic and backend routing |
+| `index=prod-quoroner` | Killed SQL queries and request-linked database timeouts |
+| `index=catchall service.name=<service>` | Moda and service-specific application logs |
+| `index=catchall gh_approle=<app-role-*>` | Host logs for applications not running on Moda |
 | `index=alambic` | Object-storage proxy activity |
 | `index=catchall gh.infra.app=lfs-server` | Git Large File Storage service logs |
 | `index=rails path_info="/lfs/<owner>/<repo>/*"` | LFS requests routed through Rails |
 
-For data-resident GHEC, verify the stamp and regional Splunk endpoint before searching. Do not assume staffship telemetry contains resident customer data.
+GLB logs have been evacuated from Splunk and must be queried in Kusto. Do not use the older `index=glb` examples without first confirming historical data is required.
+
+For data-resident GHEC, verify the stamp and regional endpoint before searching. Do not assume staffship telemetry contains resident customer data.
 
 ## Common GitHub search terms
 
@@ -296,16 +298,45 @@ index=catchall gh.infra.app="<service>" (error OR exception OR timeout) earliest
 | timechart span=5m count by host
 ```
 
-## Correlation guidance
 
+### GHEC latency by controller and action
+
+```spl
+index=rails deployment.environment=production catalog_service="<catalog_service>" earliest=-2h latest=now
+| eval controller_action=controller."#".action
+| stats count median(elapsed) perc95(elapsed) perc99(elapsed) max(elapsed) by controller_action
+| sort - perc99(elapsed)
+```
+
+### GHEC timed-out requests
+
+```spl
+index=rails timeout=true earliest=-2h latest=now
+| stats count by controller action catalog_service
+| sort - count
+```
+
+### Killed SQL queries for one request
+
+```spl
+index=prod-quoroner earliest=-15m latest=+15m
+| rex field=query "request_id:(?<request_id>.*?)[,|*]"
+| search request_id="<request_id>"
+| table _time request_id query
+| sort _time
+```
+
+## Correlation guidance
 | Starting evidence | Useful pivot |
 | ----------------- | ------------ |
-| Request ID | Search the exact value across likely sourcetypes in a tight time window |
+| `request_id` | Search the exact value in `rails`, `prod-exceptions`, `prod-resque`, and other likely indexes within a tight time window |
 | `esb_babeld.id` | Pivot to `esb_gitmon request_id` for fileserver-side measurements |
 | `TraceId` | Search `esb_production`, `esb_resqued`, `esb_babeld`, and `esb_syslog` |
 | Repository name | Add operation, protocol, and host before aggregating |
 | Background job ID | Deduplicate overlapping bundles using `gh.job.active_job_id` |
 | Fileserver host | Compare latency, error, and operation mix across `fs_host` values |
+
+For GitHub.com requests, `request_id` is the strongest general-purpose pivot because it follows the request lifecycle. Start in the index where the symptom appeared, then reuse the exact ID in related indexes.
 
 Overlapping GHES bundles can contain duplicate events. Use the event-specific stable key, such as `esb_babeld.id` or `gh.job.active_job_id`, before counting.
 
@@ -363,3 +394,6 @@ Overlapping GHES bundles can contain duplicate events. Use the event-specific st
 - [Splunk Search Reference](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/WhatsInThisManual)
 - [Splunk Search Tutorial](https://docs.splunk.com/Documentation/Splunk/latest/SearchTutorial/WelcometotheSearchTutorial)
 - [GHES log forwarding](https://docs.github.com/en/enterprise-server@latest/admin/monitoring-activity-in-your-enterprise/exploring-user-activity-in-your-enterprise/log-forwarding)
+- [GitHub Splunk Cookbook](https://thehub.github.com/epd/engineering/dev-practicals/performance/tools/splunk/)
+- [GitHub Splunk guides](https://thehub.github.com/epd/engineering/products-and-services/internal/splunk/)
+- [Splunk Education](https://education.splunk.com)
