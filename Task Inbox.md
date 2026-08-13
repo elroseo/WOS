@@ -10,7 +10,7 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Start GitHub Foundations course ⏫ 📅 2026-08-31
 - [ ] Learn Kusto/KQL querying for CRE investigations ⏩ 📅 2026-09-01
 	- 📝 Study aid ready: [[Kusto-KQL Cheatsheet]]
-- [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-07-31
+- [ ] Learn Splunk for GHES log investigation ⏩ 📅 2026-08-24
 	- 📝 Study aid ready: [[Splunk Cheatsheet]] (see also [[Support Bundles Cheatsheet]])
 - [x] Ask Melanie about PTO for roadtrip (Oct 16 - Nov 1) 📅 2026-06-30 ✅ 2026-07-02
 - [x] Ask Melanie about PTO Aug 6-7 📅 2026-06-30 ✅ 2026-07-02
@@ -19,7 +19,9 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Book in 1:1s with senior CREs on my team (Peter Kovacs, Jessica Widener) 📅 2026-07-29 ✅ 2026-08-05
 	- ✅ Carlos Naranjo booked 2026-07-14 - rescheduled 
 	- Book with outside team (Louis)
-- [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-08-05
+- [ ] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-08-19
+- [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-08-12 ✅ 2026-08-13
+- [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-08-05 ✅ 2026-08-13
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-29 ✅ 2026-08-05
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-27 ✅ 2026-07-27
 - [ ] 

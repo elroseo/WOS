@@ -6,7 +6,7 @@ Agents - Specific persona that the models calls upon (ticket-investigator agent)
 Saved queries - step up from skills, reusable common scenarios 
 Hero path LLM Assist workshop 
 
-- [ ] LLM Assist workshop 'Hero Track' 🔼 📅 2026-08-10
+- [ ] LLM Assist workshop 'Hero Track' 🔼 📅 2026-08-19
 	- [ ] https://github.com/github/support/blob/main/tools/llm-assist/training/rko-breakout/llm-assist-workshop.md
 
 **How to use Codespace: 
@@ -32,5 +32,5 @@ copilot --yolo --disable-mcp-server github
 💡 **TIP 6:** If the layout feels crowded, hide the Explorer, drag the chat divider left, or toggle the terminal with `Ctrl+``.
 
 ****
-- [ ] use copilot to analyse most common zd ticket topics - guided learnings (kusto) llm assist ⏫ 📅 2026-07-31
+- [x] use copilot to analyse most common zd ticket topics - guided learnings (kusto) llm assist ⏫ 📅 2026-07-31 ✅ 2026-08-13
 
