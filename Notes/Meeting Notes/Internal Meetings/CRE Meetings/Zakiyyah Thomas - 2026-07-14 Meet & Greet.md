@@ -9,7 +9,7 @@ type: internal
 
 **Date:** 2026-07-14
 **Attendees:** Ellie, [[Zakiyyah Thomas]]
-**Context:** First meet & greet with Zakiyyah (senior CRE III). Mentoring/onboarding conversation covering CRE practices, customer relationships, health checks, and using AI tools well.
+**Context:** First meet & greet with Zakiyyah (CRE III). Mentoring/onboarding conversation covering CRE practices, customer relationships, health checks, and using AI tools well.
 
 **References:**
 - [Facilitator notes (Loop)](https://microsoft-my.sharepoint.com/personal/zmuhammad_microsoft_com/Documents/Meetings/Ellie%20%20Zakiyyah%20Meet%20%20Greet.loop?web=1)
@@ -40,7 +40,7 @@ type: internal
 
 ## Action Items
 
-- [ ] Follow up with Stephen Bennett for guidance on the Element Assist project.
+- [ ] Follow up with Stephen Bennett for guidance on the LLM Assist project.
 - [ ] Explore the peer mentoring repository and give feedback plus topic suggestions.
 - [ ] Practice creating health checks before publishing to customers.
 - [ ] Consider recurring weekly or biweekly mentoring meetings if useful.

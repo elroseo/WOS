@@ -11,7 +11,8 @@ Welcome to your Work Operating System.
 
 ### Prep
 - [[People/]] - people notes
-- [[Notes/Meeting Notes/]] - meeting notes
+- [[Notes/Meeting Notes/Internal Meetings/]] - internal meetings and 1-on-1s
+- [[Notes/Meeting Notes/Customer Meetings/]] - customer meetings
 - [[Notes/Hub Notes/]] - hub notes
 
 ### Learn

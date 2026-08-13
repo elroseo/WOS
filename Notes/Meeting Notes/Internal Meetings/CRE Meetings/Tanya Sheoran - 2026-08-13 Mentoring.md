@@ -1,7 +1,8 @@
-# Mentoring Session with Tanya Sheoran
+# Tanya Sheoran - Mentoring - 2026-08-13
 
-**Date:** TBD
-**Time:** TBD
+**Date:** August 13, 2026
+**Time:** 2:00 PM to 3:00 PM ET
+**Subject:** Ellie/Tanya
 **Role:** Customer Reliability Engineer III
 
 ## Goals
@@ -29,7 +30,6 @@
 - What changed your conclusion?
 - Which troubleshooting patterns or failure modes should a new CRE learn first?
 
-
 ### Health Checks and technical evidence
 
 - When you review a Health Check, which findings deserve narrative explanation rather than only a metric or status?
@@ -48,7 +48,6 @@
 - Could we choose one sanitized past investigation and have me build the timeline and hypotheses before you show me the conclusion?
 - Which GHES support-bundle logs or GHEC telemetry sources should I learn first, and why?
 - What is one technical signal you initially trusted too much, or not enough, when you were newer to the role?
-
 
 ### Organization, note-taking, and resource finding
 

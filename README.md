@@ -7,8 +7,9 @@ It is version controlled with `obsidian-git` so notes, config, and tooling stay 
 ## What's inside
 - **Environment/** - my Copilot CLI setup: custom agents, skills, [[Environment/MCP Servers|MCP servers]], and development environment notes
 - **Templates/** - reusable Obsidian templates for 1-on-1s, meeting notes, incidents, and hub notes
+- **Notes/Meeting Notes/** - person-first meeting notes split into internal meetings, 1-on-1s, and customer meetings
 - **Notes/Cheatsheets/** - quick references for Kusto Query Language (KQL), Splunk, GitHub Enterprise Server (GHES), GitHub Advanced Security (GHAS), Git, and supporting technologies
-- **Notes/** - product deep dives, hub notes, and consolidated meeting notes
+- **Notes/** - product deep dives, hub notes, and other working notes
 - **CRE-Learning/** - role-specific practices, investigation methods, and reusable CRE guidance
 - **Training & Development/** - certification paths, study notes, and formal development planning
 - **Accounts/** - durable customer-specific context and generated account snapshots
