@@ -3,12 +3,33 @@ tags:
   - ghes
   - esb-tools
   - support-bundles
+audience: CRE
 updated: 2026-08-13
 ---
 
 # ESB Support Bundle Workflow
 
 How to access and investigate a support bundle through ESB Tools. For investigation methodology and log interpretation, see [[Support Bundles Cheatsheet]].
+
+## What and when
+
+Use this workflow when you have a GHES support bundle identified (a bundle ID or an ESB/CRE Dashboard record) and need read-only shell access to its extracted contents for investigation.
+
+## Prerequisites and auth
+
+- SSH agent with your key loaded (`ssh-add -l`) and FIDO authentication completed for the ESB bastion.
+- An assigned `esbtools-azshell-*` host for your authenticated session (see step 2 below).
+- The bundle already uploaded and its dashboard record identified; extraction triggered through the dashboard if not already extracted.
+
+See [[SSH Cheatsheet]] for local SSH configuration and troubleshooting, and the full checklist under [[#SSH prerequisites]] below.
+
+## Platform scope
+
+This workflow covers **GHES support bundles only**, accessed through ESB Tools. Bundle identifiers (repo_id, org_id, user_id) are independent from GitHub.com identifiers and can collide; never join bundle data to GHEC/dotcom datasets. See [[Support Bundles Cheatsheet]] for the platform boundary in more detail.
+
+## Safety and read-only boundary
+
+Every step in this workflow is read-only: entering the launch cache, running `ghe-probe`, reading logs, and copying files for local analysis. This workflow does not cover running `ghe-*` administrative commands against a live customer appliance; for that boundary, see [[GHES Cheatsheet#Safety and read-only boundary]].
 
 > [!important] Extraction and launch-cache readiness are different
 > `script/launch` enters a bundle that is already available in the current ESB host's launch cache. It is **not** the extraction trigger. A dashboard may show `extracted: true` while the assigned shell host still lacks a ready launch cache.
@@ -94,6 +115,23 @@ scp esbtools-azshell-<yourid>.azure-eastus.github.net:\
 
 If that host-side link is absent, do not guess another path. Recheck launch-cache readiness or use `script/launch` remotely.
 
+**Success criteria:** the launch-cache check in step 3 reports `ready`, `ghe-probe` and diagnostics are readable, and you can locate the log paths relevant to the customer symptom. If step 3 still reports `pending` after a dashboard-confirmed extraction, treat it as a launch-cache readiness gap, not a missing-evidence conclusion, and retry or escalate rather than guessing an alternate path.
+
+## GUI procedure
+
+The ESB/CRE Dashboard is the supported GUI interface for this workflow, but only for **step 1 (confirm/trigger extraction)**. Detailed dashboard navigation beyond checking the bundle's extraction status is not documented in this vault.
+
+1. Open the bundle's record in the ESB/CRE Dashboard.
+2. Confirm the extraction status shown for the bundle.
+3. If not extracted, trigger or request extraction through the dashboard's documented workflow (do not substitute repeated `script/launch` calls for this).
+4. Continue with the CLI steps above (2 to 5) once extraction is confirmed; the dashboard does not provide raw log access itself.
+
+## Validation and cross-check
+
+- Cross-check the bundle ID and hostname shown in the dashboard against the one you SSH into, to avoid investigating the wrong appliance.
+- Before trusting any parsed field, probe the raw log line format first (see [[#Useful read-only tools]]); an empty result after a mismatched probe is a parser gap, not evidence of no event.
+- For findings that will drive a customer-facing conclusion, cross-reference with [[Splunk Cheatsheet]] if the bundle's data has also been ingested into Splunk.
+
 ## Evidence availability
 
 | Source | What it provides | Important limitation |
@@ -152,6 +190,16 @@ See [[SSH Cheatsheet]] for local SSH configuration and troubleshooting.
 | Treating generated health output as the conclusion | Connect evidence to the customer symptom and trace causation |
 | Guessing alternate host paths | Use the ready launch workspace or the documented host launch link |
 
+## Stop and escalate
+
+Escalate rather than continuing to retry alone when:
+
+- The launch cache stays `pending` after a dashboard-confirmed extraction and a reasonable retry, with no clear next step.
+- SSH access repeatedly fails after confirming key, agent forwarding, and FIDO authentication.
+- The bundle appears to be missing evidence needed for the reported incident, and no alternative source (Splunk, a second bundle) is available.
+
+Apply the general investigation and escalation judgment in [[Investigation and Escalation Judgment]], including building an evidence chain (bundle ID, host, exact error, what was tried) before escalating.
+
 ## Quick reference
 
 - [[Support Bundles Cheatsheet]]
@@ -159,3 +207,9 @@ See [[SSH Cheatsheet]] for local SSH configuration and troubleshooting.
 - [[Splunk Cheatsheet]]
 - [[Kusto-KQL Cheatsheet]]
 - [[SSH Cheatsheet]]
+- [[Health Check Runbook]] - repeatable multi-pillar evidence collection built on this access workflow
+- [[Investigation and Escalation Judgment]]
+
+## Freshness note
+
+Hostnames (`esbtools-azshell-*`), paths, and dashboard behavior can change as ESB Tools evolves. Verify the assigned shell host and launch-cache paths for your current session rather than reusing one from a prior investigation. Reviewed 2026-08-13.

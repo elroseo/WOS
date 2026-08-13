@@ -1,5 +1,7 @@
 # Health Check Structure and Review Reference
 
+> For repeatable technical evidence-collection steps (commands, queries, validation), see [[Health Check Runbook]] in Notes/Cheatsheets.
+
 ## Evidence reviewed
 
 - **Window:** February 13 to August 13, 2026

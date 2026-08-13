@@ -1,16 +1,94 @@
+---
+tags:
+  - docker
+  - containers
+  - troubleshooting
+  - cheatsheet
+  - runbook
+audience: cre
+updated: 2026-08-13
+---
+
 # Docker Cheatsheet
 
-## What is Docker?
+## What this is and when to use it
 
 Docker packages an application and its dependencies into a **container**, a lightweight, isolated process that runs the same way on any host. Containers share the host kernel (unlike VMs), so they start fast and use fewer resources. Images are the read-only templates; containers are running instances of them.
 
-## CRE perspective
+Use this runbook when a customer's self-hosted GitHub Actions runner, a containerized service, or a customer application is misbehaving and you need to inspect container state, logs, or resource usage. GHES itself is a virtual appliance (not Docker), but Actions workflows, self-hosted runners, and many customer apps run in containers.
 
-You will meet Docker when customers self-host runners, run GitHub Actions, package services, or debug container-based CI. GHES itself is a virtual appliance (not Docker), but Actions workflows, self-hosted runners, and many customer apps run in containers. Knowing how to inspect a container, read its logs, and check resource limits speeds up troubleshooting.
+## Prerequisites
+
+- Shell access to the host running Docker (a self-hosted runner host or customer application host, not the GHES appliance).
+- Enough permission to run `docker` (membership in the `docker` group, or sudo).
+- No special GitHub entitlement is required; this is general Docker/Linux administration knowledge applied to a customer-owned host.
+
+## Platform scope
+
+- **Customer-managed hosts**: self-hosted Actions runners, customer applications, and general containerized workloads. This is where this runbook applies directly.
+- **GHES appliance**: on modern (containerized) GHES, services run as Docker containers, but they are supervised by Nomad. Do not run `docker` directly against the appliance; use [[Nomad Cheatsheet]] to check status, logs, and to bounce a service. Running `docker` mutating commands against a GHES appliance container fights the scheduler and is not normal CRE practice.
+
+## Safety and read-only boundary
+
+> [!warning] Default to read-only inspection
+> Lead with `docker ps`, `docker logs`, `docker inspect`, `docker stats`, and `docker top`. Do not stop, remove, restart, or prune a customer's containers, images, volumes, or networks without the customer's explicit direction, an approved change, or Support/Engineering guidance. Direct mutation of containers on infrastructure you do not own (including a GHES appliance) is not normal CRE investigation practice.
+
+## Quick procedure (read-only triage)
+
+1. Confirm scope: is the affected workload a self-hosted runner, a customer application container, or (rarely) a GHES-appliance service? For a GHES-appliance service, switch to [[Nomad Cheatsheet]] instead of this procedure.
+2. List containers and their current state: `docker ps` (running) or `docker ps -a` (including stopped/exited).
+3. Read the failing container's logs: `docker logs <container>`, or follow in real time with `docker logs -f <container>` (add `--tail 100` to limit history).
+4. Inspect full configuration for mounts, network, environment, and restart policy: `docker inspect <container>`.
+5. Check live resource usage for CPU/memory/network pressure: `docker stats`.
+6. Check the processes running inside the container: `docker top <container>`.
+7. If the workload is Compose-based, check service status and logs: `docker compose ps`, `docker compose logs -f <service>`.
+8. Check host-level disk pressure if relevant: `docker system df`.
+
+## GUI steps
+
+N/A. There is no supported GUI for CRE container investigation on a GHES appliance or in a standard customer environment. Docker Desktop is a local developer tool, not part of the CRE investigation workflow. Use the CLI procedure above.
+
+## Expected output / success criteria
+
+- `docker ps` / `docker ps -a` lists the container(s) in question with a plausible `STATUS` (e.g. `Up 3 hours`, `Exited (1) 5 minutes ago`).
+- `docker logs` returns the application's stdout/stderr. An empty result can mean the container just started, does not log to stdout, or has already rotated its log, not necessarily that nothing happened.
+- `docker inspect` returns valid JSON matching what the customer described (image, ports, volumes, restart policy).
+- `docker stats` shows plausible CPU/memory values relative to the host's known capacity, not a hung or all-zero read.
+
+## Validation / cross-check
+
+- Cross-check `docker logs` findings against the exit code and reason in `docker ps -a` (`STATUS` column) and, for a crash loop, `docker inspect <container>` (`State.ExitCode`, `State.OOMKilled`).
+- If the workload is orchestrated (Nomad, Kubernetes, Compose), confirm the orchestrator's view of desired versus actual state agrees with what `docker ps` shows before concluding the container itself is the problem.
+- For self-hosted Actions runners, corroborate with the runner's own diagnostic logs, not just container state.
+
+## Errors and recovery
+
+| Issue | What to check |
+|---|---|
+| Container exits immediately | `docker logs <container>`, confirm the main process stays in the foreground |
+| "Port already allocated" | `docker ps` for a conflicting mapping, or another host process on that port |
+| Out of disk space | `docker system df`; involve the customer/owner before any `prune` action |
+| Cannot connect between containers | Confirm they're on the same user-defined network, use container names not localhost |
+| Permission denied on mount | Check host path ownership and SELinux/AppArmor; remediation is a customer-side change |
+| Image won't pull | Check registry auth (`docker login`), network/proxy, and that the tag exists |
+
+## Stop / escalate
+
+Escalate or hand off when: the fix requires mutating a customer's containers/images/volumes/networks and you lack clear authorization, a GHES-appliance service is involved and Nomad-level checks aren't resolving it, or read-only inspection cannot establish a root cause within a reasonable investigation window. See [[Investigation and Escalation Judgment]] for thresholds and the evidence to collect before escalating.
+
+---
+
+## Mutating commands: customer-impact warning
+
+> [!danger] Read before running anything below
+> These commands stop, remove, or delete a running service or data. Confirm explicit authorization (customer request, approved change, or Support/Engineering direction) first. Never run them against a GHES appliance's containers directly; use [[Nomad Cheatsheet]] instead, since Nomad will fight and undo out-of-band `docker` changes on an appliance.
 
 ---
 
 ## Images
+
+> [!warning] Customer impact
+> `docker rmi` and `docker image prune` delete images. Confirm nothing still depends on the image first (see `docker ps -a` for containers created from it).
 
 | Command | What it does |
 |---|---|
@@ -25,6 +103,9 @@ You will meet Docker when customers self-host runners, run GitHub Actions, packa
 ---
 
 ## Containers
+
+> [!warning] Customer impact
+> `docker start\|stop\|restart`, `docker rm`, and `docker container prune` change or remove a running/stopped service. Read-only commands (`docker ps`, `docker ps -a`) are always safe to run first.
 
 | Command | What it does |
 |---|---|
@@ -78,6 +159,9 @@ docker logs --tail 100 -f <container>
 
 ## Volumes and data
 
+> [!warning] Customer impact
+> `docker volume rm` and `docker volume prune` delete data. Named volumes are often the only copy of a container's persistent state; confirm what's using a volume before removing it.
+
 | Command | What it does |
 |---|---|
 | `docker volume ls` | List volumes |
@@ -121,6 +205,9 @@ Defines multi-container apps in a `docker-compose.yml` file.
 
 ## System and cleanup
 
+> [!danger] Customer impact
+> `docker system prune` and `docker system prune -a --volumes` can delete data you still need, including stopped containers, images, and volumes the customer intended to keep. Check `docker ps -a` and `docker volume ls` first, and confirm authorization before running either.
+
 | Command | What it does |
 |---|---|
 | `docker system df` | Show disk used by images, containers, volumes |
@@ -129,26 +216,17 @@ Defines multi-container apps in a `docker-compose.yml` file.
 | `docker info` | Daemon-wide status and config |
 | `docker version` | Client and server versions |
 
-> **Careful:** `docker system prune -a --volumes` can delete data you still need. Check `docker ps -a` and `docker volume ls` first.
-
 ---
 
-## Common troubleshooting
+## Related notes and docs
 
-| Issue | What to check |
-|---|---|
-| Container exits immediately | `docker logs <container>`, confirm the main process stays in the foreground |
-| "Port already allocated" | `docker ps` for a conflicting mapping, or another host process on that port |
-| Out of disk space | `docker system df`, then `docker system prune` |
-| Cannot connect between containers | Put them on the same user-defined network, use container names not localhost |
-| Permission denied on mount | Check host path ownership and SELinux/AppArmor, try `:z`/`:Z` on the volume |
-| Image won't pull | Check registry auth (`docker login`), network/proxy, and the tag exists |
-
----
-
-## Quick reference links
-
+- [[Nomad Cheatsheet]]: how GHES actually manages its own containers
+- [[GHES Deep Dive]]
 - [Docker CLI reference](https://docs.docker.com/reference/cli/docker/)
 - [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
 - [Compose file reference](https://docs.docker.com/reference/compose-file/)
 - [GitHub Actions: about self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners)
+
+## Freshness note
+
+Restructured as a CRE runbook on 2026-08-13. Command syntax reflects the Docker CLI reference at that time. Reconfirm flags with `docker <command> --help` or the current Docker docs before relying on them, especially around Compose v2 syntax differences.

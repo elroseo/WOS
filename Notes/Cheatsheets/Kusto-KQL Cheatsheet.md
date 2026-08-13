@@ -1,4 +1,32 @@
+---
+tags:
+  - kusto
+  - kql
+  - cheatsheet
+  - read-only
+audience: CRE
+updated: 2026-08-13
+---
+
 # Kusto / KQL Cheatsheet
+
+## Scope and when to use this
+
+Use this when you need KQL syntax or query patterns to investigate GitHub's internal telemetry (or any Kusto-backed data) during a customer investigation. This is a **generic KQL reference** - it does not name specific GitHub clusters, databases, or tables. Confirm those against your current schema cache or routing documentation before querying.
+
+## Prerequisites and access
+
+- Azure CLI authentication: `az login --use-device-code`, or confirm an existing token with `az account get-access-token --resource https://kusto.kusto.windows.net`.
+- Entitlement/access to the specific Kusto cluster and database you need for the investigation.
+- A Kusto client - the Kusto MCP tools, the Azure Data Explorer web UI, or any tool that can execute KQL.
+
+## Safety and read-only boundary
+
+All Kusto usage here is **read-only**. KQL queries never modify data. Commands that start with `.` (control commands, e.g. `.show tables`) are a separate category - some are read-only (`.show`), others are administrative/mutating and are out of scope for this cheatsheet. Don't run a `.` command unless you know it's read-only.
+
+## Platform scope
+
+This cheatsheet covers general KQL syntax and investigation patterns, not any specific GitHub Kusto cluster, database, or table. Names and schemas vary by investigation - always verify them against your current schema cache or routing documentation rather than reusing a name from a past investigation.
 
 ## What is Kusto / KQL?
 
@@ -17,6 +45,22 @@ Kusto is the query engine behind **Azure Data Explorer** (ADX), and **KQL** (Kus
 Many GitHub internal investigations route through Kusto-backed telemetry. As a CRE you'll use KQL to find the needle: filter a huge table down to one customer/repo/time window, aggregate to see error rates and latency, and join across tables to follow a transaction. The skills that matter most are **time filtering early** (always narrow `Timestamp` first - it's the cheapest filter), choosing the right `summarize` aggregation, and using `bin()` for time-bucketing. Start broad with `take`/`count`, then progressively `where` your way down.
 
 > **KQL is case-sensitive** for column/table names and most string operators. Use the `_cs`-free operators (like `has`, `contains`) for case-insensitive matching, and `==` vs `=~` for case-sensitive vs insensitive equality.
+
+---
+
+## Quick task: investigate a symptom with KQL
+
+1. **Confirm access** - verify `az login` / your token is valid for the target cluster.
+2. **Confirm the table, schema, and grain first** - run `TableName | getschema` (or check the schema cache) before writing filters. Don't guess column names.
+3. **Filter time first** - add `| where Timestamp > ago(...)` (or the equivalent time column) as the first or second line, before other filters.
+4. **Sanity-check the row count** - run `| count`, or note the row count of your filtered result, before summarizing. Zero rows or an unexpectedly huge number is a signal to revisit your filters, not a result to trust.
+5. **Inspect sample rows** - `| take 10` and review 3-5 rows to confirm the columns and values match what you expect (correct shape, no unexpected nulls).
+6. **Aggregate** - once the filtered/sampled data looks right, add your `summarize`/`join`/`render` logic.
+7. **Cross-check** - where possible, validate the finding against a second query or data source before treating it as conclusive.
+
+**Expected result:** A query that returns a reasonable, explainable row count, with sample rows that match the expected shape, and an aggregate result you can defend if asked "how do you know?"
+
+**Verify:** Re-run step 4 (row count) and step 5 (sample rows) after any change to your `where` clauses - a small edit can silently change which rows match.
 
 ---
 
@@ -186,6 +230,25 @@ DeployEvents
 - `arg_max(Timestamp, *)` beats `top 1 by Timestamp` when you want the latest *full row per group*.
 - `render timechart` after a time-bucketed summarize for instant visuals.
 - Control commands start with `.` (e.g. `.show tables`) - those are admin commands, not queries.
+- Check schema first (`| getschema` or the schema cache) before assuming a column exists - Kusto tables don't necessarily mirror any REST/GraphQL API schema.
+- Avoid `column_ifexists()` on GitHub's gh-analytics clusters - it isn't supported there. Confirm the correct column name against the schema instead.
+
+---
+
+## Errors and recovery
+
+| Symptom | Likely cause | Next step |
+|---|---|---|
+| `SEM0100: column 'X' not found` (HTTP 400) | Column name guessed incorrectly | Re-check the schema with `| getschema` or the schema cache; don't assume a name exists just because it's a "standard" field elsewhere |
+| Query times out or scans a huge data volume | Time filter missing, or applied too late in the pipeline | Move the time filter to the top of the query and narrow the window |
+| `column_ifexists()` fails | Not supported on GitHub's gh-analytics clusters | Check the schema cache for the correct column name and reference it directly |
+| Zero rows returned unexpectedly | Time window, casing, or join key mismatch | Temporarily widen the time window, verify `==` vs `=~` case sensitivity, and check join key cardinality |
+
+## Stop and escalate if
+
+- You need write/administrative access (creating tables, altering retention, running mutating control commands) - this is out of scope for a CRE investigation; route to the team that owns the cluster.
+- Access/entitlement is denied for a cluster or database you need - request the correct entitlement rather than working around it.
+- A query result seems to contradict the customer's reported symptom - don't conclude root cause from a single query; cross-check a second table or data source (see [[Splunk Cheatsheet]] for the equivalent Splunk-side check).
 
 ---
 
@@ -195,4 +258,11 @@ DeployEvents
 - [KQL operator reference](https://learn.microsoft.com/en-us/kusto/query/queries)
 - [SQL → KQL cheat sheet](https://learn.microsoft.com/en-us/kusto/query/sql-cheat-sheet)
 - [Best practices for KQL queries](https://learn.microsoft.com/en-us/kusto/query/best-practices)
-- [[Splunk Cheatsheet]]
+
+## Related links
+
+- [[Splunk Cheatsheet]] - equivalent investigation workflow for Splunk-backed data
+
+## Freshness note
+
+KQL syntax and core operators are stable, but cluster/database/table names and schemas change often. Confirm current names and schema against your schema cache or routing documentation before relying on any example here. Last reviewed: 2026-08-13.

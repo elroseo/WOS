@@ -1,8 +1,26 @@
+---
+tags:
+  - splunk
+  - spl
+  - troubleshooting
+  - cheatsheet
+audience: CRE
+updated: 2026-08-13
+---
+
 # Splunk Cheatsheet
 
-Splunk searches machine-generated events with Search Processing Language (SPL). For GitHub investigations, the most important habits are simple: confirm the platform, choose the correct data source, constrain time and scope early, inspect sample events, then aggregate.
+## What and when
 
-## Platform and data-source split
+Splunk searches machine-generated events with Search Processing Language (SPL). Use it when you need to search GHEC staff telemetry, a GHES support bundle uploaded to `prod-esbtools`, or customer-forwarded GHES logs. For GitHub investigations, the most important habits are simple: confirm the platform, choose the correct data source, constrain time and scope early, inspect sample events, then aggregate.
+
+## Prerequisites and auth
+
+- Tailscale VPN connection and a valid Splunk bearer token (`python3 tools/splunk_auth.py`). Regenerate with the repository's Splunk auth tooling if a query returns an auth error.
+- The `splunk-capability-generate-tokens` entitlement is required to mint tokens.
+- For data-resident (Proxima) stamps, confirm the regional Splunk endpoint before querying; the default Staffship endpoint is US-based. See the Proxima data-residency guidance in the repository's investigation instructions before querying a non-US stamp.
+
+## Platform scope
 
 Do not treat all GitHub logs as one dataset.
 
@@ -25,7 +43,9 @@ Do not treat all GitHub logs as one dataset.
 7. **Correlate:** Pivot using a stable identifier and a narrow time window.
 8. **Verify alternatives:** Check both platform-side and customer-side explanations before making a causal claim.
 
-## Authentication and execution
+**Success criteria:** you can name the exact index/sourcetype searched, the time window, the stable identifier used to pivot, and a quantified result (count, rate, or percentile) that supports or rules out the symptom. A search that returns zero results without checking retention, format, or scope is not success; treat it as inconclusive until ruled out (see Common mistakes below).
+
+## Safety and read-only boundary
 
 ```bash
 python3 tools/splunk_auth.py --validate
@@ -37,6 +57,10 @@ python3 tools/splunk_query.py \
 ```
 
 All repository Splunk tooling is read only. Commands that modify state, send email, write lookups, or export results through SPL are blocked.
+
+## Supported interface
+
+The repository's read-only SPL tooling (`tools/splunk_auth.py`, `tools/splunk_query.py`) is the primary supported interface for this cheatsheet's examples. Splunk Web provides an interactive GUI: paste the same base search and pipes from any example below into its search bar to run the identical query. Exact Splunk Web navigation (app selection, time-range picker) is not documented here; use the CLI tooling for anything scripted or repeatable.
 
 ## Anatomy of an SPL search
 
@@ -384,10 +408,24 @@ Overlapping GHES bundles can contain duplicate events. Use the event-specific st
 | Top values | `top field` | `top N by field` |
 | Sort descending | `sort - field` | `order by field desc` |
 
+## Stop and escalate
+
+Escalate rather than continuing to search alone when:
+
+- The data source needed to confirm or rule out impact is unavailable (index down, auth expired and cannot be restored, bundle not yet extracted) and there is no fallback source.
+- A zero-result search cannot be explained by retention, format, node, or timestamp, and the investigation has run past the customer's urgency window.
+- Evidence suggests a platform-side incident rather than a customer-side issue.
+- You are unsure whether a query pattern is safe or read only.
+
+Apply the general investigation and escalation judgment in [[Investigation and Escalation Judgment]], including building an evidence chain (timestamp, request/trace ID, exact error, what was searched, current hypothesis) before escalating.
+
 ## Related notes and references
 - [[Support Bundles Cheatsheet]]
 - [[ESB Support Bundle Workflow]]
 - [[Kusto-KQL Cheatsheet]]
+- [[GHES Cheatsheet]]
+- [[Health Check Runbook]] - repeatable multi-pillar evidence collection using these Splunk patterns.
+- [[Investigation and Escalation Judgment]]
 - `data-explorers/splunk-data-explorer/schema-cache/README.md`
 - `data-explorers/splunk-data-explorer/telemetry-maps/babeld-telemetry.md`
 - `data-explorers/splunk-data-explorer/telemetry-maps/resqued-otel-telemetry.md`
@@ -397,3 +435,7 @@ Overlapping GHES bundles can contain duplicate events. Use the event-specific st
 - [GitHub Splunk Cookbook](https://thehub.github.com/epd/engineering/dev-practicals/performance/tools/splunk/)
 - [GitHub Splunk guides](https://thehub.github.com/epd/engineering/products-and-services/internal/splunk/)
 - [Splunk Education](https://education.splunk.com)
+
+## Freshness note
+
+Index names, sourcetypes, and field availability drift as services migrate (for example, GLB logs moved from Splunk to Kusto). Verify index and field names still resolve before relying on an example query. Reviewed 2026-08-13.
