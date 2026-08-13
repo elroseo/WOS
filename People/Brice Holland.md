@@ -24,4 +24,4 @@ last_updated: 2026-08-13
 - No verified direct Teams interactions were found before the meeting.
 
 ## Action items
-- See [[2026-08-18 Brice Holland]] for meeting preparation and follow-up.
+- See [[Brice Holland - 2026-08-18]] for meeting preparation and follow-up.

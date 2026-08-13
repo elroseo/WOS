@@ -13,7 +13,7 @@
 
 ## Notes
 - Coordinated our Meet & Greet over Slack (Outlook scheduling friction on her end).
-- Meet & Greet notes: [[2026-07-14 Zakiyyah Meet & Greet]]
+- Meet & Greet notes: [[Zakiyyah Thomas - 2026-07-14 Meet & Greet]]
 
 ## Action items
 - [x] Have intro Meet & Greet 2026-07-14 ✅ 2026-07-14
