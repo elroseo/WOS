@@ -32,6 +32,8 @@
 - How do you convert telemetry into a recommendation with a clear owner and next action?
 - What makes a Health Check concise without omitting the evidence needed for review?
 
+- Your Intel Health Checks received cleaner reviews than some later reports. Which preparation step made the difference, and could it become a reusable pre-review checklist?
+
 ### Practical learning and shadowing
 
 - Could I shadow a live bundle investigation, account Health Check, or engineering escalation?

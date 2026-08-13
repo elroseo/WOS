@@ -37,6 +37,8 @@
 - What makes a recommendation specific enough for the account team to act on?
 - Which sections tend to attract avoidable review feedback, and what evidence is usually missing?
 
+- Your Databricks Health Check had a cleaner initial review than the earlier Southern California Edison report. What changed in your final quality-assurance process between those two?
+
 ### Workflow changes and retrospectives
 
 - When ticket ownership or routing changes, how should CRE comments, investigation context, and retrospectives be preserved?
