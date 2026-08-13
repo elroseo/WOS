@@ -71,9 +71,54 @@ Melanie recommended learning from Tanya's organization and note-taking practices
 - [ ] Choose one skill to practice before the next mentoring session.
 
 ## Notes
+### Source
 
-- 
+- [Teams meeting recap](https://teams.microsoft.com/l/meetingrecap?driveId=b%21d5EqXu7ubEWVzhGN0rA-oizg-oydu3JEht1BSPvwShzNmMMVIyzeSaJgwpmQZAmB&driveItemId=01Q72VVLJW35336SBJZJFYKU52JZJFYKU52JLPGBQWT&threadId=19%3Ameeting_MGZjNGMwM2QtZGIzNy00NTNkLWIyOGQtZGRkMjRiMzAyYTNj%40thread.v2&iCalUid=040000008200E00074C5B7101A82E00800000000D9824BE47A2ADD01000000000000000010000000D1BA0CA84FE8574CACD76374E607D009)
+- The meeting was transcribed. These notes use the available transcript excerpt, which may not cover every part of the conversation.
+
+### Distinguishing noise from risk
+
+- Repeated operational notices are not automatically meaningful risk.
+- Focus on whether the customer has an execution blocker, active technical failure, unsupported configuration, or material customer impact.
+- Upgrade delay alone may be normal noise. Risk increases when the customer encounters blockers, operates outside support, or lacks a credible execution plan.
+
+### Customer and Support boundaries
+
+- Support calls should primarily gather evidence and clarify the problem.
+- Do not create an expectation that Support Engineering will conduct extended live debugging for the customer.
+- Technical troubleshooting should normally continue offline after the required data is collected.
+- Clear boundaries may need to be repeated consistently before expectations change.
+
+### Proactive account monitoring
+
+- Tanya uses saved queries and alerts to prevent recurring incidents rather than relying only on manual review.
+- The demonstrated workflow was: run the query, validate the result, save it as an alert, set cadence and thresholds, then deliver actionable results to Slack.
+- Useful recurring account signals include primary and secondary API rate limits, rate-limit increase requests, upgrade readiness, and major infrastructure changes.
+- Alert thresholds must be based on a validated signal and customer context, not copied blindly from another account.
+
+### Finding unfamiliar information and owners
+
+- Start with the technical evidence, particularly the API route or component surfaced by the query.
+- Use that evidence to identify the likely engineering owner or Slack channel.
+- Do not assume the first suggested owner is correct. Follow redirects until the responsible team is confirmed.
+- Ownership discovery is more reliable when driven by routes and system evidence than by broad product names.
+
+### Technical walkthrough
+
+- Tanya demonstrated a secondary rate-limit investigation using recent 403 responses.
+- The route in the query output provided the pivot for identifying engineering ownership.
+- She demonstrated turning a validated query into a recurring alert with Slack delivery.
+- The example threshold and cadence were specific to the demonstrated use case and are not universal defaults.
+
+### Growth and hands-on learning
+
+- I want to move from passive observation toward active participation in account and ticket work.
+- Ticket work provides practical exposure to customer context, investigation flow, ownership boundaries, and escalation decisions.
+- The next useful step is to reproduce a known investigation workflow and explain the evidence chain, not only run the query.
 
 ## Action items
-
-- [ ] 
+- [ ] Reproduce the secondary rate-limit investigation workflow with a safe practice example.
+- [ ] Learn how to create, validate, and manage a query-based operational alert.
+- [ ] Practice identifying an engineering owner from an API route before asking broadly in Slack.
+- [ ] Pursue hands-on ticket or account work where I can own part of the evidence gathering.
+- [ ] Ask Tanya for a follow-up walkthrough from alert detection through customer action or resolution.

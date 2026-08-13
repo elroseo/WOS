@@ -31,3 +31,8 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 
 - [ ] Review GitHub Enterprise Server cluster architecture and build practical troubleshooting knowledge 🔽 📅 2027-02-13
 	- 📝 Long-term learning goal. Cover cluster topology, node roles, replication, failover, health checks, and common support-bundle signals.
+
+- [ ] Practice a secondary rate-limit investigation from query result to ownership decision
+	- 📝 Use [[Account Monitoring and Ownership Discovery]] and [[Tanya Sheoran - 2026-08-13 Mentoring]].
+- [ ] Learn to create and validate a query-based operational alert
+- [ ] Find a hands-on ticket or account investigation where I can own the evidence-gathering step
