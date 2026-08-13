@@ -28,3 +28,6 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Consolidate Splunk course notes for Pooja Reddypalle 📅 2026-08-17
 	- 📝 Use [[Splunk Cheatsheet]] as the reusable reference.
 - [ ] Share the completed Splunk notes with Pooja Reddypalle 📅 2026-08-17
+
+- [ ] Review GitHub Enterprise Server cluster architecture and build practical troubleshooting knowledge 🔽 📅 2027-02-13
+	- 📝 Long-term learning goal. Cover cluster topology, node roles, replication, failover, health checks, and common support-bundle signals.
