@@ -6,7 +6,7 @@ Nomad is HashiCorp's workload orchestrator. It schedules and supervises **jobs**
 
 ## CRE perspective
 
-On modern (containerized) GHES, **most services run as Docker containers that Nomad orchestrates**. You almost never touch `docker` directly — you use Nomad to inspect status and to bounce a service, and Nomad drives the Docker backend for you. A container's UUID first segment matches its Nomad **allocation ID**. On a true cluster, one MySQL node is also the **Nomad leader**, and many admin commands must run there. `ghe-config-apply` renders per-service Nomad HCL templates and then starts the jobs.
+On modern (containerized) GHES, **most services run as Docker containers that Nomad orchestrates**. You almost never touch `docker` directly - you use Nomad to inspect status and to bounce a service, and Nomad drives the Docker backend for you. A container's UUID first segment matches its Nomad **allocation ID**. On a true cluster, one MySQL node is also the **Nomad leader**, and many admin commands must run there. `ghe-config-apply` renders per-service Nomad HCL templates and then starts the jobs.
 
 > [!important] GHES gotchas
 > - Restart a **single service** through Nomad instead of running a full `ghe-config-apply` for a minor change (a full apply can take ~40 min on a large cluster with Actions enabled).
@@ -92,7 +92,7 @@ nomad status github-unicorn        # verify: two allocs briefly, then one runnin
 |---|---|
 | Nomad's view of a service | `nomad status <service>` → allocation ID |
 | Docker's view | `docker ps` → container whose UUID **starts with** the alloc ID |
-| Bounce a service | **Use Nomad**, not `docker stop` — Nomad manages the Docker backend |
+| Bounce a service | **Use Nomad**, not `docker stop` - Nomad manages the Docker backend |
 
 > Manually stopping the container with Docker fights the scheduler: Nomad sees the desired state is still "run" and will try to bring it back. Always go through Nomad.
 
@@ -139,7 +139,7 @@ job "example" {
 | Issue | What to check |
 |---|---|
 | Service shows `dead`/`failed` | `nomad alloc status <alloc-id>` for recent events; then `nomad alloc logs -stderr` |
-| Port unavailable (e.g. MySQL) | `nomad status mysql` — confirm the alloc is running, not stopped |
+| Port unavailable (e.g. MySQL) | `nomad status mysql` - confirm the alloc is running, not stopped |
 | Change didn't take effect | Did the HCL template re-render? Re-run the job or `ghe-config-apply` |
 | Stale/duplicate allocation | Normal right after a restart; wait for garbage collection, re-check `nomad status` |
 | Command "must run on primary" | On a cluster, run it on the **MySQL primary / Nomad leader** node |

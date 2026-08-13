@@ -16,9 +16,9 @@ Markdown is a lightweight plain-text formatting syntax that converts to HTML. **
 ## Headings
 
 ```markdown
-# H1 — Page title
-## H2 — Section
-### H3 — Subsection
+# H1 - Page title
+## H2 - Section
+### H3 - Subsection
 #### H4
 ##### H5
 ###### H6
@@ -78,7 +78,7 @@ GitHub auto-generates an anchor link for each heading and builds a table of cont
 3. Third
 ```
 
-> Numbers don't have to be sequential — GitHub renumbers automatically. `1.` repeated still renders 1, 2, 3.
+> Numbers don't have to be sequential - GitHub renumbers automatically. `1.` repeated still renders 1, 2, 3.
 
 ### Task lists
 
@@ -130,7 +130,7 @@ Sizing and alignment need HTML:
 <p align="center"><img src="logo.png" width="120"></p>
 ```
 
-You can also paste/drag images directly into issues and PRs — GitHub uploads and inserts the link for you.
+You can also paste/drag images directly into issues and PRs - GitHub uploads and inserts the link for you.
 
 ---
 
@@ -187,7 +187,7 @@ Wrap with more backticks than the content uses:
 
 - `:---` left-align, `:--:` center, `---:` right-align.
 - The header row and separator (`---`) are required.
-- Columns don't need to line up in source — only the pipes matter.
+- Columns don't need to line up in source - only the pipes matter.
 - Escape a literal pipe inside a cell with `\|`.
 
 ---
@@ -322,7 +322,7 @@ GitHub renders LaTeX math via MathJax in Markdown files, issues, and PRs.
 
 ---
 
-## Reference table — all GFM syntax
+## Reference table - all GFM syntax
 
 | Element | Syntax |
 |---|---|

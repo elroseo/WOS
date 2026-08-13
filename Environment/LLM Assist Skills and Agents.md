@@ -1,4 +1,4 @@
-# LLM Assist — Skills & Agents Reference
+# LLM Assist - Skills & Agents Reference
 
 Quick reference for the project skills and agents in the `github/llm-assist` repo. These load **only** when running Copilot CLI inside `~/GitHub work/llm-assist` (see [[LLM Assist in CLI]]). Personal skills in `~/.copilot/skills/` (like `today`, `week`, `eod`) load everywhere and are separate.
 

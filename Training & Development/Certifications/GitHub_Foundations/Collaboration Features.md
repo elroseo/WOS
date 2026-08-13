@@ -1,4 +1,4 @@
-# Domain 3 — Collaboration Features
+# Domain 3 - Collaboration Features
 
 ## Issues
 
@@ -72,7 +72,7 @@ A forum-style space (separate from Issues) for Q&A, announcements, and open-ende
 
 ## CODEOWNERS
 
-A file (`.github/CODEOWNERS`) mapping paths to owners. When a PR touches those paths, the owners are **automatically requested as reviewers** — and can be made required via branch protection.
+A file (`.github/CODEOWNERS`) mapping paths to owners. When a PR touches those paths, the owners are **automatically requested as reviewers** - and can be made required via branch protection.
 
 ```
 *.js        @frontend-team
@@ -84,7 +84,7 @@ A file (`.github/CODEOWNERS`) mapping paths to owners. When a PR touches those p
 1. **Draft PRs can't be merged** until marked "Ready for review".
 2. **Suggestions** let reviewers propose committable code, not just comment.
 3. **Closing keywords** only work from the PR's target/default branch context (e.g. `Fixes #12`).
-4. **Discussions ≠ Issues** — Issues are trackable work; Discussions are conversation.
+4. **Discussions ≠ Issues** - Issues are trackable work; Discussions are conversation.
 5. **CODEOWNERS auto-requests** reviewers; pair with branch protection to *require* them.
 
 ## Checklist

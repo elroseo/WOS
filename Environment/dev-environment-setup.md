@@ -22,7 +22,7 @@ All installed via [Homebrew](https://brew.sh) unless noted.
 | Tool | Version | Install method | Purpose |
 |---|---|---|---|
 | Homebrew | 6.0.2 | `/bin/bash -c "$(curl ...)"` | Package manager for macOS |
-| iTerm2 | — | `brew install --cask iterm2` | Terminal emulator |
+| iTerm2 | - | `brew install --cask iterm2` | Terminal emulator |
 | Fish shell | 4.7.1 | `brew install fish` | User-friendly shell |
 | Git | 2.50.1 | Apple Git (pre-installed) | Version control |
 | GitHub CLI (`gh`) | 2.94.0 | `brew install gh` | GitHub from the terminal |

@@ -1,6 +1,6 @@
 # CRE Account Workspace (Phase 1 scaffold)
 
-A CLI-first way to manage customer accounts as a GitHub CRE. No web dashboard — each
+A CLI-first way to manage customer accounts as a GitHub CRE. No web dashboard - each
 account is a **living note** in this vault plus a **persistent, customer-scoped Copilot
 session** that pulls live data on demand.
 
@@ -38,8 +38,8 @@ cre-new globex "Globex Inc" 001ABC "glx" # scaffold + register a new account
 - refuses to hand-edit inside the generated snapshot markers.
 
 ## The account note (`<slug>/index.md`)
-- **Durable sections** (Contacts, Background, Decisions, Action Items) — *you* own these.
-- **Snapshot (generated)** — between `BEGIN/END GENERATED SNAPSHOT` markers; refreshed from
+- **Durable sections** (Contacts, Background, Decisions, Action Items) - *you* own these.
+- **Snapshot (generated)** - between `BEGIN/END GENERATED SNAPSHOT` markers; refreshed from
   live data with a source + timestamp. Never hand-edit inside the markers.
 
 ## Not built yet (Phase 2, deferred by design)
@@ -51,7 +51,7 @@ cre-new globex "Globex Inc" 001ABC "glx" # scaffold + register a new account
   instructions still apply. The seed prompt names the account + SF id to reduce mistakes,
   but confirm the account before writing.
 - **Governance:** decide what live business data (Salesforce/Gong/email/Teams) is allowed
-  to persist in this vault. Default: store your notes, decisions, IDs, and links — not
+  to persist in this vault. Default: store your notes, decisions, IDs, and links - not
   copied transcripts or full commercial reports.
 
 `acme-corp/` is a **placeholder** for review. Replace it with a real account via `cre-new`,

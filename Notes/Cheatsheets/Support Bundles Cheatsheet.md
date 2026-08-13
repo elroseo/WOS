@@ -37,7 +37,7 @@ Deciphering a bundle is core CRE work. You need to know **which log answers whic
 | Diagnostics only | `ssh -p122 admin@HOSTNAME -- 'ghe-diagnostics' > diagnostics.txt` |
 | Management Console | Site admin → Management Console → **Support** → **Download support bundle** |
 
-> **Cluster note:** Always use `ghe-cluster-support-bundle` for clustered or geo-replicated instances — it gathers logs from **every node**, not just the one you SSH'd into.
+> **Cluster note:** Always use `ghe-cluster-support-bundle` for clustered or geo-replicated instances - it gathers logs from **every node**, not just the one you SSH'd into.
 
 ---
 
@@ -108,7 +108,7 @@ grep -rin "2026-06-25T14:3" .
 
 ## Reading the diagnostics file
 
-Scan for these first — they frame every other interpretation:
+Scan for these first - they frame every other interpretation:
 
 | Field | Why it matters |
 |---|---|
@@ -133,14 +133,14 @@ These directories are **scrubbed of tokens, keys, and secrets** before bundling,
 
 ## Investigation playbook
 
-1. **Confirm the instance** — open the diagnostics file: version, topology, auth mode, disk, load.
-2. **Pin the timestamp** — get the exact time (and timezone) of the customer's symptom.
-3. **Pick the entry log** — map the symptom to a subsystem using the tables above.
-4. **Follow the request** — pivot across logs for the same time window:
+1. **Confirm the instance** - open the diagnostics file: version, topology, auth mode, disk, load.
+2. **Pin the timestamp** - get the exact time (and timezone) of the customer's symptom.
+3. **Pick the entry log** - map the symptom to a subsystem using the tables above.
+4. **Follow the request** - pivot across logs for the same time window:
    `haproxy.log` (did it route?) → `production.log` (did the app handle it?) → `exceptions.log` (did it blow up?).
-5. **Check resources** — cross-reference `collectd` / load / disk if symptoms look like saturation.
-6. **Correlate config changes** — check `configuration-logs/` for a recent `ghe-config-apply` near the incident.
-7. **Summarize** — version, topology, timeline, root-cause log line, and next step.
+5. **Check resources** - cross-reference `collectd` / load / disk if symptoms look like saturation.
+6. **Correlate config changes** - check `configuration-logs/` for a recent `ghe-config-apply` near the incident.
+7. **Summarize** - version, topology, timeline, root-cause log line, and next step.
 
 ---
 

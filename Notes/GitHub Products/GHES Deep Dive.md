@@ -236,12 +236,12 @@ Source: internal training "GHES Cluster Training – Session I" (Loom). Diagrams
 Note: this session reflects a **modern, containerized GHES** (3.14.x era, Nomad + Docker). It supersedes the older "Services architecture (under the hood)" section above, which describes the pre-container GHES 2.x generation. Reconcile against the customer's exact version.
 
 > [!important] Key points to remember
-> - **Most services now run as Docker containers orchestrated by Nomad.** Never drive Docker directly — use `nomad status` to inspect and Nomad to bounce a service; it manages the Docker backend. A container's UUID first segment matches its Nomad allocation ID.
+> - **Most services now run as Docker containers orchestrated by Nomad.** Never drive Docker directly - use `nomad status` to inspect and Nomad to bounce a service; it manages the Docker backend. A container's UUID first segment matches its Nomad allocation ID.
 > - **Learn GHES as a cluster first.** A standalone instance is just *all roles and services running on one node*; a cluster spreads those same roles across nodes.
 > - **In a true cluster the only single point of failure is the MySQL primary** (it is also the **Nomad leader**, and many admin commands must run there). Web/job nodes are **stateless**; storage survives losing 1 of 3 replicas.
 > - **You assign roles, not individual services.** Roles group services onto nodes via `cluster.conf`.
 > - **Geo/active replicas are NOT horizontal scaling.** They only accelerate **Git-read** ops; web/API requests proxy back to the primary. Correct customers who plan to "load-balance users across geo replicas."
-> - **`ghe-config-apply` and `ghe-cluster-config-apply` resolve to the same thing.** The cluster wrapper just checks the `ha`/cluster settings. Don't run a full config-apply for a minor change (can be ~40 min on a large cluster) — restart the specific Nomad service instead.
+> - **`ghe-config-apply` and `ghe-cluster-config-apply` resolve to the same thing.** The cluster wrapper just checks the `ha`/cluster settings. Don't run a full config-apply for a minor change (can be ~40 min on a large cluster) - restart the specific Nomad service instead.
 > - **`ha = true` in `cluster.conf` means an HA replica pair, not a true cluster.** A true cluster omits that flag and lists per-node roles.
 > - **Git data (and alambic/pages) is replicated 3×**, which is why a true cluster needs a minimum of 3 storage/data nodes. Spokes uses a 3-way handshake to commit a push across all three replicas.
 
@@ -306,7 +306,7 @@ flowchart LR
 
 ### Deployment & replication options
 
-**HA (passive)** — a passive replica mirrors the primary and does nothing until a **manual failover** flips DNS/load-balancer to it.
+**HA (passive)** - a passive replica mirrors the primary and does nothing until a **manual failover** flips DNS/load-balancer to it.
 
 ```mermaid
 flowchart LR
@@ -322,7 +322,7 @@ flowchart LR
     LB1 -.->|only after manual promote| R
 ```
 
-**Geo (active)** — an active replica placed near a second dev site serves **Git reads/clones/archives locally**, but Git **writes** and **web/API** requests are proxied back to the primary. This is **not** horizontal scaling.
+**Geo (active)** - an active replica placed near a second dev site serves **Git reads/clones/archives locally**, but Git **writes** and **web/API** requests are proxied back to the primary. This is **not** horizontal scaling.
 
 ```mermaid
 flowchart LR
@@ -340,7 +340,7 @@ flowchart LR
     P ==>|"replication of MySQL, Redis, Elasticsearch"| R
 ```
 
-**True cluster (reference architecture)** — a load balancer fronts a **web tier ×2** and three backend tiers **×3** each; every tier scales independently.
+**True cluster (reference architecture)** - a load balancer fronts a **web tier ×2** and three backend tiers **×3** each; every tier scales independently.
 
 ```mermaid
 flowchart LR
@@ -365,11 +365,11 @@ flowchart LR
 
 - **Reference architecture:** 3 of each backend tier (storage/database/search) + 2 front-end nodes for redundancy. Each tier scales **independently** (e.g. IBM ran ~16 storage nodes; add web nodes as user load grows). The lab uses a trimmed 5-node layout (2 app + 3 data).
 - **Why customers cluster:** horizontal scaling once a single appliance can't grow further (the SAP scenario). Not for the average customer.
-- **A/B partition upgrades:** each VM has an **OS disk** (root, `A`/`B` partitions) and a **data disk** (`/data/user`). An upgrade re-images the *inactive* partition, swaps the bootloader, and reboots — user data on the data disk is untouched.
+- **A/B partition upgrades:** each VM has an **OS disk** (root, `A`/`B` partitions) and a **data disk** (`/data/user`). An upgrade re-images the *inactive* partition, swaps the bootloader, and reboots - user data on the data disk is untouched.
 
 ### Configuring a cluster (`cluster.conf`)
 
-- One file at `/data/user/common/cluster.conf` drives **HA, geo, and true cluster** — the difference is the entries and the `ha` flag.
+- One file at `/data/user/common/cluster.conf` drives **HA, geo, and true cluster** - the difference is the entries and the `ha` flag.
 - **`ha = true`** under the `[cluster]` block ⇒ HA replica pair. Omit it ⇒ true cluster with explicit per-node role assignments.
 - Rollout on the **MySQL primary node**: create `cluster.conf` → `ghe-cluster-config-init` (reachability + SSH key exchange across nodes) → `ghe-config-apply` (each node runs its own config-apply).
 - `ghe-config-apply` renders Nomad HCL templates per service, then starts them; the final phase **validates services** and names any that failed. Unicorn and Git services take longest to come up. Config-apply log: `/data/user/common/ghe-config.log`.
@@ -383,5 +383,5 @@ flowchart LR
 | **github/ghes** | Engineering issues, feature tracking, and support escalations. |
 
 - **MySQL scale:** ~1,200 tables ship with GHES; nearly every UI action is many DB ops. Port errors (3306/3307) → `nomad status mysql`.
-- **Upgrade migrations:** schema changes live in `github/github` under `db/migrate`. On huge databases a post-upgrade migration/backfill can run **10–20+ hours** — set customer expectations.
+- **Upgrade migrations:** schema changes live in `github/github` under `db/migrate`. On huge databases a post-upgrade migration/backfill can run **10–20+ hours** - set customer expectations.
 - **Useful commands seen in the session:** `nomad status`, `nomad status <service>`, `ghe-spokes` (which nodes hold a repo), `ghe-repo <owner>/<repo>` (jump to on-disk path), `ghe-cluster-config-init`, `ghe-config-apply`.

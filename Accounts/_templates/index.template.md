@@ -7,29 +7,29 @@ renewal_date: "{{RENEWAL_DATE}}"
 type: cre-account-home
 ---
 
-# {{DISPLAY_NAME}} — Account Home
+# {{DISPLAY_NAME}} - Account Home
 
 > Living note for this account. **You own the "Durable" sections.** The `Snapshot`
 > section between the generated markers is refreshed from live data (account360 /
-> revenue-mcp) and may be overwritten — never hand-edit inside the markers.
+> revenue-mcp) and may be overwritten - never hand-edit inside the markers.
 
-## Durable — Contacts
+## Durable - Contacts
 <!-- People, roles, email, timezone. You maintain this. -->
 - 
 
-## Durable — Background & Context
+## Durable - Background & Context
 <!-- Business context, goals, history, risks, politics. You maintain this. -->
 - 
 
-## Durable — Decisions Log
-<!-- date — decision — rationale. Append-only. -->
+## Durable - Decisions Log
+<!-- date - decision - rationale. Append-only. -->
 - 
 
 ## Action Items
-<!-- - [ ] owner — item — due. Note if authoritative source is elsewhere (SF/Planner). -->
+<!-- - [ ] owner - item - due. Note if authoritative source is elsewhere (SF/Planner). -->
 - [ ] 
 
-<!-- BEGIN GENERATED SNAPSHOT — do not edit by hand -->
+<!-- BEGIN GENERATED SNAPSHOT - do not edit by hand -->
 ## Snapshot (generated)
 
 _Source: not yet refreshed · Retrieved: never_

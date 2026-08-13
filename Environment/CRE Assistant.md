@@ -1,6 +1,6 @@
 # CRE Assistant
 
-Local CRE assistant that runs via Copilot CLI + MCP servers. No cloud deployment, no shared infrastructure — data stays on your laptop.
+Local CRE assistant that runs via Copilot CLI + MCP servers. No cloud deployment, no shared infrastructure - data stays on your laptop.
 
 **Repo:** `github/cre-assistant` · **Added:** 2026-08-05
 

@@ -2,7 +2,7 @@
 
 ## What is Splunk?
 
-Splunk is a platform for searching, monitoring, and analyzing machine-generated data — primarily logs. It ingests data from many sources, indexes it, and lets you query it with **SPL** (Search Processing Language). Like KQL, SPL is a piped language: a search starts by selecting events, then flows them through commands separated by `|`, each refining or transforming the result. Splunk's strengths are full-text search across heterogeneous logs, real-time alerting, field extraction from unstructured text, and dashboards.
+Splunk is a platform for searching, monitoring, and analyzing machine-generated data - primarily logs. It ingests data from many sources, indexes it, and lets you query it with **SPL** (Search Processing Language). Like KQL, SPL is a piped language: a search starts by selecting events, then flows them through commands separated by `|`, each refining or transforming the result. Splunk's strengths are full-text search across heterogeneous logs, real-time alerting, field extraction from unstructured text, and dashboards.
 
 ## How it's typically used
 
@@ -14,7 +14,7 @@ Splunk is a platform for searching, monitoring, and analyzing machine-generated 
 
 ## How it relates to GHES
 
-GHES customers frequently forward their instance logs to Splunk via **log forwarding** (syslog forwarding configured in the Management Console / `ghe-config`). This means that when investigating a GHES issue you may be searching the same logs you'd find in a support bundle (`github-logs`, `babeld-logs`, `haproxy`, `auth.log`, audit log) — but live, searchable, and correlated across time in Splunk. As a CRE, knowing SPL lets you find auth failures, 500 spikes, and audit events in a customer's Splunk far faster than scrolling raw files. Key skills: filter by `index`/`sourcetype`/`host` early, extract fields, and use `stats`/`timechart` to quantify.
+GHES customers frequently forward their instance logs to Splunk via **log forwarding** (syslog forwarding configured in the Management Console / `ghe-config`). This means that when investigating a GHES issue you may be searching the same logs you'd find in a support bundle (`github-logs`, `babeld-logs`, `haproxy`, `auth.log`, audit log) - but live, searchable, and correlated across time in Splunk. As a CRE, knowing SPL lets you find auth failures, 500 spikes, and audit events in a customer's Splunk far faster than scrolling raw files. Key skills: filter by `index`/`sourcetype`/`host` early, extract fields, and use `stats`/`timechart` to quantify.
 
 > **GHES tie-in:** GHES forwards logs over syslog. In Splunk these usually arrive under a dedicated `index` and split by `sourcetype` (e.g. the originating log file). Always scope your search to the right `index` and time range first.
 
@@ -31,7 +31,7 @@ index=ghes sourcetype=github_audit         <- 1. select events (+ implicit time 
 | head 20                                     <- 6. limit
 ```
 
-Events flow left-to-right; each `|` passes results to the next command. **The first line is the base search** — keep it as specific as possible (index, sourcetype, host, keywords) because it determines how much data Splunk scans.
+Events flow left-to-right; each `|` passes results to the next command. **The first line is the base search** - keep it as specific as possible (index, sourcetype, host, keywords) because it determines how much data Splunk scans.
 
 ---
 
@@ -45,7 +45,7 @@ Events flow left-to-right; each `|` passes results to the next command. **The fi
 | `earliest="06/25/2026:14:00:00"` | Explicit timestamp |
 | `@d` / `@h` / `@m` | "Snap to" day / hour / minute boundary |
 
-Or use the time-range picker in the UI — it applies the same bounds.
+Or use the time-range picker in the UI - it applies the same bounds.
 
 ---
 
@@ -89,7 +89,7 @@ index=ghes sourcetype=github_auth host=ghe01 ("failed" OR "invalid")
 | Wildcards | `host=ghe* path="/api/*"` |
 | Comparison (`where`) | `| where duration_ms > 2000` |
 
-> Adding `index`, `sourcetype`, and `host` to the base search is the single biggest performance win — it limits the buckets Splunk has to scan.
+> Adding `index`, `sourcetype`, and `host` to the base search is the single biggest performance win - it limits the buckets Splunk has to scan.
 
 ---
 
@@ -128,7 +128,7 @@ index=ghes sourcetype=github_exceptions earliest=-6h
 ```
 
 - `timechart` always buckets by `_time` automatically; use `span=5m`/`1h` to set granularity.
-- `by <field>` produces one series per value — great for spotting which host/service spiked.
+- `by <field>` produces one series per value - great for spotting which host/service spiked.
 
 ---
 
@@ -158,7 +158,7 @@ index=ghes (sourcetype=github_request OR sourcetype=babeld)
 | Tool | Use |
 |---|---|
 | `transaction <field>` | Stitch related events by a shared key + time window |
-| `join` | SQL-style join to a subsearch (use sparingly — costly) |
+| `join` | SQL-style join to a subsearch (use sparingly - costly) |
 | `lookup` | Enrich events with a static CSV/KV table |
 | `stats ... by <key>` | Often a faster alternative to `transaction` |
 
@@ -175,7 +175,7 @@ index=ghes sourcetype=github_auth earliest=-24h
 index=ghes sourcetype=github_request status>=500 earliest=-6h
 | top limit=15 path
 
-// 3. Audit log — who deleted repos
+// 3. Audit log - who deleted repos
 index=ghes sourcetype=github_audit action="repo.destroy"
 | table _time, actor, repo
 
@@ -211,10 +211,10 @@ index=ghes sourcetype=haproxy ("backend" AND ("DOWN" OR "no server"))
 
 - **Scope the base search** (`index`, `sourcetype`, `host`) and **set the time range** before anything else.
 - Use `fields`/`table` early to drop unneeded data and speed things up.
-- Prefer `stats by` over `transaction` and `join` when you can — it scales far better.
+- Prefer `stats by` over `transaction` and `join` when you can - it scales far better.
 - `_raw` is the original event text; `_time` is the parsed timestamp.
 - `count(eval(<cond>))` is the SPL idiom for conditional counts inside `stats`.
-- Wildcards at the *start* of a term (`*error`) are slow — anchor them where possible.
+- Wildcards at the *start* of a term (`*error`) are slow - anchor them where possible.
 - Save common searches as **reports** or **alerts** once they prove useful.
 
 ---

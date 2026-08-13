@@ -50,7 +50,7 @@ flowchart TB
 
 ## Peer managers (Michael Bruce's other directs)
 
-`brandonaus` · `dannyleblanc` · `mwiesen` · `swedabl` — sibling CRE teams under Michael Bruce. Useful when routing an escalation to another pod.
+`brandonaus` · `dannyleblanc` · `mwiesen` · `swedabl` - sibling CRE teams under Michael Bruce. Useful when routing an escalation to another pod.
 
 ---
 

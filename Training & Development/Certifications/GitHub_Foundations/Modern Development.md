@@ -1,4 +1,4 @@
-# Domain 4 — Modern Development
+# Domain 4 - Modern Development
 
 ## GitHub Actions (CI/CD + automation)
 
@@ -34,7 +34,7 @@ A package-hosting service integrated with repos and permissions. Supports npm, N
 
 ## GitHub Codespaces
 
-Cloud-hosted **dev environments** — a configurable container you open in the browser or VS Code. Defined by a `devcontainer.json`. Lets you code without local setup.
+Cloud-hosted **dev environments** - a configurable container you open in the browser or VS Code. Defined by a `devcontainer.json`. Lets you code without local setup.
 
 ## GitHub Copilot
 
@@ -51,7 +51,7 @@ AI pair-programmer that suggests code and answers questions in your editor, CLI,
 
 ## GitHub Marketplace
 
-A catalog of **Actions** and **Apps** that extend GitHub — CI tools, code quality, project management, security, and more.
+A catalog of **Actions** and **Apps** that extend GitHub - CI tools, code quality, project management, security, and more.
 
 ## Apps & webhooks (automation building blocks)
 
@@ -65,7 +65,7 @@ A catalog of **Actions** and **Apps** that extend GitHub — CI tools, code qual
 
 1. **Workflow files live in `.github/workflows/`** as YAML.
 2. **Jobs are parallel by default**; `needs:` creates dependencies.
-3. **Action vs workflow** — an action is a reusable step; a workflow is the whole automated process.
+3. **Action vs workflow** - an action is a reusable step; a workflow is the whole automated process.
 4. **Codespaces = cloud dev environment**, not a CI runner.
 5. **Packages inherit repo permissions** and support container images via `ghcr.io`.
 

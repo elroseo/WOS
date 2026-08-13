@@ -4,7 +4,7 @@ created: 2026-08-05
 updated: 2026-08-05
 ---
 
-# Premium Plus (P+) — Most Common Ticket Topics
+# Premium Plus (P+) - Most Common Ticket Topics
 
 **Generated:** 2026-08-05 · **Window:** last 180 days (2026-02-06 to 2026-08-05)
 **Scope:** All P+ customers, defined as `mapped_support_plan_at_ticket_open == "GitHub Premium Support Plus"`.
@@ -90,11 +90,11 @@ Same 180-day P+ window. **Reopen** = a ticket whose status changed from `solved`
 
 ### Where to spend review time (volume x reopen x escalation)
 
-- **Infrastructure (GHES)** — highest reopen among high-volume topics (15.4%, ~206 reopened). Escalation lower (4.4%), so solved in-tier but often not first-time-right. Biggest "fix the playbook" opportunity.
-- **Worktent (core platform)** — largest absolute rework pool: ~279 reopened + ~130 escalated. High volume amplifies a moderate rate; split into sub-topics (Git, PRs, Data Migration) to target.
-- **Copilot & Code Security** — highest escalation rates (7.8% each). Newer/complex surfaces where support can't fully resolve. Copilot also has the slowest close and the slow Cloud Agent sub-topic. Candidate for KB/tooling + engineering partnership.
-- **C2C / Actions** — high escalation (7.3%) with high volume; runner/workflow issues frequently need engineering.
-- **Access** — healthy: low reopen (10.8%) and lowest escalation (3.1%) of the big topics. Leave it alone.
+- **Infrastructure (GHES)** - highest reopen among high-volume topics (15.4%, ~206 reopened). Escalation lower (4.4%), so solved in-tier but often not first-time-right. Biggest "fix the playbook" opportunity.
+- **Worktent (core platform)** - largest absolute rework pool: ~279 reopened + ~130 escalated. High volume amplifies a moderate rate; split into sub-topics (Git, PRs, Data Migration) to target.
+- **Copilot & Code Security** - highest escalation rates (7.8% each). Newer/complex surfaces where support can't fully resolve. Copilot also has the slowest close and the slow Cloud Agent sub-topic. Candidate for KB/tooling + engineering partnership.
+- **C2C / Actions** - high escalation (7.3%) with high volume; runner/workflow issues frequently need engineering.
+- **Access** - healthy: low reopen (10.8%) and lowest escalation (3.1%) of the big topics. Leave it alone.
 
 ---
 
@@ -126,7 +126,7 @@ Same 180-day P+ window. **Reopen** = a ticket whose status changed from `solved`
 - **Copilot :: Cloud Agent is the slowest topic (~305h median)** and worth a closer look; it may reflect newer/complex features where remedies aren't yet mature.
 - **Health Check** and **Upgrade** are proactive/planned engagements; high "time to close" is expected and healthy.
 - **Fast-closing topics** (2FA recovery ~3h, Sensitive data removal ~50h) are well-defined request flows.
-- **Highest urgent/high concentration:** Worktent (508), Infrastructure (423), C2C/Actions (253), Client Connectivity (102) — most likely to be customer-impacting incidents.
+- **Highest urgent/high concentration:** Worktent (508), Infrastructure (423), C2C/Actions (253), Client Connectivity (102) - most likely to be customer-impacting incidents.
 - The blank category row (156 tickets, ~0.5h close) is uncategorized/auto-closed and can be ignored for topic analysis.
 - Data freshness: `service_cs_analytics` is current through 2026-08-05 12:00 UTC; recent tickets may still be open and will pull medians up as they resolve.
 
@@ -136,11 +136,11 @@ Same 180-day P+ window. **Reopen** = a ticket whose status changed from `solved`
 
 Done: topic volume, time-to-close, reopen rate, escalation rate. Remaining from the shortlist:
 
-3. **Submitted vs current priority** — where customers over-signal urgency vs where we under-triage (`priority_at_creation` vs `priority_at_solved`).
-4. **CSAT by topic** — pair satisfaction with volume; high-volume + low-CSAT = top fix.
-5. **Repeat customers per topic** — systemic (many accounts) vs account-specific (coaching / health-check opportunity).
-6. **Month-over-month trend** — is a topic growing or a one-off spike.
-7. **Deflection candidates** — high-volume, fast-close, low-complexity topics for docs/automation.
+3. **Submitted vs current priority** - where customers over-signal urgency vs where we under-triage (`priority_at_creation` vs `priority_at_solved`).
+4. **CSAT by topic** - pair satisfaction with volume; high-volume + low-CSAT = top fix.
+5. **Repeat customers per topic** - systemic (many accounts) vs account-specific (coaching / health-check opportunity).
+6. **Month-over-month trend** - is a topic growing or a one-off spike.
+7. **Deflection candidates** - high-volume, fast-close, low-complexity topics for docs/automation.
 
 ---
 

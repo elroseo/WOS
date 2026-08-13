@@ -2,7 +2,7 @@
 
 ## What is Kusto / KQL?
 
-Kusto is the query engine behind **Azure Data Explorer** (ADX), and **KQL** (Kusto Query Language) is the read-only language you use to interrogate it. It is built for fast, large-scale analysis of append-only telemetry — logs, metrics, traces, and events. A query starts with a **table**, then flows data left-to-right through a series of operators separated by the pipe (`|`) character, each transforming the rows that the previous step produced. It reads like a Unix pipeline and is purpose-built for "slice millions of log rows by time and dimension" investigations.
+Kusto is the query engine behind **Azure Data Explorer** (ADX), and **KQL** (Kusto Query Language) is the read-only language you use to interrogate it. It is built for fast, large-scale analysis of append-only telemetry - logs, metrics, traces, and events. A query starts with a **table**, then flows data left-to-right through a series of operators separated by the pipe (`|`) character, each transforming the rows that the previous step produced. It reads like a Unix pipeline and is purpose-built for "slice millions of log rows by time and dimension" investigations.
 
 ## How it's typically used
 
@@ -14,7 +14,7 @@ Kusto is the query engine behind **Azure Data Explorer** (ADX), and **KQL** (Kus
 
 ## CRE perspective
 
-Many GitHub internal investigations route through Kusto-backed telemetry. As a CRE you'll use KQL to find the needle: filter a huge table down to one customer/repo/time window, aggregate to see error rates and latency, and join across tables to follow a transaction. The skills that matter most are **time filtering early** (always narrow `Timestamp` first — it's the cheapest filter), choosing the right `summarize` aggregation, and using `bin()` for time-bucketing. Start broad with `take`/`count`, then progressively `where` your way down.
+Many GitHub internal investigations route through Kusto-backed telemetry. As a CRE you'll use KQL to find the needle: filter a huge table down to one customer/repo/time window, aggregate to see error rates and latency, and join across tables to follow a transaction. The skills that matter most are **time filtering early** (always narrow `Timestamp` first - it's the cheapest filter), choosing the right `summarize` aggregation, and using `bin()` for time-bucketing. Start broad with `take`/`count`, then progressively `where` your way down.
 
 > **KQL is case-sensitive** for column/table names and most string operators. Use the `_cs`-free operators (like `has`, `contains`) for case-insensitive matching, and `==` vs `=~` for case-sensitive vs insensitive equality.
 
@@ -104,10 +104,10 @@ Requests
 | `has` | Whole-term match (indexed, fast) | Insensitive |
 | `contains` | Substring (slower) | Insensitive |
 | `startswith` / `endswith` | Prefix / suffix | Insensitive |
-| `matches regex "..."` | Regular expression | — |
+| `matches regex "..."` | Regular expression | - |
 | `in (...)` / `in~ (...)` | Value in a set | Sensitive / insensitive |
 
-> Prefer `has` over `contains` when matching whole words — it uses the term index and is much faster on big tables.
+> Prefer `has` over `contains` when matching whole words - it uses the term index and is much faster on big tables.
 
 ---
 
@@ -179,13 +179,13 @@ DeployEvents
 
 ## Tips & gotchas
 
-- **Filter time first**, then dimensions — it dramatically reduces scanned data.
+- **Filter time first**, then dimensions - it dramatically reduces scanned data.
 - Use `take 10` while exploring to avoid pulling huge result sets.
 - Column and table names are **case-sensitive**; many string ops are not.
 - `summarize ... by bin(Timestamp, X)` is the backbone of time-series analysis.
 - `arg_max(Timestamp, *)` beats `top 1 by Timestamp` when you want the latest *full row per group*.
 - `render timechart` after a time-bucketed summarize for instant visuals.
-- Control commands start with `.` (e.g. `.show tables`) — those are admin commands, not queries.
+- Control commands start with `.` (e.g. `.show tables`) - those are admin commands, not queries.
 
 ---
 

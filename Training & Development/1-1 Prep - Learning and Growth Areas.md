@@ -3,9 +3,9 @@ tags: [cre, learning, 1-1, onboarding]
 created: 2026-08-05
 ---
 
-# 1:1 Prep — Learning & Growth Areas (New CRE)
+# 1:1 Prep - Learning & Growth Areas (New CRE)
 
-Question bank for sessions with senior CREs (Peter Kovacs, Jessica Widener, Carlos Naranjo, Louis). Pre-accounts phase, so weight toward **judgment and shadowing** — the things that aren't in docs. Pick 2-3 per session, don't fire the whole list.
+Question bank for sessions with senior CREs (Peter Kovacs, Jessica Widener, Carlos Naranjo, Louis). Pre-accounts phase, so weight toward **judgment and shadowing** - the things that aren't in docs. Pick 2-3 per session, don't fire the whole list.
 
 Mapped to my [[Goals]] and the 6 CRE pillars.
 
@@ -23,13 +23,13 @@ Mapped to my [[Goals]] and the 6 CRE pillars.
 - How do you decide when to escalate to engineering vs. keep investigating? (The hardest call, rarely documented.)
 - How do you deliver bad news or "working as intended" without damaging trust?
 - What separates a good CRE health check from a box-ticking one?
-- How do you run a customer situation / incident — first move and cadence?
+- How do you run a customer situation / incident - first move and cadence?
 
 ## Program / account health (Program pillar)
 
 - What signals tell you an account is drifting *before* it shows up in tickets?
 - How do you prioritize across multiple accounts when everything feels urgent?
-- Walk me through prepping a monthly report / QBR — what data matters, what's fluff?
+- Walk me through prepping a monthly report / QBR - what data matters, what's fluff?
 
 ## Collaboration & mentorship (Collaboration + Mentorship pillars)
 
@@ -37,7 +37,7 @@ Mapped to my [[Goals]] and the 6 CRE pillars.
 - What's the one habit you wish you'd built in your first 90 days?
 - Who are the key cross-functional partners (SEs, engineering, AEs) and how do you work with them?
 
-## Innovation (Innovation pillar — my edge)
+## Innovation (Innovation pillar - my edge)
 
 - Already ahead on AI tooling (llm-assist, MCP, the P+ ticket analysis). Ask: "Where do you still do manual work that could be automated?" → contribute back, build reputation fast.
 
@@ -45,10 +45,10 @@ Mapped to my [[Goals]] and the 6 CRE pillars.
 
 ## Growth areas to name about myself (shows self-awareness)
 
-- **Building the pattern library** — I have the tools, I lack the reps. Ask for volume.
+- **Building the pattern library** - I have the tools, I lack the reps. Ask for volume.
 - **Reading logs to a conclusion**, not just running queries.
-- **Customer communication under pressure** — practice via shadowing.
-- **Knowing the escalation boundary** — where support ends and engineering begins.
+- **Customer communication under pressure** - practice via shadowing.
+- **Knowing the escalation boundary** - where support ends and engineering begins.
 
 ---
 

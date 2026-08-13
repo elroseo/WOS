@@ -1,11 +1,11 @@
-# Domain 7 — Benefits of the GitHub Community
+# Domain 7 - Benefits of the GitHub Community
 
 ## Open source on GitHub
 
 | Concept | Meaning |
 |---|---|
 | Open source | Code with a license allowing use, study, modification, sharing |
-| **License** | Defines what others may do (MIT, Apache 2.0, GPL, etc.) — without one, default copyright applies |
+| **License** | Defines what others may do (MIT, Apache 2.0, GPL, etc.) - without one, default copyright applies |
 | Fork & PR | The standard way outsiders contribute |
 | Star | Bookmark/show appreciation for a repo |
 | Watch | Subscribe to a repo's notifications |
@@ -53,12 +53,12 @@ Lets the community **fund developers and projects** financially. Maintainers add
 
 ## InnerSource
 
-Applying **open-source collaboration practices inside a company** — using internal/private repos so teams across an organization can discover, reuse, and contribute to each other's code. **Internal** repository visibility supports this.
+Applying **open-source collaboration practices inside a company** - using internal/private repos so teams across an organization can discover, reuse, and contribute to each other's code. **Internal** repository visibility supports this.
 
 ## Exam traps
 
 1. **No license = not reusable** (default copyright), even on public repos.
-2. **Star vs Watch** — star = bookmark; watch = subscribe to notifications.
+2. **Star vs Watch** - star = bookmark; watch = subscribe to notifications.
 3. **Profile README** comes from a repo named exactly your username.
 4. **InnerSource** = open-source practices applied internally (often via internal repos).
 5. **Sponsors** is for funding; **Achievements** are activity badges.

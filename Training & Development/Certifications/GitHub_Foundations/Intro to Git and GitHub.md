@@ -1,10 +1,10 @@
-# Domain 1 — Introduction to Git and GitHub
+# Domain 1 - Introduction to Git and GitHub
 
 > Exam weight: ~the foundation everything else builds on. Pairs with [[2026-06-22_core_workflow]] (hands-on Git workflow).
 
 ## What is Git?
 
-Git is a **free, open-source distributed version control system (DVCS)** created by Linus Torvalds in 2005. "Distributed" means every clone is a full copy of the project *and* its entire history — you can commit, branch, and view history offline.
+Git is a **free, open-source distributed version control system (DVCS)** created by Linus Torvalds in 2005. "Distributed" means every clone is a full copy of the project *and* its entire history - you can commit, branch, and view history offline.
 
 | Concept | Meaning |
 |---|---|
@@ -22,7 +22,7 @@ GitHub is a **cloud-based hosting platform built on top of Git**. Git handles ve
 | Commits, branches, merges, history | Remote hosting of repositories |
 | Local repository operations | Pull requests, Issues, Discussions |
 | The version-control engine | Actions (CI/CD), Packages, Pages, Codespaces |
-| — | Access control, teams, security features |
+| - | Access control, teams, security features |
 
 **Exam framing:** *Git is the engine; GitHub is the platform built around it.* Git ≠ GitHub. Alternatives to GitHub include GitLab and Bitbucket (also built on Git).
 
@@ -94,16 +94,16 @@ git switch -c <name>     # Create + switch to a branch
 
 ## Supporting concepts
 
-- **Markdown** — lightweight formatting used in READMEs, issues, PRs, comments. (See [[GitHub Markdown Cheatsheet]].)
-- **Gist** — a shareable snippet/file, backed by a Git repo; can be public or secret.
-- **README.md** — renders automatically on the repo home page; a profile README (repo named after your username) renders on your profile.
+- **Markdown** - lightweight formatting used in READMEs, issues, PRs, comments. (See [[GitHub Markdown Cheatsheet]].)
+- **Gist** - a shareable snippet/file, backed by a Git repo; can be public or secret.
+- **README.md** - renders automatically on the repo home page; a profile README (repo named after your username) renders on your profile.
 
 ## Exam traps
 
-1. **Fork is GitHub, not Git** — there's no `git fork` command.
-2. **Distributed** — every clone has full history; Git is not centralized.
-3. **Organizations don't log in** — people log in to personal accounts and act within orgs.
-4. **GHEC vs GHES** — Cloud is GitHub-hosted; Server is self-hosted.
+1. **Fork is GitHub, not Git** - there's no `git fork` command.
+2. **Distributed** - every clone has full history; Git is not centralized.
+3. **Organizations don't log in** - people log in to personal accounts and act within orgs.
+4. **GHEC vs GHES** - Cloud is GitHub-hosted; Server is self-hosted.
 5. **Git stores snapshots**, not file-by-file diffs.
 
 ## Checklist

@@ -1,4 +1,4 @@
-# Domain 6 — Privacy, Security, and Administration
+# Domain 6 - Privacy, Security, and Administration
 
 ## Authentication methods
 
@@ -71,7 +71,7 @@ Protect important branches by requiring:
 ## Exam traps
 
 1. **Signing keys verify identity; they don't authenticate sign-in.** SSH keys/PATs authenticate.
-2. **Fine-grained PATs > classic** — scoped, least-privilege, expiring.
+2. **Fine-grained PATs > classic** - scoped, least-privilege, expiring.
 3. **Triage and Maintain** are the "in-between" roles people forget (Read < Triage < Write < Maintain < Admin).
 4. **Dependabot has three modes**: alerts, security updates, version updates.
 5. **Secret scanning push protection** can block a secret *before* it's committed.

@@ -1,4 +1,4 @@
-# Domain 2 — Working with GitHub Repositories
+# Domain 2 - Working with GitHub Repositories
 
 ## What a repository contains
 
@@ -25,9 +25,9 @@ A repo holds your project's files, full version history, branches, and settings.
 ## Creating a repository
 
 - **New** from scratch (optionally initialize with README, `.gitignore`, license).
-- **From a template** — a repo marked as a template; creates a fresh repo with the files but **no commit history**.
-- **Fork** — server-side copy of someone else's repo under your account (keeps link to upstream).
-- **Import** — bring in a repo from another VCS/host.
+- **From a template** - a repo marked as a template; creates a fresh repo with the files but **no commit history**.
+- **Fork** - server-side copy of someone else's repo under your account (keeps link to upstream).
+- **Import** - bring in a repo from another VCS/host.
 
 ## Cloning options
 
@@ -71,7 +71,7 @@ Static website hosting **directly from a repository**. Serves from a branch (e.g
 | Topics | Tags that make repos discoverable |
 | Stars / Watch | Bookmark / subscribe to notifications |
 
-## Repository roles (intro — full detail in Domain 6)
+## Repository roles (intro - full detail in Domain 6)
 
 | Role | Can |
 |---|---|
@@ -83,9 +83,9 @@ Static website hosting **directly from a repository**. Serves from a branch (e.g
 
 ## Exam traps
 
-1. **Template vs fork** — a template gives a clean repo with **no history**; a fork keeps history and an upstream link.
+1. **Template vs fork** - a template gives a clean repo with **no history**; a fork keeps history and an upstream link.
 2. **Internal visibility** exists only within enterprises/orgs.
-3. **Tag ≠ Release** — a release wraps a tag with notes/assets.
+3. **Tag ≠ Release** - a release wraps a tag with notes/assets.
 4. **Pages serves static sites** from a repo branch/folder.
 5. Editing a file in the web UI **creates a commit** (optionally on a new branch via a PR).
 

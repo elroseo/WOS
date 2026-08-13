@@ -1,4 +1,4 @@
-# Domain 5 — Project Management
+# Domain 5 - Project Management
 
 ## GitHub Projects (Projects v2)
 
@@ -43,7 +43,7 @@ Older **Projects (classic)** were simple per-repo Kanban boards. They've been su
 
 ## Exam traps
 
-1. **Projects v2 spans repositories** and is owned by a user or org — not limited to one repo.
+1. **Projects v2 spans repositories** and is owned by a user or org - not limited to one repo.
 2. **Draft issues** live only in the project until converted to real issues.
 3. **Milestones track progress** with a percent-complete bar; labels do not.
 4. **Iterations** are a custom field type for sprint-style planning.
