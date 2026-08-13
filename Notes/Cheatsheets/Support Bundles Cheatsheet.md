@@ -1,174 +1,236 @@
+---
+tags:
+  - ghes
+  - troubleshooting
+  - support-bundles
+  - cheatsheet
+updated: 2026-08-13
+---
+
 # Support Bundles Cheatsheet
 
-## What is a support bundle?
+> [!summary] The rule to remember
+> **Start from the customer-visible symptom and a concrete timestamp or request.** Use general health signals to explain that evidence, not as a substitute for it. A dramatic anomaly is not a root cause until you can connect it to the reported impact.
 
-A support bundle is a gzip-compressed tar archive (`.tar.gz`) that a GHES administrator generates and shares with GitHub Support to help diagnose an issue. It packages a **diagnostics file** (a snapshot of the instance's settings and environment) together with **sanitized log files** from across every major subsystem. Authentication tokens, keys, and secrets are stripped from the logs before the archive is built, so the bundle is safe to share. It is the single most important artifact for offline troubleshooting because Support has no direct access to the customer's environment.
+## First five minutes
 
-## How it's typically used
+### 1. Write down the incident frame
 
-- A customer reports an issue; Support asks them to generate and upload a bundle
-- The engineer unpacks it and reads logs to reconstruct what happened without touching the live system
-- Used to investigate auth failures, 500 errors, performance problems, replication lag, upgrade failures, and email/webhook delivery issues
-- The diagnostics file gives the "shape" of the instance (version, topology, load, config); the logs give the timeline of events
+- **What failed?** Expected versus actual behavior
+- **When?** Exact timestamp, timezone, duration, and recurrence
+- **Which object?** Repository, pull request, workflow run, user, request ID, webhook GUID, or Git operation
+- **Scope?** One user/repository/node or instance-wide
+- **What changed?** Upgrade, config apply, certificate, network, identity provider, storage, or workload change
+- **Business impact?** Broken, delayed, intermittent, or merely noisy
 
-## CRE perspective
+> [!tip] Ask only for what the bundle cannot tell you
+> When a bundle exists, find concrete examples in the logs first. Ask the customer for missing business context, confirmation of the time window, or identifiers that cannot be reconstructed.
 
-Deciphering a bundle is core CRE work. You need to know **which log answers which question** so you don't waste time. The workflow is: read `ghe-config.log` / diagnostics first to understand the instance, correlate the customer's reported timestamp against the relevant subsystem log, then pivot across logs (e.g. `haproxy.log` → `github-logs/production.log` → `exceptions.log`) to follow a single request through the stack. Always confirm the GHES **version** and **topology** (standalone, HA pair, or cluster) before interpreting anything, because paths and behavior differ.
+### 2. Confirm the bundle can cover the incident
 
----
-
-## Bundle types
-
-| Type | Contents | Time range |
-|---|---|---|
-| Diagnostic file | Plaintext settings + environment snapshot only | Point-in-time |
-| Support bundle | Diagnostics file + sanitized logs | Last **2 days** (default) |
-| Extended support bundle | Diagnostics file + sanitized logs | Last **8 days** |
-
----
-
-## Generating a bundle
-
-| Scenario | Command |
+| Check | Why it matters |
 |---|---|
-| Standard bundle (SSH) | `ssh -p122 admin@HOSTNAME -- 'ghe-support-bundle -o' > bundle.tgz` |
-| Extended bundle | `ssh -p122 admin@HOSTNAME -- 'ghe-support-bundle -o -e' > bundle.tgz` |
-| Cluster / HA bundle | `ssh -p122 admin@HOSTNAME -- 'ghe-cluster-support-bundle -o' > cluster-bundle.tgz` |
-| Diagnostics only | `ssh -p122 admin@HOSTNAME -- 'ghe-diagnostics' > diagnostics.txt` |
-| Management Console | Site admin → Management Console → **Support** → **Download support bundle** |
+| Bundle creation/upload time | Establishes the end of the evidence window |
+| Standard or extended bundle | Standard is approximately 2 days; extended is approximately 8 days |
+| Log-specific retention | Busy firehose logs may rotate much sooner than the nominal bundle range |
+| Correct node(s) included | Cluster and geo-replication investigations need multi-node evidence |
+| Clock and timezone | Prevents searching the wrong hour |
 
-> **Cluster note:** Always use `ghe-cluster-support-bundle` for clustered or geo-replicated instances - it gathers logs from **every node**, not just the one you SSH'd into.
+Do not conclude “nothing happened” until you have checked both retention and parser/log format. An empty result can mean no event, rotated evidence, a wrong timestamp, a wrong node, or a query that does not match that GHES version.
 
----
+### 3. Establish the instance profile
 
-## Unpacking
+Check the diagnostics before interpreting any log:
 
-```bash
-# Extract
-tar xzf bundle.tgz
-cd <bundle-dir>
+- GHES version and build SHA
+- standalone, HA, cluster, or geo-replication topology
+- node role and hostname
+- CPU and memory capacity
+- disk usage and mount layout
+- authentication method
+- recent configuration applies or upgrade
+- relevant feature flags and configuration values
 
-# See the top-level layout
-ls -la
+> [!warning] ESB container trap
+> Commands such as `df -h`, `/proc/loadavg`, and `/proc/meminfo` inside an ESB launch container describe the **ESB container**, not the customer appliance. Use captured bundle files, diagnostics, `ghe-metrics` in support-bundle mode, and collectd/RRD evidence.
 
-# Find the largest logs (often where the action is)
-du -ah . | sort -rh | head -20
+### 4. Start with ghe-probe, but classify every result
 
-# Search every log for an error across the whole bundle
-grep -rin "error\|exception\|fatal" . | less
+| Classification | Examples | What to do |
+|---|---|---|
+| **Direct subsystem failure** | Replication broken, backup failed, certificate expired | Investigate that subsystem directly and verify impact |
+| **Pressure signal requiring validation** | High load, disk use, large tables, connection limits | Ask what caused it and whether it overlaps the incident |
+| **Usually a symptom** | Queue backlog, rejected connection, timeout, retry storm | Trace upstream to the first saturation or failure point |
+| **Separate operational risk** | Unrelated warning outside the affected path | Record separately; do not call it the incident cause |
 
-# Follow one timestamp window across all logs
-grep -rin "2026-06-25T14:3" .
+**ghe-probe is a starting inventory, not a root-cause report.**
+
+## Symptom-to-evidence map
+
+| Customer symptom | Start with | Then correlate |
+|---|---|---|
+| UI/API slow or timing out | `github-logs/exceptions.log*` slow-request events | `unicorn.log`/request logs, collectd RRDs, MySQL/GitRPC timing |
+| 500 errors | `github-logs/exceptions.log*` | Request ID, controller, `production.log`/`unicorn.log` |
+| Git clone/fetch/push slow or failing | `babeld-logs/babeld.log*` | GitRPC timing, storage/network evidence, HAProxy |
+| Authentication failure | `github-logs/auth.log*` | IdP/LDAP response, user scope, time drift, certificate/config changes |
+| Webhook delayed or missing | Hookshot/Aqueduct delivery and dequeue evidence | Queue age, retries, destination response, event creation |
+| Workflow or runner issue | Actions logs and `ghe-actions-dump` when available | Queue/circuit breaker, runner state, Nomad, storage/network |
+| Search/indexing issue | Elasticsearch logs and index status | Cluster health, aliases, indexing lag, application exception |
+| Email delivery issue | `mail-logs/mail.log*` | SMTP response, DNS/TLS, queue/retry timeline |
+| Config/upgrade regression | `configuration-logs/`, `enterprise-manage-logs/` | Exact apply/upgrade time, version-specific known issues |
+| PR/branch appears stale | Event/merge-state propagation evidence | Background jobs and cached state; this may not be request latency |
+| Replication problem | Replication diagnostics and node-specific logs | Network, storage, database/repository lag, outage duration |
+
+## The investigation workflow
+
+1. **Pin a concrete example.** Find the affected request, exception, job, webhook, Git operation, or object transition.
+2. **Build the timeline.** Search a narrow time window first, then widen deliberately.
+3. **Pivot by stable identifiers.** Prefer request ID, job ID, trace ID, repository ID, pull request ID, or webhook GUID over vague text.
+4. **Measure the symptom.** Duration, error rate, queue age, retry attempts, lag, or failed transitions.
+5. **Check the denominator.** Counts alone are workload-sensitive. Compare slow events with total traffic, failures with attempts, or queue growth with enqueue/dequeue rates.
+6. **Corroborate with time-series evidence.** A point-in-time diagnostic snapshot does not prove what happened during the incident.
+7. **Trace upstream.** Keep asking “what caused this?” until you reach the first demonstrated saturation or failure point.
+8. **Test counter-hypotheses.** State at least one plausible alternative and what evidence supports or weakens it.
+9. **Check version-specific prior art.** Similar symptoms can have different mechanisms across GHES releases.
+10. **Separate findings.** Distinguish the incident mechanism, possible upstream cause, ruled-out hypotheses, and unrelated health risks.
+
+## Evidence and confidence
+
+| Label | Use when |
+|---|---|
+| **CONFIRMED** | Direct mechanism is demonstrated with specific evidence for this incident |
+| **PROBABLE** | Multiple independent signals support the mechanism, with meaningful alternatives ruled out |
+| **POSSIBLE** | Plausible and supported by some evidence, but a critical link is missing |
+| **OBSERVED** | The signal is directly present, but its causal role is not established |
+| **REPORTED** | Customer, Support, or engineering states it, but you have not independently demonstrated it |
+| **RULED OUT** | Evidence shows it did not materially participate in the incident |
+
+> [!important] Do not let the conclusion outrun the evidence
+> An exception count proves that an exception occurred. It does not automatically prove why it occurred or that it caused the customer symptom.
+
+### Finding template
+
+```markdown
+### Finding: <short statement>
+
+- **Classification:** incident mechanism / upstream hypothesis / operational risk / ruled out
+- **Confidence:** OBSERVED / POSSIBLE / PROBABLE / CONFIRMED
+- **Evidence:** exact metric, log event, time window, and source path
+- **Customer impact:** how this maps to the reported symptom
+- **Causation chain:** symptom <- mechanism <- upstream cause
+- **Counter-hypothesis:** alternative and the evidence for/against it
+- **Evidence gap:** what is still needed
+- **Next step:** validated, supported action
 ```
 
----
+## Performance-specific guardrails
 
-## Directory layout (what lives where)
+- **Load is a pressure signal, not proof of CPU saturation.** Linux load also includes tasks blocked in uninterruptible sleep.
+- A low load-to-CPU ratio can rule CPU pressure out; a high ratio requires CPU, process, and I/O corroboration.
+- High per-request CPU time means that request was CPU-bound. It does not alone prove host-wide saturation.
+- High request idle time means off-CPU time. It can include I/O, locks, downstream calls, scheduling, or GVL waits.
+- Compare the incident window with a healthy baseline or adjacent bundles whenever possible.
+- Broad controller impact shows scope, not mechanism. A shared dependency can affect many endpoints.
 
-| Path | Subsystem | What you'll find |
+### Retention reality
+
+| Source | Typical behavior | Best use |
 |---|---|---|
-| `ghe-config.log` / diagnostics file | Config | Version, SHAs, topology, hostname, auth mode, license, load |
-| `github-logs/` | Rails app (frontend) | App requests, errors, audit, exceptions |
-| `babeld-logs/` | Git proxy (babeld) | Git over SSH/HTTPS routing, fetch/push proxying |
-| `system-logs/` | OS / load balancer | `haproxy.log`, `syslog`, kernel, dmesg |
-| `enterprise-manage-logs/` | Management Console | Config apply, MC errors |
-| `configuration-logs/` | Config runs | Output of `ghe-config-apply` runs |
-| `elasticsearch-logs/` | Search | Indexing, search cluster health |
-| `alambic-logs/` | Storage (LFS/avatars/assets) | Object storage operations |
-| `hookshot-logs/` | Webhooks | Webhook delivery and retries |
-| `codeload-logs/` | Archive downloads | `git archive` / zip/tarball downloads |
-| `pages-logs/` | GitHub Pages | Pages builds and serving |
-| `lfs-server-logs/` | Git LFS | Large file storage transactions |
-| `mail-logs/mail.log` | SMTP | Outbound email delivery |
-| `collectd/logs/collectd.log` | Metrics | collectd daemon (feeds monitoring) |
-| `registry-logs/` | Packages / registry | Container & package registry |
-| `svn-bridge-logs/` | SVN bridge | Subversion compatibility |
-| `task-dispatcher-logs/` | Background jobs | Async/resque-style job dispatch |
+| `unicorn.log` / `production.log` | High-volume and may retain only a short recent window | Recent requests and request-ID correlation |
+| `exceptions.log*` | Often reaches further back | Slow requests, slow queries, exceptions |
+| collectd RRDs | Longer history, downsampled | Confirm incident window and system mechanism |
+| Diagnostics | Point-in-time snapshot | Instance profile and state near bundle creation |
 
----
+## State that must be checked before making claims
 
-## The most useful logs (start here)
+If your analysis refers to any of these, inspect its actual bundle state:
 
-| Question | Log to read |
-|---|---|
-| What is this instance? (version, topology, auth, license) | Diagnostics file / `ghe-config.log` |
-| Site throwing 500s? | `github-logs/exceptions.log` |
-| App-level request detail | `github-logs/production.log` |
-| Who did what, when? | `github-logs/audit.log` |
-| LDAP / SAML / CAS auth failing? | `github-logs/auth.log` |
-| 502 / 503 / routing / which node? | `system-logs/haproxy.log` |
-| Git clone/fetch/push problems | `babeld-logs/babeld.log` |
-| Config apply broke something | `configuration-logs/` + `enterprise-manage-logs/` |
-| Search broken / slow indexing | `elasticsearch-logs/github-enterprise.log` |
-| Webhooks not arriving | `hookshot-logs/` |
-| Email not sending | `mail-logs/mail.log` |
-| LFS push/pull errors | `lfs-server-logs/` |
+- `metadata/mysql_row_count.txt` for table-size claims
+- `metadata/configs/` or diagnostics for configuration claims
+- `metadata/feature_flags.txt` for feature-flag claims
+- `docker/images.txt` before assuming an image exists
+- `docker/ps.txt` before claiming a container was healthy or stopped
+- `metadata/kafka-lite-metadata.json` and related metrics for offset/capacity claims
+- node-specific evidence for HA/cluster conclusions
 
----
+Unchecked configuration, table, feature-flag, or version-parity assumptions should remain **POSSIBLE**.
 
-## Reading the diagnostics file
+## Useful search patterns
 
-Scan for these first - they frame every other interpretation:
-
-| Field | Why it matters |
-|---|---|
-| Version + SHA | Determines feature set, known bugs, correct doc version |
-| Topology | Standalone vs HA vs cluster changes log locations and failure modes |
-| Private mode / SSL settings | Affects auth and connectivity symptoms |
-| Auth method | LDAP vs SAML vs built-in changes where to look for login failures |
-| License (seats, expiry) | Expired/over-limit licenses cause access issues |
-| Load + process listing | High load points to performance root cause |
-| Disk usage | Full disk causes 500s, failed pushes, stuck jobs |
-| Repo / user counts | Sizing context for performance complaints |
-
----
-
-## Log sanitization
-
-These directories are **scrubbed of tokens, keys, and secrets** before bundling, so don't expect to find raw credentials:
-
-`alambic-logs` · `babeld-logs` · `codeload-logs` · `enterprise-manage-logs` · `github-logs` · `hookshot-logs` · `lfs-server-logs` · `semiotic-logs` · `task-dispatcher-logs` · `pages-logs` · `registry-logs` · `render-logs` · `svn-bridge-logs`
-
----
-
-## Investigation playbook
-
-1. **Confirm the instance** - open the diagnostics file: version, topology, auth mode, disk, load.
-2. **Pin the timestamp** - get the exact time (and timezone) of the customer's symptom.
-3. **Pick the entry log** - map the symptom to a subsystem using the tables above.
-4. **Follow the request** - pivot across logs for the same time window:
-   `haproxy.log` (did it route?) → `production.log` (did the app handle it?) → `exceptions.log` (did it blow up?).
-5. **Check resources** - cross-reference `collectd` / load / disk if symptoms look like saturation.
-6. **Correlate config changes** - check `configuration-logs/` for a recent `ghe-config-apply` near the incident.
-7. **Summarize** - version, topology, timeline, root-cause log line, and next step.
-
----
-
-## Common patterns to grep for
+Probe the file format before trusting a parser. Fields and formats drift between GHES versions.
 
 ```bash
-# 500s and their backtraces
-grep -n "Error\|Exception" github-logs/exceptions.log
+# Inspect one structured exception before writing a jq query
+zgrep -m1 -h 'SlowRequest\|SlowQuery' github-logs/exceptions.log* | jq .
 
-# Auth failures (LDAP/SAML)
-grep -in "failed\|invalid\|denied" github-logs/auth.log
+# Count exception classes without losing structure
+zgrep -hF -e 'Slow' -e 'github-slow-' github-logs/exceptions.log* \
+  | jq -r '.class // empty' | sort | uniq -c | sort -nr | head -20
 
-# Backend marked down by the load balancer
-grep -in "backend\|down\|no server available" system-logs/haproxy.log
+# Search a narrow timestamp across compressed and uncompressed logs
+zgrep -h '2026-08-13T16:2' path/to/log* 2>/dev/null
 
-# Slow requests (look for high durations in production.log)
-grep -nE "duration=|completed in [0-9]{4,}ms" github-logs/production.log
-
-# Recent config applies
-grep -in "applying\|finished\|failed" configuration-logs/* enterprise-manage-logs/*
+# Rank exact repeated messages only after confirming the log format
+zgrep -h 'PATTERN' path/to/log* | sort | uniq -c | sort -nr | head -20
 ```
 
----
+Prefer structured fields over broad searches for `error`, `exception`, or `slow`. Broad searches mix unrelated classes, expected noise, and different semantics.
 
-## Quick reference links
+## Common traps
 
-- [Providing data to GitHub Support](https://docs.github.com/en/enterprise-server@latest/support/contacting-github-support/providing-data-to-github-support)
-- [Command-line utilities (`ghe-support-bundle`, `ghe-cluster-support-bundle`)](https://docs.github.com/en/enterprise-server@latest/admin/administering-your-instance/administering-your-instance-from-the-command-line/command-line-utilities)
-- [About the audit log for your enterprise](https://docs.github.com/en/enterprise-server@latest/admin/monitoring-activity-in-your-enterprise/reviewing-audit-logs-for-your-enterprise/about-the-audit-log-for-your-enterprise)
-- [[ESB Support Bundle Workflow]] - pulling a bundle down via esbtools (extract first, then scp)
+| Trap | Better approach |
+|---|---|
+| Starting with the busiest subsystem | Start with the affected request/event and tie subsystem evidence to it |
+| Treating every ghe-probe failure as the incident cause | Classify it and prove materiality |
+| Searching the whole bundle without a time or identifier | Begin with a narrow window and stable ID |
+| Raw counts without traffic context | Calculate a rate or explicitly note the missing denominator |
+| Empty query means healthy | Check retention, format, node, timestamp, and valid empty-result handling |
+| Using a similar incident as proof | Confirm version, code path, state, and distinguishing signals |
+| Assuming a workaround proves root cause | Treat recovery as supporting evidence, not causal proof |
+| Recommending an internal flag or service change | Validate supportability and route engineering-managed changes to engineering |
+| Reporting only anomalies | Include ruled-out hypotheses and relevant healthy baselines |
+| Trusting generated output without interpretation | Verify source data, explain impact, and distinguish observation from cause |
+
+## CRE review lessons
+
+These recurring lessons were inferred from review comments and issue discussions in `github/customer-reliability-engineering`:
+
+1. **Empty results are a real test case.** A health-check fix for bundles with no failed logins initially misread a non-useful return value as data. Reviewers required validation against both a bundle with failures and one without them. See [PR #677](https://github.com/github/customer-reliability-engineering/pull/677).
+2. **Understand field semantics before filtering.** Slow events could be identified through different JSON keys (`class` and `app`). Review feedback moved the query toward structured `jq` parsing and validated it against a real bundle. See [PR #430](https://github.com/github/customer-reliability-engineering/pull/430).
+3. **Verify what the tool already does.** A documentation change was challenged because it assumed report output was not already written to a file. Inspect actual behavior before documenting a workaround. See [PR #4416](https://github.com/github/customer-reliability-engineering/pull/4416).
+4. **Generated health output is not interpretive analysis.** CREs explicitly distinguished the bundle UI's self-service report from the interpretive CLI health check. Automation gathers evidence; the analyst still determines relevance and causation. See [PR #3231](https://github.com/github/customer-reliability-engineering/pull/3231).
+5. **Automation should be observable and kept current.** Reviewers valued a one-command workflow but requested progress visibility and noted that queries evolve. Record versions, show what ran, and revisit old parsers. See [PR #318](https://github.com/github/customer-reliability-engineering/pull/318).
+6. **A standard bundle may not contain all product evidence.** CRE planning identified gaps for Actions diagnostics and kafka-lite metadata/metrics, plus the need for graceful version-aware collection. State missing-source gaps rather than fabricating conclusions. See [issue #5675](https://github.com/github/customer-reliability-engineering/issues/5675).
+
+## Bundle creation reference
+
+GitHub's GHES 3.20 documentation uses:
+
+```bash
+# Standard support bundle, approximately 2 days
+ssh -p 122 admin@HOSTNAME -- 'ghe-support-bundle -o' > support-bundle.tgz
+
+# Extended support bundle, approximately 8 days
+ssh -p 122 admin@HOSTNAME -- 'ghe-support-bundle -o -x' > support-bundle.tgz
+```
+
+For cluster or geo-replication configurations, use the documented `ghe-cluster-support-bundle` workflow so evidence is gathered from all required nodes.
+
+> [!warning] Handle bundles as sensitive support data
+> GitHub sanitizes authentication tokens, keys, and secrets in specified log directories, but diagnostics and logs still contain customer, hostname, configuration, activity, and licensing information. Share them only through approved support systems and access-controlled locations.
+
+## Reactive versus proactive analysis
+
+- **Reactive incident:** start from the reported symptom, exact window, and affected request/object. Use GBAO or the relevant troubleshooting workflow.
+- **Proactive health/trend review:** compare multiple bundles, show trends and baselines, suppress verified known false positives, and call out source gaps.
+
+Do not use a weekly health threshold alone to explain a specific incident.
+
+## Quick reference
+
+- [[ESB Support Bundle Workflow]]: accessing an extracted bundle through ESB Tools
 - [[GHES Cheatsheet]]
+- [[Splunk Cheatsheet]]
+- [[Kusto-KQL Cheatsheet]]
+- [Providing data to GitHub Support, GHES 3.20](https://docs.github.com/en/enterprise-server@3.20/support/contacting-github-support/providing-data-to-github-support)
+- [GHES command-line utilities](https://docs.github.com/en/enterprise-server@3.20/admin/administering-your-instance/administering-your-instance-from-the-command-line/command-line-utilities)

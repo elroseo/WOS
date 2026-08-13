@@ -57,11 +57,11 @@ Usually have my video on but you do whatever works for you.
 ---
 
 ## What I'm working on
-
-- Being more concise
-- Getting up to speed with all things GitHub, please be patient!
-- Building out my GitHub x Obsidian x Copilot basecamp
-
+- Building practical CRE investigation depth across Health Checks, Splunk, Kusto, and GitHub Enterprise Server support bundles
+- Preparing to take ownership of customer accounts and strengthening my account-health judgment
+- Learning from experienced CREs through mentoring, technical walkthroughs, and shadowing opportunities
+- Turning investigation lessons into concise, reusable notes, queries, and checklists
+- Improving my GitHub, Obsidian, and Copilot work system without overcomplicating it
 ---
 
-*This is a living document. Last updated: July 2026.*
+*This is a living document. Last updated: August 2026.*

@@ -1,113 +1,161 @@
-# ESB Support Bundle Workflow
-
-How to pull a support bundle down via esbtools (the internal ESB tooling) and get set up to investigate the logs. For what the logs mean and how to read them, see [[Support Bundles Cheatsheet]].
-
-> [!important] Always extract the bundle first
-> A raw bundle is just a `.tar.gz`. You must **launch/extract it on the shell server before you can browse or `scp` any file**. The extracted tree only exists at `/mnt/tmp/esbtools/<bundle-id>/extracted/` *after* the launch step runs. Skipping this is the number one reason `scp` fails with "No such file" or the connection looks broken.
-
+---
+tags:
+  - ghes
+  - esb-tools
+  - support-bundles
+updated: 2026-08-13
 ---
 
-## The workflow (in order)
+# ESB Support Bundle Workflow
 
-### 1. Find the right shell server
+How to access and investigate a support bundle through ESB Tools. For investigation methodology and log interpretation, see [[Support Bundles Cheatsheet]].
 
-The `esbtools-azshell-*` boxes are **ephemeral and assigned per session**. The hostname in the docs (e.g. `ed39142`) is just an example. Use *your* assigned shell server hostname, not a copied one. A wrong hostname shows up as:
+> [!important] Extraction and launch-cache readiness are different
+> `script/launch` enters a bundle that is already available in the current ESB host's launch cache. It is **not** the extraction trigger. A dashboard may show `extracted: true` while the assigned shell host still lacks a ready launch cache.
 
-```
+## Quick workflow
+
+### 1. Confirm dashboard extraction
+
+Check the ESB/CRE Dashboard bundle record first. If the bundle is not extracted, trigger or request extraction through the approved dashboard/ESB workflow.
+
+Do not repeatedly run `script/launch` as a substitute for extraction.
+
+### 2. Use your assigned shell host
+
+The `esbtools-azshell-*` hosts are session-specific. Use the hostname assigned to your authenticated session, not one copied from another investigation.
+
+A stale or unavailable SSH session commonly appears as:
+
+```text
 Stdio forwarding request failed: Session open refused by peer
 Connection closed by UNKNOWN port 65535
 ```
 
-### 2. Extract the bundle on the shell server
+Reconnect or refresh authentication before treating this as a bundle problem.
+
+### 3. Confirm the launch cache is ready
 
 ```bash
-ssh -t esbtools-azshell-<yourid>.azure-eastus.github.net "/data/esb-tools/script/launch <bundle-id>"
+ssh esbtools-azshell-<yourid>.azure-eastus.github.net \
+  '/data/esb-tools/script/launch <bundle-id> -c "
+if test -f metadata/diagnostics.txt; then
+  echo ready
+elif find -L . -maxdepth 3 -path \"*/metadata/diagnostics.txt\" -print -quit | grep -q .; then
+  echo ready
+else
+  echo pending
+fi
+"'
 ```
 
-### 3. Confirm the extracted path exists
+- `ready`: the launch workspace contains diagnostics and can be investigated.
+- `pending` or “not extracted on this host”: dashboard extraction may be complete, but this shell host's launch cache is not ready.
+
+Cluster bundles often place diagnostics under a node directory, which is why the check uses `find -L`.
+
+### 4. Enter the bundle or run one command
 
 ```bash
-ssh esbtools-azshell-<yourid>.azure-eastus.github.net "ls /mnt/tmp/esbtools/<bundle-id>/extracted/"
+# Interactive shell
+ssh -t esbtools-azshell-<yourid>.azure-eastus.github.net \
+  "/data/esb-tools/script/launch <bundle-id>"
+
+# Single read-only command
+ssh -t esbtools-azshell-<yourid>.azure-eastus.github.net \
+  "/data/esb-tools/script/launch <bundle-id> -c 'ls -la'"
 ```
 
-### 4. Copy it down with scp
+Start with:
 
-`scp` syntax is `scp <remote source> <local target>`. The part **after** the space is where it lands on your Mac.
+1. `ghe-probe` report
+2. diagnostics and instance profile
+3. the customer symptom, timestamp, and relevant subsystem logs
+
+### 5. Prefer remote analysis; copy only what you need
+
+Bundles contain sensitive customer support data and can be large. Investigate on the ESB shell when practical. Copy specific files only when local tooling is necessary.
+
+On a ready host, the launchable tree is normally exposed through:
+
+```text
+/mnt/tmp/esbtools/home/<bundle-id>/
+```
+
+Example:
 
 ```bash
-# A single file
-scp esbtools-azshell-<yourid>.azure-eastus.github.net:/mnt/tmp/esbtools/<bundle-id>/extracted/github-logs/production.log ~/esb-bundles/
+mkdir -p ~/esb-bundles/<bundle-id>
 
-# The whole extracted bundle (recursive)
-scp -r esbtools-azshell-<yourid>.azure-eastus.github.net:/mnt/tmp/esbtools/<bundle-id>/extracted/ ~/esb-bundles/<bundle-id>/
+scp esbtools-azshell-<yourid>.azure-eastus.github.net:\
+/mnt/tmp/esbtools/home/<bundle-id>/github-logs/exceptions.log \
+~/esb-bundles/<bundle-id>/
 ```
 
-Bundles are saved locally to `~/esb-bundles/`. (Plan: reorganise later into `<customer>/esb-bundles/<bundle-id>/`.)
+If that host-side link is absent, do not guess another path. Recheck launch-cache readiness or use `script/launch` remotely.
 
----
+## Evidence availability
 
-## Web UI vs shell server
-
-| Method | When to use | Limit |
+| Source | What it provides | Important limitation |
 |---|---|---|
-| Web UI browse (`https://esbtools-staff.githubapp.com/bundles/<bundle-id>/browse`) | Quick look at a small file | View/download capped at **10 MB** per file |
-| Shell server + `scp` | Any file over 10 MB, or grabbing many files / whole bundle | None practical |
+| Dashboard metadata | Bundle identity, diagnostics sections, profile and health metadata | Does not guarantee raw launch-cache access |
+| Generated ghe-probe report | Known checks, warnings, failures, numeric signals | Findings still require classification and causation analysis |
+| Generated health report | Quick automated overview | Not a substitute for interpretive incident analysis |
+| Launch-cache full tree | Raw logs, detailed metadata, collectd/RRDs, product-specific evidence | May not be ready on the current host even after dashboard extraction |
 
----
+> [!warning] Missing source versus parser gap
+> Use **missing source** only after confirming the evidence is absent. If the source exists but your workflow did not parse it, label it **parser gap**.
 
-## Prerequisites (SSH must be working)
-
-This all rides on the bastion + agent forwarding setup. If `scp` or `ssh` fails with `Permission denied (publickey)`:
-
-- Load your key locally: `ssh-add -l` should list your key. If empty: `ssh-add --apple-use-keychain ~/.ssh/id_ed25519`.
-- The `bastion.githubapp.com` and `esbtools-azshell-*` host blocks need `ForwardAgent yes`.
-- Use the **full** hostname `bastion.githubapp.com`, never `ssh bastion`.
-- If a stale connection is being reused, drop it: `ssh -O exit bastion.githubapp.com`.
-
-See [[SSH Cheatsheet]] for the full config.
-
----
-
-## Tools to investigate the logs
-
-Once the bundle is on your Mac (or you're on the shell server), these are the tools that do the work. Bundle logs are often gzipped, so reach for the `z*` variants.
-
-### Local, on the extracted files
+## Useful read-only tools
 
 | Tool | Use it for |
 |---|---|
-| `grep -rin "pattern" .` | Search all logs recursively for an error, user, or timestamp |
-| `ripgrep` (`rg`) | Much faster recursive search; `rg -z` also searches inside `.gz` files |
-| `zcat` / `gzcat` / `zless` / `zgrep` | Read or search gzipped logs without unzipping them |
-| `less -S` | Page through wide log lines without wrapping (`-S` = chop long lines) |
-| `tail -f` / `tail -n 200` | Follow or read the end of a log |
-| `awk` / `cut` | Extract fields (status codes, durations, IPs) from structured lines |
-| `sort` + `uniq -c` | Count and rank repeated errors: `grep ... \| sort \| uniq -c \| sort -rn` |
-| `jq` | Parse JSON-formatted log lines |
-| `du -ah . \| sort -rh \| head` | Find the biggest logs, usually where the action is |
+| `zgrep` / `zcat` / `zless` | Search compressed and uncompressed logs without extracting them |
+| `jq` | Parse JSON log fields and avoid mixing unrelated events |
+| `rg` | Fast search of local extracted files; probe compressed-file behavior first |
+| `less -S` | Read wide log lines without wrapping |
+| `sort` + `uniq -c` | Count exact normalized events after confirming the format |
+| `awk` / `cut` | Extract stable fields from known text formats |
+| `find -L` | Follow ESB symlinks when locating diagnostics in cluster bundles |
+
+Probe before parsing:
 
 ```bash
-# Top 20 repeated exceptions across the bundle
-zgrep -rh "Exception" github-logs/ | sort | uniq -c | sort -rn | head -20
+# Confirm exceptions.log structure and field names
+zgrep -m1 -h 'SlowRequest\|SlowQuery' github-logs/exceptions.log* | jq .
 
-# Follow one incident timestamp window across every log
-grep -rin "2026-07-03T14:3" .
+# Inspect recent request-log format
+sed -n '1,3p' github-logs/unicorn.log
 ```
 
-### Platform tools
+An empty scripted result after a mismatched probe is a parser failure, not proof that no event occurred.
 
-| Tool | Use it for | Note |
-|---|---|---|
-| **Splunk** | Searching indexed GHES/production logs at scale, dashboards, time-series | See [[Splunk Cheatsheet]] |
-| **Kusto / KQL** | Querying telemetry and CRE investigation datasets | See [[Kusto-KQL Cheatsheet]] |
-| **esbtools Web UI** | Quick browse of small files without downloading | 10 MB per-file cap |
+## SSH prerequisites
 
-> The bundle tells you *what happened on the box*; Splunk and Kusto help you correlate it against fleet-wide telemetry and history.
+If SSH fails with `Permission denied (publickey)`:
 
----
+- Confirm your key is loaded with `ssh-add -l`.
+- Confirm your bastion and ESB host configuration supports agent forwarding.
+- Complete the required FIDO authentication.
+- If a ControlMaster session expired, reconnect rather than repeatedly retrying bundle commands.
 
-## Quick reference links
+See [[SSH Cheatsheet]] for local SSH configuration and troubleshooting.
 
-- [[Support Bundles Cheatsheet]] - what each log contains and the investigation playbook
-- [[GHES Cheatsheet]] - `ghe-*` utilities and log locations on the appliance
-- [[Splunk Cheatsheet]] · [[Kusto-KQL Cheatsheet]] · [[SSH Cheatsheet]]
+## Common mistakes
+
+| Mistake | Correction |
+|---|---|
+| Assuming `script/launch` performs extraction | Confirm dashboard extraction, then confirm launch-cache readiness |
+| Assuming `extracted: true` means this host is ready | Test for diagnostics through `script/launch` |
+| Using `/proc` or `df -h` in the launch container as customer metrics | Use captured diagnostics, `ghe-metrics` bundle mode, disk metadata, and collectd |
+| Copying the whole bundle by default | Analyze remotely and copy only required evidence |
+| Treating generated health output as the conclusion | Connect evidence to the customer symptom and trace causation |
+| Guessing alternate host paths | Use the ready launch workspace or the documented host launch link |
+
+## Quick reference
+
+- [[Support Bundles Cheatsheet]]
+- [[GHES Cheatsheet]]
+- [[Splunk Cheatsheet]]
+- [[Kusto-KQL Cheatsheet]]
+- [[SSH Cheatsheet]]
