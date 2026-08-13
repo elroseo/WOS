@@ -116,6 +116,24 @@ Melanie recommended learning from Tanya's organization and note-taking practices
 - Ticket work provides practical exposure to customer context, investigation flow, ownership boundaries, and escalation decisions.
 - The next useful step is to reproduce a known investigation workflow and explain the evidence chain, not only run the query.
 
+
+### Key findings from transcript review
+
+- Escalation should be evidence-first. Customer urgency alone does not make an engineering escalation actionable.
+- Investigate broadly enough to avoid confirmation bias. Check related errors, request IDs, routes, traffic patterns, historical incidents, and alternative explanations before concluding root cause.
+- Reusable investigations can become proactive monitoring. Validate a Splunk search first, then consider saving it as an account-specific alert with an owner, cadence, threshold, and response.
+- Ownership discovery may require parallel outreach to multiple plausible teams or subject-matter experts until the responsible component is confirmed.
+- Request IDs, API routes, traffic patterns, and rate-limit indicators are strong escalation artifacts.
+- Use existing resources before escalating: LLM Assist, prior tickets, Support Knowledge Base guidance, Slack discussions, public search, and recognized subject-matter experts.
+- Account risk can appear before a ticket through repeated upgrade delays, unsupported versions, execution blockers, major infrastructure changes, and weak operational readiness.
+- Support calls are primarily for clarifying impact and gathering evidence. Deeper troubleshooting generally continues offline.
+
+### Transcript-derived follow-up discussed
+
+- Tanya planned to continue investigating the Anthropic merged-batch push failures with broader Splunk searches and historical incidents.
+- If the evidence supports an infrastructure problem, document the findings and escalate with the evidence chain.
+- Review the investigation results and engineering issue approach together afterward.
+
 ## Action items
 - [ ] Reproduce the secondary rate-limit investigation workflow with a safe practice example.
 - [ ] Learn how to create, validate, and manage a query-based operational alert.

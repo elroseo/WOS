@@ -25,6 +25,16 @@ Mapped to my [[Goals]] and the 6 CRE pillars.
 - What separates a good CRE health check from a box-ticking one?
 - How do you run a customer situation / incident - first move and cadence?
 
+
+### Guidance captured from Carlos Naranjo, August 13, 2026
+
+- Escalation judgment is contextual. Use time thresholds as practical heuristics rather than rigid rules.
+- Consider escalation when an investigation is likely to exceed a couple of hours.
+- For an urgent or high-priority case, investigate for about 30 minutes, consult available colleagues, and escalate if there is still no direction.
+- Make escalations actionable with impact, timestamps, request IDs, exact errors, customer activity, troubleshooting attempted, and a clear engineering question.
+- Validate UI or staff-tool indicators against another source before assigning ownership or root cause.
+- Related reference: [[Investigation and Escalation Judgment]].
+
 ## Program / account health (Program pillar)
 
 - What signals tell you an account is drifting *before* it shows up in tickets?
