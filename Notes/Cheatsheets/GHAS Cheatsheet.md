@@ -1,4 +1,31 @@
+---
+tags:
+  - ghas
+  - security
+  - ghec
+  - ghes
+  - cheatsheet
+audience: CRE
+updated: 2026-08-13
+---
+
 # GHAS - GitHub Advanced Security
+
+## Scope and when to use this
+
+Use this cheatsheet when a customer asks about enabling, licensing, or troubleshooting GitHub Advanced Security (GHAS) features - code scanning, secret scanning, push protection, Dependabot, or security overview - on GHEC or GHES. For the underlying platform differences that affect GHAS availability, see [[GHEC vs GHES Cheatsheet]].
+
+**Platform scope:** Applies to both GHEC and GHES. Where behavior differs, it is called out per feature and in the GHES version table at the end.
+
+## Prerequisites and access
+
+- Organization owner or enterprise admin access (customer-side) to view or change GHAS settings.
+- A valid GHAS license/entitlement for the org or enterprise - GHAS is an add-on, not included in the base Enterprise license.
+- For GHES: Management Console access, and SSH/appliance access if you need to check configuration at the appliance level (see [[GHES Cheatsheet]]).
+
+## Safety and read-only boundary
+
+CRE's role here is diagnostic and advisory. Enabling or disabling GHAS features, changing security policies, or modifying repository/org settings are customer admin actions performed in their own tenant. Don't make these changes on a customer's production instance yourself - walk them through the steps, or use a sandbox/non-production org if you need to demonstrate the flow.
 
 ## What is GHAS?
 
@@ -147,18 +174,47 @@ Enterprise and org-level dashboards showing:
 
 ---
 
-## Enabling GHAS
+## Quick task: enable GHAS for a repository
+
+Use this when a customer asks "how do I turn on GHAS" or you need to walk them through the enablement path.
 
 ### GHEC
-1. Enterprise settings > Policies > enable GHAS
-2. Org settings > Security > enable for all/selected repos
-3. Per-repo: Settings > Security > enable individual features
+
+1. **Enterprise settings > Policies** - confirm GHAS is allowed at the enterprise policy level.
+2. **Org settings > Security** - enable GHAS for all repositories, or select specific repositories.
+3. **Per-repo: Settings > Security** - enable individual features (code scanning, secret scanning, push protection, Dependabot) if they aren't already turned on at the org level.
 
 ### GHES
-1. Management Console > Security > enable GHAS
-2. Same org/repo-level settings as GHEC
-3. Ensure Actions is enabled (required for code scanning)
-4. Ensure adequate runner capacity
+
+1. **Management Console > Security** - enable GHAS at the appliance level (requires a valid GHAS license applied to the instance).
+2. **Org/repo settings** - same navigation as GHEC, once GHAS is enabled at the appliance level.
+3. **Confirm Actions is enabled** - code scanning runs as an Actions workflow; without Actions enabled, code scanning cannot run.
+4. **Confirm runner capacity** - CodeQL analysis is resource-intensive (8GB+ RAM, 2+ cores recommended); insufficient runner capacity causes scans to queue or fail.
+
+### Expected result
+
+The repository's Security tab shows the enabled features with an active status, and code scanning/secret scanning start running on the next push or scheduled scan. On GHES, the Management Console should also show a valid GHAS license.
+
+### Verify
+
+- Repo Security tab shows the feature as **enabled**, not just "available."
+- Check a recent (or trigger a test) push and confirm a code scanning/secret scanning result appears in the Security tab.
+- For push protection, confirm a test secret is blocked at `git push` - use a placeholder/test pattern, never a real credential.
+
+### Errors and recovery
+
+| Symptom | Likely cause | Next step |
+|---|---|---|
+| Feature toggle is greyed out | Missing GHAS license, or below the required GHES version | Check license status and compare the customer's GHES version against the feature table below |
+| Code scanning never runs | Actions not enabled, or (on older GHES versions) no workflow file present | Confirm Actions is enabled; check for a CodeQL workflow file if the version predates default setup |
+| Enabled but no alerts appear | First scan hasn't completed yet, or the branch/path is excluded | Check the workflow run status; check any `codeql-config.yml` exclusions |
+| Dependabot alerts missing on GHES | GitHub Connect not enabled/syncing | Verify GitHub Connect status; air-gapped instances need a manual advisory import |
+
+### Stop and escalate if
+
+- The customer reports a licensing entitlement mismatch (feature enabled in the UI, but billing shows no GHAS seats) - escalate to the account team, this is not a technical fix.
+- Management Console shows GHAS as licensed but the toggle still fails to enable - escalate to GitHub Support with a support bundle.
+- Anyone asks you to help bypass push protection for a real, currently-valid secret - don't assist; direct them to rotate the credential first, then address the block.
 
 ---
 
@@ -173,3 +229,15 @@ Enterprise and org-level dashboards showing:
 | 3.8 | Dependabot security/version updates |
 | 3.9 | Code scanning default setup |
 | 3.10+ | Copilot Autofix, grouped Dependabot |
+
+---
+
+## Related links
+
+- [[GHEC vs GHES Cheatsheet]] - platform differences that affect GHAS availability
+- [[GHES Cheatsheet]] - `ghe-*` admin commands and Management Console access
+- [About GitHub Advanced Security](https://docs.github.com/en/enterprise-cloud@latest/get-started/learning-about-github/about-github-advanced-security)
+
+## Freshness note
+
+GHAS feature availability and licensing details change frequently, and GHAS product naming/packaging has evolved over time (for example, into separate Code Security and Secret Protection offerings). Verify current entitlements and feature availability against the customer's specific GHES release and enterprise license before advising, rather than relying solely on the version table above. Last reviewed: 2026-08-13.

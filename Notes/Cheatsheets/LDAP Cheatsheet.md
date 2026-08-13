@@ -1,8 +1,22 @@
+---
+tags:
+  - ldap
+  - authentication
+  - ghes
+  - troubleshooting
+  - cheatsheet
+  - runbook
+audience: cre
+updated: 2026-08-13
+---
+
 # LDAP Cheatsheet
 
-## What is LDAP?
+## What this is and when to use it
 
-LDAP (Lightweight Directory Access Protocol) is a protocol for accessing and managing directory services. A directory is a hierarchical database that stores information about users, groups, computers, and other resources in an organization. Think of it like a company's address book that applications can query to look up who someone is, what groups they belong to, and whether their password is correct. Microsoft's Active Directory is the most common LDAP-compatible directory.
+LDAP (Lightweight Directory Access Protocol) is a protocol for accessing and managing directory services. A directory is a hierarchical database that stores information about users, groups, computers, and other resources in an organization. Microsoft's Active Directory is the most common LDAP-compatible directory.
+
+Use this runbook when a customer configures GHES to authenticate against their corporate directory and reports sign-in failures, sync problems (users/team memberships not updating), or LDAPS certificate issues.
 
 ## How it's typically used
 
@@ -13,7 +27,65 @@ LDAP (Lightweight Directory Access Protocol) is a protocol for accessing and man
 
 ## How it relates to GHES
 
-GHES supports LDAP as an authentication method, allowing customers to sign into GitHub with their corporate credentials. GHES can sync users and teams from LDAP groups automatically. Common CRE scenarios include helping customers configure LDAP settings (base DN, search filters, attribute mapping), troubleshooting authentication failures using `ghe-ldap-test` and `/var/log/github/auth.log`, debugging LDAPS certificate issues, and resolving LDAP sync problems where users or team memberships aren't updating correctly.
+GHES supports LDAP as an authentication method, allowing customers to sign in with their corporate credentials, and can sync users and teams from LDAP groups automatically. Common CRE scenarios: helping customers configure LDAP settings (base DN, search filters, attribute mapping), troubleshooting authentication failures, debugging LDAPS certificate issues, and resolving LDAP sync problems.
+
+## Prerequisites
+
+- Network reachability from your investigation host to the customer's LDAP server (or SSH access to the GHES appliance if testing from there).
+- Bind credentials if an authenticated search is needed; anonymous search is not always permitted.
+- For GHES-side auth-failure investigation: SSH access to the appliance and read access to `/var/log/github/auth.log`.
+
+## Platform scope
+
+- **Any LDAP/Active Directory environment**: the `ldapsearch`/`ldapadd`/`ldapmodify`/`ldapdelete` commands below are general LDAP tooling and apply to any directory, customer-managed or otherwise.
+- **GHES appliance**: GHES connects to the customer's LDAP server as a client; it does not run its own LDAP directory. LDAP authentication settings are configured through the GHES Management Console (Site admin > Management Console > Authentication > LDAP), not by hand-editing files on the appliance. For CLI-based connection testing, GHES documents a dedicated `ghe-ldap-test` utility, but this file does not have verified flag syntax for it; check the current version's [GHES command-line utilities](https://docs.github.com/en/enterprise-server@latest/admin/administering-your-instance/administering-your-instance-from-the-command-line/command-line-utilities) reference before running it.
+
+## Safety and read-only boundary
+
+> [!warning] Default to ldapsearch
+> `ldapsearch` (with or without a bind) is read-only. `ldapadd`, `ldapmodify`, and `ldapdelete` mutate the customer's directory: they can create, change, or remove real accounts and group memberships. Do not run these against a customer's production directory without explicit authorization; this is customer identity data, not a GHES-managed resource, so any write needs the customer's own directory administrators, not just Support/Engineering sign-off.
+
+## Quick procedure (read-only triage)
+
+1. Confirm the symptom: sign-in failure, stale group membership after sync, or an LDAPS certificate/handshake error.
+2. Test basic connectivity: `telnet <host> 389` (or `636` for LDAPS) to rule out network/firewall issues before touching LDAP semantics.
+3. Run an anonymous or authenticated search for the affected user to confirm the entry exists and has the expected attributes:
+   - Anonymous: `ldapsearch -x -H ldap://ldap.example.com -b "dc=example,dc=com" "(uid=jdoe)"`
+   - Authenticated: add `-D "cn=admin,dc=example,dc=com" -W`
+4. For Active Directory, confirm the attribute mapping (`sAMAccountName`, `mail`/`userPrincipalName`, `memberOf`) matches what GHES expects; see the AD search example below.
+5. For LDAPS, verify the certificate chain independently (see [[SSL TLS Cheatsheet]]) before assuming an LDAP configuration problem.
+6. On the GHES side, check `/var/log/github/auth.log` for the exact rejection reason (bind failure, no such entry, size limit, timeout).
+7. If GHES's own connection test is needed, use the documented `ghe-ldap-test` utility per the current version's docs (see Platform scope above); don't guess its flags.
+
+## GUI steps
+
+GHES: LDAP settings (server URL, encryption, bind DN, search base/filters, attribute mapping) are configured in the Management Console under **Site admin > Management Console > Authentication > LDAP**. The Management Console includes a test/verify step before saving; exact labels vary by version, so confirm against the current version's [Using LDAP](https://docs.github.com/en/enterprise-server@latest/admin/managing-iam/using-ldap-for-enterprise-iam/using-ldap) docs. Saving settings triggers a config-apply and brief service restart.
+
+## Expected output / success criteria
+
+- `ldapsearch` returns exactly one entry for a known user, with the attributes the customer's GHES config depends on populated (not blank).
+- The bind (if authenticated) succeeds without an "Invalid credentials" error.
+- For AD, `memberOf` includes the group(s) the customer expects to map to GHES teams.
+
+## Validation / cross-check
+
+- Cross-check a "user can't sign in" report against `/var/log/github/auth.log` on GHES; a successful `ldapsearch` from your workstation does not guarantee GHES's own bind/search succeeds with the same result (different network path, different bind identity, different filter).
+- For sync problems, confirm the specific attribute or group membership in the directory itself via `ldapsearch` before assuming GHES's sync logic is at fault.
+- For LDAPS certificate errors, validate the chain independently with `openssl` (see [[SSL TLS Cheatsheet]]) rather than relying only on the LDAP client's error message.
+
+## Errors and recovery
+
+| Issue | What to check |
+|---|---|
+| Can't connect | Check hostname, port, firewall. Try `telnet host 389` |
+| Invalid credentials | Verify bind DN format and password |
+| No results | Check base DN and search filter. Try broader filter like `(objectClass=*)` |
+| Certificate error (LDAPS) | Check CA cert; see [[SSL TLS Cheatsheet]] for chain verification |
+| Size limit exceeded | Add `-z` flag, or ask the directory admin to increase the server limit |
+
+## Stop / escalate
+
+Escalate when the fix requires a write to the customer's directory (new entry, attribute change, deletion), since that's the customer's identity data and outside normal CRE scope, when GHES-side LDAP config changes are needed and the customer needs guidance beyond what the docs cover, or when `/var/log/github/auth.log` shows an error you can't attribute to a known cause. See [[Investigation and Escalation Judgment]] for thresholds and the evidence to collect first.
 
 ---
 
@@ -139,6 +211,9 @@ ldapsearch -x -H ldap://dc.company.com \
 
 ## Modifying entries
 
+> [!danger] Customer impact: writes to a live directory
+> `ldapadd`, `ldapmodify`, and `ldapdelete` create, change, or remove real entries in the customer's directory. This is the customer's own identity infrastructure, not something GHES manages. Do not run these against a customer's production directory; any legitimate write request should go through the customer's own directory administrators.
+
 ### Add an entry
 
 ```bash
@@ -184,20 +259,14 @@ mail: jane.doe@example.com
 
 ---
 
-## Troubleshooting
-
-| Issue | What to check |
-|---|---|
-| Can't connect | Check hostname, port, firewall. Try `telnet host 389` |
-| Invalid credentials | Verify bind DN format and password |
-| No results | Check base DN and search filter. Try broader filter like `(objectClass=*)` |
-| Certificate error (LDAPS) | Check CA cert. Use `LDAPTLS_REQCERT=never` to skip (testing only) |
-| Size limit exceeded | Add `-z` flag or ask admin to increase server limit |
-
----
-
-## Quick reference links
+## Related notes and docs
 
 - [ldapsearch man page](https://linux.die.net/man/1/ldapsearch)
 - [LDAP filter syntax (RFC 4515)](https://datatracker.ietf.org/doc/html/rfc4515)
 - [Active Directory LDAP reference](https://learn.microsoft.com/en-us/windows/win32/ad/active-directory-domain-services)
+- [Using LDAP for GHES](https://docs.github.com/en/enterprise-server@latest/admin/managing-iam/using-ldap-for-enterprise-iam/using-ldap)
+- [[SSL TLS Cheatsheet]] · [[GHES Cheatsheet]]
+
+## Freshness note
+
+Restructured as a CRE runbook on 2026-08-13. `ldapsearch`/`ldapadd`/`ldapmodify`/`ldapdelete` syntax is standard OpenLDAP client tooling. `ghe-ldap-test` exact flags were not verified in this pass; confirm against the current GHES version's command-line utilities docs before using it.

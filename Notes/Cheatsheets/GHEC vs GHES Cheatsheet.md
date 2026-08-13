@@ -1,4 +1,21 @@
+---
+tags:
+  - ghec
+  - ghes
+  - reference
+  - cheatsheet
+audience: CRE
+updated: 2026-08-13
+---
+
 # GitHub Enterprise Cloud vs GitHub Enterprise Server
+
+> [!note] Reference/orientation document
+> This is a conceptual comparison, not a step-by-step procedure. Use it to quickly orient on GHEC vs GHES differences and decide which platform-specific cheatsheet to open next - [[GHES Cheatsheet]] for appliance administration, [[GHAS Cheatsheet]] for security features, or [[Git and GitHub Cheatsheet]] for day-to-day Git/GitHub usage.
+
+## Scope and when to use this
+
+Use this when you need a quick orientation on how GHEC and GHES differ (hosting, updates, auth, troubleshooting ownership) before diving into a platform-specific cheatsheet. **Platform scope:** covers both GHEC and GHES at a conceptual level; it does not replace version-specific feature availability, which changes over time - verify current details against official docs or the customer's specific release before advising.
 
 ## Quick Comparison
 
@@ -99,3 +116,16 @@
 - GHES releases: 3.x series (check [enterprise.github.com](https://enterprise.github.com) for latest)
 - GHEC: continuously deployed
 - Feature flags may gate new features on both platforms
+
+---
+
+## Related links
+
+- [[GHES Cheatsheet]] - `ghe-*` admin commands and appliance access
+- [[GHAS Cheatsheet]] - security feature availability by platform/version
+- [[Git and GitHub Cheatsheet]] - day-to-day Git/GitHub usage and CRE troubleshooting
+- [GitHub Enterprise Importer (GEI) docs](https://docs.github.com/en/enterprise-cloud@latest/migrations/using-github-enterprise-importer) - for GHES to GHEC migration questions
+
+## Freshness note
+
+Feature parity between GHEC and GHES narrows with every GHES release. Treat the "Key Differences" and version notes here as directional, and confirm current feature availability against official docs or the customer's specific GHES release before advising. Last reviewed: 2026-08-13.

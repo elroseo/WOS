@@ -1,10 +1,38 @@
+---
+tags:
+  - git
+  - github
+  - cheatsheet
+  - troubleshooting
+audience: CRE
+updated: 2026-08-13
+---
+
 # Git and GitHub Cheatsheet
 
-## What is Git?
+## Scope and when to use this
+
+This cheatsheet covers two different things, kept in separate parts below:
+
+- **Part 1: Normal developer workflow** - the everyday Git/GitHub commands and process any engineer uses (issue → branch → commit → PR → review → merge).
+- **Part 2: CRE troubleshooting workflow** - how to diagnose a customer's broken clone/push/pull/auth against github.com or GHES. This is a different mode: you're isolating a failure, not writing code.
+
+Use Part 1 as a command reference. Use Part 2 when a customer reports they can't connect, authenticate, or push/pull.
+
+## Prerequisites and access
+
+- Git installed locally, and the GitHub CLI (`gh`) if you want to use the `gh` command examples.
+- For Part 2 (troubleshooting): the customer's remote URL/hostname, and enough context to know whether they're on github.com or GHES.
+
+## What is Git and GitHub?
 
 Git is a version control system that tracks changes to files over time. It lets you save snapshots of your work (commits), create separate lines of development (branches), and collaborate with others by merging changes together. Every developer on a project has a full copy of the history on their machine.
 
 **GitHub** is the cloud platform built on top of Git. It adds collaboration features like pull requests, issues, code review, and CI/CD. The **GitHub CLI** (`gh`) lets you do most GitHub tasks from your terminal.
+
+## Platform scope
+
+GHES runs a full GitHub instance on a customer's own infrastructure. Git commands work the same way, but remotes point to the GHES hostname instead of github.com. The `gh` CLI works with GHES too (authenticate with `gh auth login --hostname your-ghes.com`). As a CRE, you may help customers troubleshoot Git connectivity, authentication, and push/pull issues against their GHES instance - see Part 2 below.
 
 ## How it's typically used
 
@@ -13,13 +41,9 @@ Git is a version control system that tracks changes to files over time. It lets 
 - Code review through pull requests before merging
 - Releasing and tagging versions
 
-## How it relates to GHES
-
-GHES runs a full GitHub instance on your own infrastructure. Git commands work the same way, but remotes point to your GHES hostname instead of github.com. The `gh` CLI works with GHES too (authenticate with `gh auth login --hostname your-ghes.com`). As a CRE, you may help customers troubleshoot Git connectivity, authentication, and push/pull issues against their GHES instance.
-
 ---
 
-## The typical development workflow
+## Part 1: Normal developer workflow
 
 Here's how Git and GitHub fit together in a real project, from start to finish:
 
@@ -131,6 +155,48 @@ Repeat
 ```
 
 ---
+
+## Part 2: CRE troubleshooting workflow
+
+Use this when a customer reports they can't clone, push, pull, or authenticate against GitHub.com or GHES. This is different from Part 1 above: here you are isolating a broken connection or permission problem, not writing code.
+
+**Platform scope:** Works the same way for github.com and GHES, except the remote hostname (and possibly the SSH port, if the customer has changed defaults) differ. Git-over-SSH uses port 22; GHES appliance admin SSH is a separate connection on port 122 (see [[SSH Cheatsheet]] and [[GHES Cheatsheet]]) and is not the same thing as a customer's Git-over-SSH port.
+
+**Safety and read-only boundary:** Start with read-only diagnostic commands (`git remote -v`, `git ls-remote`, `gh auth status`, `ssh -T`). Don't run destructive commands (`git push --force`, `git reset --hard`, branch deletion) against a customer's repository without their explicit confirmation, and don't perform them on their behalf without them present.
+
+### Quick task: diagnose a clone/push/pull failure
+
+1. **Confirm the remote URL** - `git remote -v`. Check the hostname matches github.com or the customer's GHES hostname, and that the protocol (HTTPS vs SSH) matches what they intend to authenticate with.
+2. **Test connectivity without touching the repo** - `git ls-remote <url>` (read-only; lists refs without cloning). For SSH: `ssh -T git@<hostname>` (see [[SSH Cheatsheet]]).
+3. **Check authentication state** - `gh auth status` for HTTPS/CLI-based auth. For SSH, confirm the key is loaded (`ssh-add -l`) and the matching public key is registered on the account or appliance.
+4. **Reproduce the exact failing command** with `-v`, or `GIT_TRACE=1 git <command>` for verbose output, to see where it fails: DNS, TCP, TLS/SSH handshake, or authorization.
+5. **Compare the error message** against the table below to classify the failure.
+
+**Expected result:** You can classify the failure as network/connectivity, authentication, or authorization (permission), and give the customer a specific next step instead of a generic "try again."
+
+**Verify:** Once the customer applies a fix (new key, corrected remote URL, restored permissions), re-run `git ls-remote <url>` or push to a scratch branch to confirm before closing the ticket.
+
+### Errors and recovery
+
+| Symptom | Likely cause | Next step |
+|---|---|---|
+| `remote: Support for password authentication was removed` | Customer is using a password instead of a token/SSH key over HTTPS | Have them run `gh auth login`, or use a personal access token |
+| `Permission denied (publickey)` | SSH key not loaded, not registered, or wrong key used | See [[SSH Cheatsheet]] troubleshooting section |
+| `fatal: repository not found` | Wrong URL, typo, or the authenticated account/token lacks access to that repo | Confirm the remote URL and that the authenticated account has access |
+| `Could not resolve host` | DNS/network issue, VPN not connected, or wrong GHES hostname | Confirm the customer is on the required network path to reach the GHES hostname |
+| `! [rejected] ... (fetch first)` / non-fast-forward push rejected | Local branch is behind the remote | `git pull --rebase` (or merge) before pushing again; don't force-push without the customer's explicit confirmation |
+
+### Stop and escalate if
+
+- The failure looks like it's inside GHES infrastructure (5xx errors, service unavailable, appliance-side auth backend down) rather than the client - move to [[GHES Cheatsheet]] and consider a support bundle investigation ([[Support Bundles Cheatsheet]]).
+- The customer needs a force-push or history rewrite on a shared branch - confirm with them explicitly and make sure they understand the impact; this is their decision to make on their own repository, not something CRE performs for them.
+- Authentication fails against an SSO-protected org and the standard `gh auth login` flow doesn't resolve it - escalate rather than guessing at a workaround.
+
+---
+
+## Command reference (quick lookup tables)
+
+Everyday Git/GitHub commands, grouped by task. This is normal developer workflow reference (Part 1 above), not the troubleshooting workflow in Part 2.
 
 ## Setup
 
@@ -310,3 +376,14 @@ Then use `git st`, `git co`, `git br`, `git lg`.
 - [Git docs](https://git-scm.com/doc)
 - [GitHub CLI manual](https://cli.github.com/manual/)
 - [GitHub Docs](https://docs.github.com)
+
+## Related links
+
+- [[SSH Cheatsheet]] - key management and connectivity troubleshooting for Git-over-SSH
+- [[GHES Cheatsheet]] - `ghe-*` admin commands and appliance access
+- [[GHEC vs GHES Cheatsheet]] - platform differences that affect auth and troubleshooting
+- [[Support Bundles Cheatsheet]] - when a connectivity issue points to appliance-side infrastructure
+
+## Freshness note
+
+Core Git commands and the PR/review workflow are stable. `gh` CLI flags and GHES auth behavior can change between releases - if a command in Part 1 or Part 2 doesn't match what you observe, check `gh --version` and the customer's GHES release notes. Last reviewed: 2026-08-13.

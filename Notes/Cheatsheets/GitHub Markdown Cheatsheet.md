@@ -1,4 +1,21 @@
+---
+tags:
+  - markdown
+  - github
+  - reference
+  - cheatsheet
+audience: CRE
+updated: 2026-08-13
+---
+
 # GitHub Markdown Cheatsheet
+
+> [!note] Reference document
+> This is a syntax reference, not a procedure guide. Use it to look up GitHub Flavored Markdown (GFM) syntax while writing issues, PRs, READMEs, or notes.
+
+## Scope and when to use this
+
+Use this when writing or reviewing Markdown in a GitHub context - issues, pull requests, comments, wikis, discussions, gists, or README files. **Platform scope:** covers GitHub Flavored Markdown (GFM) as rendered on github.com and GHES; also notes where Obsidian's rendering differs. **Prerequisites:** none - any place you can type Markdown on GitHub.
 
 ## What is GitHub Flavored Markdown?
 
@@ -370,3 +387,11 @@ GitHub renders LaTeX math via MathJax in Markdown files, issues, and PRs.
 - [Working with advanced formatting](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting)
 - [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
 - [CommonMark reference](https://commonmark.org/help/)
+
+## Related links
+
+- [[Git and GitHub Cheatsheet]] - where Markdown shows up in the PR/issue workflow
+
+## Freshness note
+
+GFM syntax is stable and rarely changes. New alert types or rendering tweaks do occasionally ship - if something here doesn't render as described, check the quick reference links above for the current spec. Last reviewed: 2026-08-13.

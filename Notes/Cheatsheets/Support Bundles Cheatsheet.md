@@ -4,6 +4,7 @@ tags:
   - troubleshooting
   - support-bundles
   - cheatsheet
+audience: CRE
 updated: 2026-08-13
 ---
 
@@ -11,6 +12,23 @@ updated: 2026-08-13
 
 > [!summary] The rule to remember
 > **Start from the customer-visible symptom and a concrete timestamp or request.** Use general health signals to explain that evidence, not as a substitute for it. A dramatic anomaly is not a root cause until you can connect it to the reported impact.
+
+## What and when
+
+A GHES support bundle is a point-in-time capture of an appliance's logs, diagnostics, and configuration. Use this cheatsheet when investigating a reported GHES incident from an uploaded bundle, whether accessed through ESB Tools or forwarded to Splunk.
+
+## Prerequisites and auth
+
+- A support bundle uploaded and extracted for the affected appliance; see [[ESB Support Bundle Workflow]] for dashboard extraction and SSH access to the ESB shell host.
+- Alternatively, Splunk access if the bundle's data has been ingested into `index=prod-esbtools`; see [[Splunk Cheatsheet]] for authentication.
+
+## Platform scope
+
+This cheatsheet covers **GHES support bundles only**. GHES appliance identifiers (repo_id, org_id, user_id) are independent from GitHub.com identifiers and can collide; never join GHES bundle data to GHEC/dotcom datasets. For GHEC-side investigation, use the appropriate GHEC telemetry source instead (see [[Splunk Cheatsheet]] platform scope and [[Kusto-KQL Cheatsheet]]).
+
+## Safety and read-only boundary
+
+Reading a support bundle (logs, diagnostics, metadata) is read-only and safe. This cheatsheet does not cover running commands against a live customer appliance; for that, and for which `ghe-*` commands are customer-impacting, see [[GHES Cheatsheet#Safety and read-only boundary]].
 
 ## First five minutes
 
@@ -93,6 +111,12 @@ Check the diagnostics before interpreting any log:
 8. **Test counter-hypotheses.** State at least one plausible alternative and what evidence supports or weakens it.
 9. **Check version-specific prior art.** Similar symptoms can have different mechanisms across GHES releases.
 10. **Separate findings.** Distinguish the incident mechanism, possible upstream cause, ruled-out hypotheses, and unrelated health risks.
+
+**Success criteria:** a completed pass through this workflow produces at least one finding using the template below, with a stated confidence label, cited evidence path, and a counter-hypothesis considered. An investigation that stops at "here is an anomaly" without connecting it to the reported symptom has not met success criteria.
+
+## GUI procedure
+
+The primary supported interface for bundle investigation is CLI-based (SSH into the ESB shell host, then `zgrep`/`jq`/`rg` as shown below). A bundle dashboard UI also exists and can generate a self-service report, but its detailed navigation is not documented in this vault; use it only for the extraction-status check described in [[ESB Support Bundle Workflow]], and treat its generated report as a starting inventory, not a substitute for the CLI investigation in this cheatsheet.
 
 ## Evidence and confidence
 
@@ -226,11 +250,28 @@ For cluster or geo-replication configurations, use the documented `ghe-cluster-s
 
 Do not use a weekly health threshold alone to explain a specific incident.
 
+## Stop and escalate
+
+Escalate rather than continuing to search the bundle alone when:
+
+- The bundle cannot cover the incident window (see the retention and coverage checks above) and no alternative source (Splunk, a second bundle, customer-forwarded logs) is available.
+- Evidence points to a platform bug rather than a customer configuration or workload issue.
+- A finding requires an internal flag change or an engineering-managed service change; route that to engineering rather than recommending it directly.
+- The investigation has run past the customer's urgency window with no credible next step.
+
+Apply the general investigation and escalation judgment in [[Investigation and Escalation Judgment]], including building an evidence chain (timestamp, exact error, what was tried, current hypothesis) before escalating.
+
 ## Quick reference
 
 - [[ESB Support Bundle Workflow]]: accessing an extracted bundle through ESB Tools
 - [[GHES Cheatsheet]]
 - [[Splunk Cheatsheet]]
 - [[Kusto-KQL Cheatsheet]]
+- [[Health Check Runbook]] - repeatable multi-pillar evidence collection built on this methodology
+- [[Investigation and Escalation Judgment]]
 - [Providing data to GitHub Support, GHES 3.20](https://docs.github.com/en/enterprise-server@3.20/support/contacting-github-support/providing-data-to-github-support)
 - [GHES command-line utilities](https://docs.github.com/en/enterprise-server@3.20/admin/administering-your-instance/administering-your-instance-from-the-command-line/command-line-utilities)
+
+## Freshness note
+
+Log formats, field names, and bundle contents drift between GHES releases. Verify the bundle's version before reusing a parsing pattern, and confirm the linked docs still match the customer's release series. Reviewed 2026-08-13.
