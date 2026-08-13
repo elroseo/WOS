@@ -1,243 +1,365 @@
 # Splunk Cheatsheet
 
-## What is Splunk?
+Splunk searches machine-generated events with Search Processing Language (SPL). For GitHub investigations, the most important habits are simple: confirm the platform, choose the correct data source, constrain time and scope early, inspect sample events, then aggregate.
 
-Splunk is a platform for searching, monitoring, and analyzing machine-generated data - primarily logs. It ingests data from many sources, indexes it, and lets you query it with **SPL** (Search Processing Language). Like KQL, SPL is a piped language: a search starts by selecting events, then flows them through commands separated by `|`, each refining or transforming the result. Splunk's strengths are full-text search across heterogeneous logs, real-time alerting, field extraction from unstructured text, and dashboards.
+## Platform and data-source split
 
-## How it's typically used
+Do not treat all GitHub logs as one dataset.
 
-- Centralized log aggregation from many hosts and services
-- Searching unstructured/semi-structured logs by keyword and field
-- Building alerts on error conditions and thresholds
-- Correlating events across systems by shared fields
-- Operational dashboards and reporting
+| Context | Starting point | Important distinction |
+| ------- | -------------- | --------------------- |
+| GitHub Enterprise Cloud (GHEC) staff telemetry | GitHub internal Splunk indexes such as `rails`, `prod-exceptions`, `prod-resque`, `catchall`, `glb`, or service-specific indexes | Index and field availability vary by service and stamp. Discover before assuming. |
+| GitHub Enterprise Server (GHES) support bundles | `index=prod-esbtools` with `host`, `bundle_id`, or `splunk_ingest_id` plus an `esb_*` sourcetype | This is appliance data extracted from uploaded support bundles. |
+| Customer-forwarded GHES logs | The customer's Splunk index and sourcetype conventions | GitHub cannot assume index names such as `ghes` or `github_auth`. Ask the customer how forwarding is configured. |
 
-## How it relates to GHES
+> **Critical:** GHES appliance identifiers are independent from GitHub.com identifiers. A GHES `repo_id`, `org_id`, or `user_id` can collide with an unrelated dotcom identifier. Never join GHES appliance IDs to GHEC snapshot tables.
 
-GHES customers frequently forward their instance logs to Splunk via **log forwarding** (syslog forwarding configured in the Management Console / `ghe-config`). This means that when investigating a GHES issue you may be searching the same logs you'd find in a support bundle (`github-logs`, `babeld-logs`, `haproxy`, `auth.log`, audit log) - but live, searchable, and correlated across time in Splunk. As a CRE, knowing SPL lets you find auth failures, 500 spikes, and audit events in a customer's Splunk far faster than scrolling raw files. Key skills: filter by `index`/`sourcetype`/`host` early, extract fields, and use `stats`/`timechart` to quantify.
+## Reliable investigation workflow
 
-> **GHES tie-in:** GHES forwards logs over syslog. In Splunk these usually arrive under a dedicated `index` and split by `sourcetype` (e.g. the originating log file). Always scope your search to the right `index` and time range first.
+1. **Confirm the platform:** GHEC, GHES support bundle, or customer-forwarded GHES logs.
+2. **Pin the time:** Get the timestamp, timezone, start, end, and whether the symptom is ongoing.
+3. **Identify one scope key:** Host, bundle, repository, request ID, trace ID, actor, path, job ID, or service.
+4. **Discover the shape:** Run `head`, inspect available fields, and count sourcetypes or services.
+5. **Search the symptom:** Error text, status code, exception class, operation, or subsystem term.
+6. **Quantify:** Use `stats`, `timechart`, percentiles, and distinct counts.
+7. **Correlate:** Pivot using a stable identifier and a narrow time window.
+8. **Verify alternatives:** Check both platform-side and customer-side explanations before making a causal claim.
 
----
+## Authentication and execution
 
-## Anatomy of a search
+```bash
+python3 tools/splunk_auth.py --validate
 
-```spl
-index=ghes sourcetype=github_audit         <- 1. select events (+ implicit time range)
-  earliest=-1h latest=now                   <- 2. time bounds
-| search action=repo.destroy                <- 3. filter
-| stats count by actor                       <- 4. aggregate
-| sort -count                                <- 5. sort
-| head 20                                     <- 6. limit
+python3 tools/splunk_query.py \
+  --spl 'index=prod-esbtools host="<host>" | head 20' \
+  --earliest '-2h' --latest 'now' \
+  --max-results 20
 ```
 
-Events flow left-to-right; each `|` passes results to the next command. **The first line is the base search** - keep it as specific as possible (index, sourcetype, host, keywords) because it determines how much data Splunk scans.
+All repository Splunk tooling is read only. Commands that modify state, send email, write lookups, or export results through SPL are blocked.
 
----
+## Anatomy of an SPL search
 
-## Time range (set it first)
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_exceptions earliest=-2h latest=now
+| search (Error OR Exception OR timeout)
+| stats count by host
+| sort - count
+| head 20
+```
 
-| Token | Meaning |
-|---|---|
+- The base search appears before the first pipe.
+- Put indexed constraints such as `index`, `host`, `sourcetype`, and time in the base search.
+- Each pipe transforms the current result set.
+- Use `table` for inspection and `stats` or `timechart` for conclusions.
+
+## Time ranges
+
+| SPL | Meaning |
+| --- | ------- |
 | `earliest=-15m latest=now` | Last 15 minutes |
-| `earliest=-24h@h` | Last 24 hours, snapped to the hour |
-| `earliest=-7d@d` | Last 7 days, snapped to midnight |
-| `earliest="06/25/2026:14:00:00"` | Explicit timestamp |
-| `@d` / `@h` / `@m` | "Snap to" day / hour / minute boundary |
+| `earliest=-2h@h latest=now` | Last 2 hours, aligned to the hour |
+| `earliest=-24h@h latest=now` | Last 24 hours |
+| `earliest=-7d@d latest=@d` | Seven complete days ending today |
+| `earliest="08/13/2026:09:00:00" latest="08/13/2026:10:00:00"` | Explicit window |
 
-Or use the time-range picker in the UI - it applies the same bounds.
+Use a slightly wider window than the reported incident, then narrow after finding the first relevant event.
 
----
+## Core commands
 
+| Command | Use |
+| ------- | --- |
+| `search` | Filter by terms or extracted fields |
+| `where` | Filter with expressions or calculated conditions |
+| `fields` | Keep or remove fields from the result payload |
+| `table` | Display selected fields in a stable order |
+| `stats` | Aggregate counts, values, sums, and percentiles |
+| `timechart` | Show a metric over time |
+| `top` / `rare` | Find common or unusual values |
+| `eval` | Calculate or normalize fields |
+| `rex` | Extract a field from raw text with regex |
+| `bin` | Place timestamps or numeric values into buckets |
+| `dedup` | Remove duplicate events using a stable event key |
+| `sort` | Order results |
+| `head` | Limit result volume |
 
-## Core SPL commands
+Prefer `stats ... by <key>` over `transaction` or `join`. It is usually cheaper and easier to verify.
 
-| Command | What it does |
-|---|---|
-| `search` | Filter events (implicit as the first line) |
-| `where` | Filter using expressions/functions (`where len(x)>5`) |
-| `fields a, b` | Keep only these fields (speeds up search) |
-| `table a, b, c` | Output as a tidy table |
-| `rename a AS b` | Rename a field |
-| `eval new = expr` | Compute a new field |
-| `stats` | Aggregate (the workhorse) |
-| `timechart` | Aggregate over time (auto time-bucketed) |
-| `chart` | Aggregate into a matrix (by two dimensions) |
-| `top` / `rare` | Most / least common values |
-| `dedup field` | Remove duplicate events by field |
-| `sort -field` | Sort (`-` = descending) |
-| `head N` / `tail N` | First / last N results |
-| `rex` | Extract fields with regex |
-| `transaction` | Group related events into one |
-| `lookup` | Enrich with an external table |
+## Discovery searches
 
----
-
-## Filtering effectively
+### Discover GHES bundle hosts and bundles
 
 ```spl
-index=ghes sourcetype=github_auth host=ghe01 ("failed" OR "invalid")
-| where result="failure"
+index=prod-esbtools earliest=-14d latest=now
+| stats dc(bundle_id) as bundle_count latest(bundle_id) as latest_bundle values(ghes_version) as versions by host
+| sort - bundle_count
 ```
 
-| Technique | Example |
-|---|---|
-| Scope the base search | `index=ghes sourcetype=github_exceptions` |
-| Keyword (full text) | `index=ghes error` |
-| Field equality | `status=500` |
-| Boolean logic | `(500 OR 502) NOT 404` |
-| Wildcards | `host=ghe* path="/api/*"` |
-| Comparison (`where`) | `| where duration_ms > 2000` |
-
-> Adding `index`, `sourcetype`, and `host` to the base search is the single biggest performance win - it limits the buckets Splunk has to scan.
-
----
-
-## Aggregating with `stats`
+### Discover sourcetypes for one GHES appliance
 
 ```spl
-index=ghes sourcetype=github_request earliest=-1h
-| stats count AS total,
-        count(eval(status>=500)) AS errors,
-        avg(duration_ms) AS avg_ms,
-        p95(duration_ms) AS p95_ms
-        by host
-| eval error_rate = round(100*errors/total, 2)
-| sort -error_rate
+index=prod-esbtools host="<host>" earliest=-14d latest=now
+| stats count by sourcetype
+| sort - count
 ```
 
-| `stats` function | Result |
-|---|---|
-| `count` | Number of events |
-| `count(eval(<cond>))` | Conditional count |
-| `dc(field)` | Distinct count |
-| `sum(field)` / `avg(field)` | Sum / mean |
-| `min` / `max` / `median` | Extremes / median |
-| `p95(field)` / `perc95(field)` | 95th percentile |
-| `values(field)` / `list(field)` | Collect unique / all values |
-| `latest(field)` / `earliest(field)` | Most / least recent value |
-| `by field` | Group results (like GROUP BY) |
-
----
-
-## Time-series with `timechart`
+### Inspect sample events before assuming fields
 
 ```spl
-index=ghes sourcetype=github_exceptions earliest=-6h
-| timechart span=10m count by host
+index=prod-esbtools host="<host>" sourcetype=esb_production earliest=-1h latest=now
+| table _time host sourcetype _raw
+| head 20
 ```
 
-- `timechart` always buckets by `_time` automatically; use `span=5m`/`1h` to set granularity.
-- `by <field>` produces one series per value - great for spotting which host/service spiked.
-
----
-
-## Field extraction with `rex`
+### Discover values for a candidate field
 
 ```spl
-index=ghes sourcetype=haproxy
-| rex field=_raw "backend (?<backend>\S+) .* status (?<status>\d{3})"
-| stats count by backend, status
+index=prod-esbtools host="<host>" sourcetype=esb_babeld earliest=-1h latest=now
+| top limit=20 cmd
 ```
 
-- `rex` pulls named capture groups out of raw text into searchable fields.
-- Use when logs aren't already parsed into fields.
-- `(?<name>pattern)` defines a field called `name`.
+## Verified GHES support-bundle sourcetypes
 
----
+| Sourcetype | Primary use | Useful fields or terms |
+| ---------- | ----------- | ---------------------- |
+| `esb_exceptions` | Application exceptions | Exception class, error text, stack context |
+| `esb_production` | Rails application requests | Request path, controller, status, request ID, duration |
+| `esb_unicorn` | Web worker request load | Duration, CPU, queue and worker activity |
+| `esb_syslog` | Operating system and service logs | Service name, OOM, disk, kernel, restart messages |
+| `esb_haproxy` | Load-balancer traffic | Backend, frontend, status, queue, connection errors |
+| `esb_babeld` | Git transport | `repo`, `cmd`, `proto`, `duration_ms`, `fs_host`, `id`, `code`, `msg` |
+| `esb_gitmon` | Fileserver Git measurements | `request_id`, CPU, wall time, program, repository context |
+| `esb_resqued` | Background jobs | `gh.job.name`, `gh.job.active_job_id`, `gh.repo.id`, `TraceId`, `SpanId` |
+| `esb_mpstat` | CPU pressure | Host and CPU utilization samples |
 
-## Correlating events
+Schema varies by GHES version. Verify the fields present in each bundle.
+
+## GHEC staff telemetry starting points
+
+These are starting points, not universal routes. Confirm the owning service and current schema.
+
+| Starting search | Typical use |
+| --------------- | ----------- |
+| `index=rails` | GitHub.com web and API request activity |
+| `index=prod-exceptions` | Application and background-job exceptions |
+| `index=prod-resque` | Background-job execution |
+| `index=catchall gh.infra.app=<service>` | Service-specific application logs |
+| `index=glb` | Global load-balancer traffic and backend routing |
+| `index=alambic` | Object-storage proxy activity |
+| `index=catchall gh.infra.app=lfs-server` | Git Large File Storage service logs |
+| `index=rails path_info="/lfs/<owner>/<repo>/*"` | LFS requests routed through Rails |
+
+For data-resident GHEC, verify the stamp and regional Splunk endpoint before searching. Do not assume staffship telemetry contains resident customer data.
+
+## Common GitHub search terms
+
+Start with identifiers when available. Add symptom terms second.
+
+### Correlation and identity
+
+| Purpose | Terms and fields to try |
+| ------- | ----------------------- |
+| Request correlation | `request_id`, `request-id`, `X-GitHub-Request-Id`, `id`, `TraceId`, `SpanId`, `trace_id`, `correlation_id` |
+| Repository scope | `repo`, `repository`, `repo_id`, `repository_id`, `owner`, `network_id` |
+| Organization or enterprise | `org`, `organization_id`, `business_id`, `enterprise`, `customer_id` |
+| Actor scope | `actor`, `actor_id`, `user_id`, `login`, `fp_sha256`, `gh.auth.fingerprint` |
+| Host or deployment | `host`, `host.name`, `stamp`, `deployment.environment`, `service.name`, `gh.infra.app` |
+| Background job | `gh.job.name`, `active_job_class`, `gh.job.active_job_id`, `job_id`, `aqueduct_id`, `queue` |
+
+### Generic failures
+
+`error`, `exception`, `fatal`, `panic`, `failed`, `failure`, `timeout`, `deadline exceeded`, `context canceled`, `retry`, `exhausted`, `unavailable`
+
+### HTTP and API
+
+`400`, `401`, `403`, `404`, `409`, `422`, `429`, `500`, `502`, `503`, `504`, `rate limit`, `secondary limit`, `abuse`, `throttle`, `path_info`, `method`, `status`, `elapsed`, `duration`
+
+### Authentication and identity
+
+`SAML`, `SSO`, `SCIM`, `LDAP`, `OAuth`, `OIDC`, `2FA`, `login`, `session`, `token`, `signature`, `certificate`, `x509`, `TLS`, `expired`, `unauthorized`, `forbidden`, `permission denied`
+
+### Git transport
+
+`git-upload-pack`, `git-receive-pack`, `clone`, `fetch`, `push`, `packfile`, `ref`, `hook`, `pre-receive`, `spokes`, `babeld`, `gitmon`, `fs_host`, `duration_ms`, `auth_status`, `creason`
+
+### Actions and runners
+
+`workflow_run`, `workflow_job`, `runner`, `registration`, `queued`, `dispatch`, `pickup`, `heartbeat`, `lost communication`, `cancel`, `timeout`, `scale set`, `ARC`
+
+### Storage and repository data
+
+`disk full`, `no space left`, `read-only`, `object storage`, `alambic`, `LFS`, `blob`, `replica`, `quorum`, `checksum`, `corrupt`, `migration`, `restore`, `backup`
+
+### Performance and capacity
+
+`slow`, `latency`, `duration`, `queue`, `saturation`, `OOM`, `out of memory`, `killed process`, `CPU`, `load average`, `memory pressure`, `connection pool`, `circuit breaker`
+
+### Search and indexing
+
+`Elasticsearch`, `OpenSearch`, `index`, `shard`, `unassigned`, `cluster health`, `red`, `yellow`, `mapping`, `reindex`, `search timeout`
+
+### Networking
+
+`connection refused`, `connection reset`, `reset by peer`, `broken pipe`, `EOF`, `DNS`, `NXDOMAIN`, `TLS handshake`, `certificate verify`, `proxy`, `HAProxy`, `backend DOWN`, `no server available`
+
+## Common investigation patterns
+
+### Error volume by sourcetype
 
 ```spl
-// Group all events for a request into one transaction
-index=ghes (sourcetype=github_request OR sourcetype=babeld)
-| transaction request_id maxspan=30s
-| where eventcount > 1
+index=prod-esbtools host="<host>" (error OR exception OR fatal OR panic) earliest=-2h latest=now
+| stats count by sourcetype
+| sort - count
 ```
 
-| Tool | Use |
-|---|---|
-| `transaction <field>` | Stitch related events by a shared key + time window |
-| `join` | SQL-style join to a subsearch (use sparingly - costly) |
-| `lookup` | Enrich events with a static CSV/KV table |
-| `stats ... by <key>` | Often a faster alternative to `transaction` |
-
----
-
-## GHES investigation patterns
+### Exception classes
 
 ```spl
-// 1. Auth failures over time
-index=ghes sourcetype=github_auth earliest=-24h
-| timechart span=1h count(eval(result="failure")) AS failures
-
-// 2. 500 error spike, by endpoint
-index=ghes sourcetype=github_request status>=500 earliest=-6h
-| top limit=15 path
-
-// 3. Audit log - who deleted repos
-index=ghes sourcetype=github_audit action="repo.destroy"
-| table _time, actor, repo
-
-// 4. Slow Git operations (babeld)
-index=ghes sourcetype=babeld earliest=-1h
-| rex field=_raw "elapsed=(?<elapsed_ms>\d+)"
-| where elapsed_ms > 5000
-| table _time, host, elapsed_ms, _raw
-
-// 5. HAProxy backends going down
-index=ghes sourcetype=haproxy ("backend" AND ("DOWN" OR "no server"))
-| stats count by host, _raw
+index=prod-esbtools host="<host>" sourcetype=esb_exceptions earliest=-2h latest=now
+| rex field=_raw "(?<exception>[A-Za-z0-9_:]+(?:Error|Exception))"
+| stats count by exception
+| sort - count
+| head 25
 ```
 
----
+### HTTP status trend
 
-## Useful `eval` functions
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_haproxy earliest=-2h latest=now
+| timechart span=5m count by status
+```
+
+If `status` is not extracted, inspect `_raw` and use `rex` for the bundle's HAProxy format.
+
+### Slow request tail
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_unicorn earliest=-2h latest=now
+| stats count avg(duration) median(duration) perc95(duration) perc99(duration) max(duration) by host
+```
+
+Verify whether the duration field is measured in seconds or milliseconds before interpreting it.
+
+### Git fetch latency by repository
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_babeld cmd=git-upload-pack repo="<owner>/<repo>" earliest=-2h latest=now
+| rex "duration_ms=(?<d>[\d.]+)"
+| stats count perc95(d) perc99(d) max(d) by fs_host
+| sort - perc99(d)
+```
+
+### Git push failures
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_babeld cmd=git-receive-pack repo="<owner>/<repo>" earliest=-2h latest=now
+| search code!=0 OR auth_status=failed OR error OR failed
+| table _time id repo proto fs_host duration_ms prerx code msg creason
+| sort _time
+```
+
+### Background-job mix
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_resqued earliest=-2h latest=now
+| rex "gh\.job\.name=\"(?<job_name>[^\"]+)\""
+| top limit=25 job_name
+```
+
+### Follow one trace
+
+```spl
+index=prod-esbtools host="<host>" TraceId="<trace_id>" earliest=-15m latest=+15m
+| table _time sourcetype host.name service.name gh.job.name SpanId code.namespace code.function Body _raw
+| sort _time
+```
+
+### GHEC rate-limit reasons
+
+```spl
+index=rails gh.rate_limit.secondary.limit_reason=* earliest=-2h latest=now
+| top limit=20 gh.auth.fingerprint path_info gh.rate_limit.secondary.limit_reason
+```
+
+### GHEC LFS errors by status
+
+```spl
+index=rails path_info="/lfs/<owner>/<repo>/*" earliest=-2h latest=now
+| stats count avg(elapsed) perc95(elapsed) by status
+| sort - count
+```
+
+### Service-specific GHEC errors
+
+```spl
+index=catchall gh.infra.app="<service>" (error OR exception OR timeout) earliest=-2h latest=now
+| timechart span=5m count by host
+```
+
+## Correlation guidance
+
+| Starting evidence | Useful pivot |
+| ----------------- | ------------ |
+| Request ID | Search the exact value across likely sourcetypes in a tight time window |
+| `esb_babeld.id` | Pivot to `esb_gitmon request_id` for fileserver-side measurements |
+| `TraceId` | Search `esb_production`, `esb_resqued`, `esb_babeld`, and `esb_syslog` |
+| Repository name | Add operation, protocol, and host before aggregating |
+| Background job ID | Deduplicate overlapping bundles using `gh.job.active_job_id` |
+| Fileserver host | Compare latency, error, and operation mix across `fs_host` values |
+
+Overlapping GHES bundles can contain duplicate events. Use the event-specific stable key, such as `esb_babeld.id` or `gh.job.active_job_id`, before counting.
+
+## SPL functions worth remembering
 
 | Function | Use |
-|---|---|
-| `if(cond, a, b)` | Inline conditional |
-| `case(c1,v1, c2,v2, true,default)` | Multi-branch |
-| `coalesce(a, b)` | First non-null |
-| `len(x)` | String length |
-| `lower(x)` / `upper(x)` | Case conversion |
-| `round(x, n)` | Round |
-| `strftime(_time, "%F %T")` | Format a timestamp |
-| `mvcount(x)` / `mvindex(x,n)` | Multi-value field handling |
+| -------- | --- |
+| `count` | Event count |
+| `dc(field)` | Distinct count |
+| `count(eval(condition))` | Conditional count |
+| `avg(field)` / `median(field)` | Typical value |
+| `perc95(field)` / `perc99(field)` | Tail behavior |
+| `min(field)` / `max(field)` | Range and extremes |
+| `values(field)` | Unique values |
+| `latest(field)` / `earliest(field)` | Boundary values |
+| `coalesce(a,b)` | First non-null value |
+| `if(condition,a,b)` | Conditional value |
+| `case(...)` | Multiple conditions |
+| `strftime(_time,"%F %T")` | Readable timestamp |
 
----
+## Common mistakes
 
-## Tips & gotchas
+- Starting with `index=*` or a multi-day window.
+- Assuming the same index and field names exist across GHEC, GHES bundles, and customer Splunk.
+- Searching only `_raw` when a reliable extracted field exists.
+- Treating `fields` as a substitute for a selective base search.
+- Using `join` or `transaction` before trying `stats by`.
+- Counting overlapping bundle events without deduplication.
+- Treating a high event count as proof of impact without a baseline.
+- Ignoring timezone differences between the customer report, appliance, and Splunk.
+- Assuming a zero-result search proves an event did not happen.
+- Joining GHES appliance IDs to dotcom datasets.
+- Making a causal claim without checking an alternative hypothesis.
 
-- **Scope the base search** (`index`, `sourcetype`, `host`) and **set the time range** before anything else.
-- Use `fields`/`table` early to drop unneeded data and speed things up.
-- Prefer `stats by` over `transaction` and `join` when you can - it scales far better.
-- `_raw` is the original event text; `_time` is the parsed timestamp.
-- `count(eval(<cond>))` is the SPL idiom for conditional counts inside `stats`.
-- Wildcards at the *start* of a term (`*error`) are slow - anchor them where possible.
-- Save common searches as **reports** or **alerts** once they prove useful.
-
----
-
-## SPL ↔ KQL quick map
+## SPL to KQL quick map
 
 | Concept | SPL | KQL |
-|---|---|---|
+| ------- | --- | --- |
 | Filter | `search` / `where` | `where` |
-| Select columns | `fields` / `table` | `project` |
+| Select fields | `fields` / `table` | `project` |
+| Add a field | `eval` | `extend` |
 | Aggregate | `stats count by x` | `summarize count() by x` |
-| Over time | `timechart span=5m count` | `summarize count() by bin(Timestamp,5m)` |
-| Top N | `top N field` | `top N by field` |
-| Add field | `eval y = ...` | `extend y = ...` |
+| Time buckets | `timechart span=5m count` | `summarize count() by bin(timestamp, 5m)` |
 | Distinct count | `dc(field)` | `dcount(field)` |
-| Sort | `sort -field` | `order by field desc` |
+| Top values | `top field` | `top N by field` |
+| Sort descending | `sort - field` | `order by field desc` |
 
----
-
-## Quick reference links
-
-- [Splunk Search Reference (all commands)](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/WhatsInThisManual)
+## Related notes and references
+- [[Support Bundles Cheatsheet]]
+- [[ESB Support Bundle Workflow]]
+- [[Kusto-KQL Cheatsheet]]
+- `data-explorers/splunk-data-explorer/schema-cache/README.md`
+- `data-explorers/splunk-data-explorer/telemetry-maps/babeld-telemetry.md`
+- `data-explorers/splunk-data-explorer/telemetry-maps/resqued-otel-telemetry.md`
+- [Splunk Search Reference](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/WhatsInThisManual)
 - [Splunk Search Tutorial](https://docs.splunk.com/Documentation/Splunk/latest/SearchTutorial/WelcometotheSearchTutorial)
-- [SPL `stats` functions](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/CommonStatsFunctions)
-- [GHES log forwarding](https://docs.github.com/en/enterprise-server@latest/admin/monitoring-and-managing-your-instance/monitoring-your-instance/log-forwarding)
-- [[Support Bundles Cheatsheet]] · [[Kusto-KQL Cheatsheet]]
+- [GHES log forwarding](https://docs.github.com/en/enterprise-server@latest/admin/monitoring-activity-in-your-enterprise/exploring-user-activity-in-your-enterprise/log-forwarding)

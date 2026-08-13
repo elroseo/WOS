@@ -12,8 +12,7 @@ For customer-facing or external GitHub communications, also reference the **GitH
 - Warm but direct. Don't over-apologise or hedge excessively.
 
 ## Rules
-
-- Never use em dashes. Use commas, parentheses, or separate sentences instead.
+- Never use em dashes in any prose, notes, reports, Slack messages, or customer communication. Use commas, parentheses, colons, semicolons, or separate sentences instead.
 - Avoid filler phrases: "I just wanted to", "I was wondering if", "I hope this finds you well"
 - Don't start messages with "Hey!" or "Hope you're well!" unless it's genuinely casual
 - Use contractions (I'm, don't, we'll) in Slack and informal comms
