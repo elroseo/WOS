@@ -217,6 +217,7 @@ You do not need to memorize individual queries or thresholds. Focus on understan
 - How is the approved report delivered to the customer?
 - When there are multiple environments, do we create separate reports or a combined assessment?
 - What should remain internal until technical review is complete?
+- Do you, or would you, consider running a healthcheck without
 
 ## Reference examples
 
