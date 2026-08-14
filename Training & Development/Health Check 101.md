@@ -4,7 +4,7 @@ tags:
   - health-checks
   - ghes
   - learning
-updated: 2026-08-13
+updated: 2026-08-14
 status: reference
 ---
 
@@ -38,14 +38,47 @@ Before analysis, confirm:
 - Expected delivery date and reviewer
 
 ### 2. Validate the evidence
-
-For a GHES bundle-based Health Check:
+For a GitHub Enterprise Server (GHES) bundle-based Health Check:
 
 - Confirm the bundle belongs to the intended appliance.
 - Record the GHES version, hostname, topology, bundle creation time, and capture-window length.
 - Check which diagnostics and log sources are populated.
 - Treat missing evidence as unavailable, not healthy.
 - Avoid joining GHES appliance identifiers to GitHub.com datasets. The identifiers are independent and may collide.
+
+#### Open the bundle directly with SSH
+
+1. Open the bundle's ESB Tools staff page and copy its current SSH command or assigned `esbtools-azshell` hostname. Bundles can be pinned to different shell hosts, so do not assume a hostname copied from an older bundle is still correct.
+2. If the staff page shows that extraction is required, start extraction there and wait until the bundle is ready.
+3. From a normal terminal, run the bundle launcher:
+
+```bash
+ssh -t esbtools-azshell-1de6dd2.azure-eastus.github.net "/data/esb-tools/script/launch 203730"
+```
+
+4. Approve the FIDO security-key prompt when requested.
+5. Confirm that the launched workspace shows the expected bundle ID, hostname, and GHES version before analyzing it.
+6. Exit the remote bundle shell when finished.
+
+> [!warning]
+> The hostname and bundle ID above are an example. Always use the complete SSH command from the specific bundle's staff page. A stale or incorrect shell host can fail with `Connection closed by UNKNOWN port 65535` or a banner-exchange timeout.
+
+#### Analyze the bundle in a new Copilot session
+
+Use this when you want Copilot to enter the extracted bundle with the ESB analysis primer loaded:
+
+1. Open a new local terminal. Do not run this inside the Copilot session already handling another task.
+2. Start a new Copilot session with the bundle-specific SSH command:
+
+```bash
+copilot -i "Analyze GHES bundle. Run: ssh esbtools-azshell-1de6dd2.azure-eastus.github.net '/data/esb-tools/script/launch 203730 -c /app/shell_tools/copilot-primer'"
+```
+
+3. Approve the SSH and FIDO prompts.
+4. In the new session, verify the bundle ID, appliance hostname, GHES version, capture window, and available diagnostics before accepting any findings.
+5. Ask Copilot to keep conclusions evidence-backed and to mark missing diagnostics as unavailable rather than healthy.
+
+For another bundle, replace both the shell hostname and bundle ID with the values from that bundle's staff page. Run separate Copilot sessions for separate appliances so evidence does not mix between environments.
 
 ### 3. Establish a baseline
 
