@@ -210,7 +210,7 @@ You do not need to memorize individual queries or thresholds. Focus on understan
 
 - Which template or prior report should I use as the starting point?
 - How do you decide which automated findings deserve narrative explanation?
-- How do you distinguish a real risk from a short-lived peak or expected behavior?
+- How do you distinguish a real risk from a short-lived peak or expected behaviour?
 - Which findings most often attract review feedback?
 - Who should review the report, and how do I request that review?
 - What belongs in the pull request versus the engagement ticket?
