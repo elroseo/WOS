@@ -344,6 +344,125 @@ index=prod-quoroner earliest=-15m latest=+15m
 | sort _time
 ```
 
+## Field-tested query patterns
+
+These sanitized patterns were found in recent Slack troubleshooting threads and Zendesk investigations. Treat them as starting points, not permanent schemas. Confirm the index, field names, data residency, and retention before relying on a result.
+
+### Primary rate-limit headroom over time
+
+Use the primary rate-limit key when you need to see how close an installation or other principal came to exhausting its allowance.
+
+```spl
+index=api-gateway gh.rate_limit.primary.key="<rate-limit-key>" earliest=-24h latest=now
+| timechart span=1m min(gh.rate_limit.primary.remaining) as minimum_remaining
+```
+
+Source: [Zendesk #4665651](https://github.zendesk.com/agent/tickets/4665651)
+
+### Rate-limited requests versus total traffic
+
+```spl
+index=api-gateway gh.rate_limit.primary.key="<rate-limit-key>" earliest=-7d latest=now
+| timechart span=1h
+    count as total_requests
+    count(eval('gh.rate_limit.primary.remaining'=0)) as rate_limited_requests
+```
+
+Use `gh.rate_limit.primary.exceeded=true` as an alternative filter when that field is present. Inspect sample events first because rate-limit fields can differ between indexes.
+
+Sources: [Zendesk #4659409](https://github.zendesk.com/agent/tickets/4659409), [Zendesk #4635029](https://github.zendesk.com/agent/tickets/4635029)
+
+### Follow an exact request ID
+
+```spl
+index=rails gh.request_id="<request-id>" earliest=-15m latest=+15m
+| table _time gh.request_id controller action http.method http.target http.status_code elapsed timeout
+| sort _time
+```
+
+If the index does not extract `gh.request_id`, search the exact request ID as quoted raw text. Reuse the same value in `prod-exceptions`, `prod-resque`, `api-gateway`, or the owning service's index.
+
+Sources: [Slack thread](https://github-grid.enterprise.slack.com/archives/C046568U26R/p1771942411972689), [Zendesk #4633913](https://github.zendesk.com/agent/tickets/4633913)
+
+### Compare webhook delivery by hook and commit
+
+```spl
+index=prod-hookshot gh.hookshot.hook_id="<hook-id>" push_sha="*<commit-sha-prefix>*" earliest=-24h latest=now
+| table _time gh.hookshot.hook_id push_sha _raw
+| sort _time
+```
+
+Run the same search for one commit that produced a delivery and one that did not. This provides a positive control before concluding that no webhook was generated.
+
+Source: [Slack thread](https://github-grid.enterprise.slack.com/archives/CTZS8Q692/p1772633734255119)
+
+### Inspect Secure Shell authentication by fingerprint
+
+```spl
+index=rails-gitauth gh.gitauth.fingerprint_sha256="<fingerprint>" earliest=-24h latest=now
+| table _time gh.request_id gh.gitauth.status gh.gitauth.key gh.gitauth.ssh_cert.result gh.gitauth.reason
+| sort _time
+```
+
+Pivot from a returned request ID when you need one authentication attempt:
+
+```spl
+index=rails-gitauth gh.request_id="<request-id>" earliest=-15m latest=+15m
+| table _time gh.request_id gh.gitauth.status gh.gitauth.key gh.gitauth.ssh_cert.result gh.gitauth.fingerprint_sha256 gh.gitauth.member gh.gitauth.reason
+| sort _time
+```
+
+Source: [Zendesk #4567097](https://github.zendesk.com/agent/tickets/4567097)
+
+### Trace repository authentication activity
+
+```spl
+index=reposd gh.reposd.service=reposd-gitauth "<owner>/<repo>" earliest=-2h latest=now
+| table _time gh.request_id gh.repo.name_with_owner gh.gitauth.action gh.gitauth.status http.client_ip network.protocol.name
+| sort _time
+```
+
+Add a known client IP, request ID, or credential fingerprint only when necessary. Treat credential-derived values and client addresses as sensitive, and redact them before sharing.
+
+Sources: [Slack thread](https://github-grid.enterprise.slack.com/archives/C02LE2XV5DM/p1770316468515839), [Zendesk #4598039](https://github.zendesk.com/agent/tickets/4598039)
+
+### Identify concentrated anonymous 5xx traffic
+
+```spl
+index=rails controller=SignupsController status=5** NOT gh.actor.id=* earliest=-30m latest=now
+| stats count by ja3_hash ja4_fp ja4h_fp
+| sort - count
+| head 20
+```
+
+Fingerprint concentration is an investigation signal, not proof of malicious traffic. Compare it with the normal distribution and the timing of the spike.
+
+Source: [Slack thread](https://github-grid.enterprise.slack.com/archives/C0ANT8LDLF7/p1777683325759259)
+
+### Group repeated error messages
+
+```spl
+index="<service-index>" (error OR exception) earliest=-2h latest=now
+| cluster field=exception.message showcount=true
+| table cluster_count exception.message
+| sort - cluster_count
+```
+
+Use this when the same underlying failure contains small variations that make exact text grouping noisy. Validate clusters against raw events before treating them as one cause.
+
+Source: [Slack thread](https://github-grid.enterprise.slack.com/archives/C0ADGH0D9B2/p1785855936207509)
+
+### Count unique requests instead of log lines
+
+```spl
+index="<service-index>" "<symptom>" earliest=-24h latest=now
+| timechart span=1h dc(gh.request_id) as affected_requests
+```
+
+This avoids overstating impact when a single request emits several log events.
+
+Source: [Slack thread](https://github-grid.enterprise.slack.com/archives/C0AH8M0MVUK/p1786645712223329)
+
 ## Correlation guidance
 | Starting evidence | Useful pivot |
 | ----------------- | ------------ |

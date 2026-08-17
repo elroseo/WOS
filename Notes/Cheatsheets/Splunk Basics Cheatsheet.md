@@ -256,19 +256,36 @@ index=my_app
 
 ## Quick reference
 
-| Goal | SPL |
-| --- | --- |
-| Sample events | `| head 20` |
-| Display columns | `| table _time host message` |
-| Count everything | `| stats count` |
-| Count by value | `| stats count by host` |
-| Common values | `| top limit=10 field` |
-| Trend over time | `| timechart span=5m count` |
-| Sort descending | `| sort - count` |
-| Remove duplicates | `| dedup request_id` |
-| Keep fields | `| fields _time host message` |
+These are complete examples. Replace `my_app` and the example field names with values from your Splunk environment.
 
-## Next step
+| Goal                       | Complete SPL example                                  | What it shows                                  |
+| -------------------------- | ----------------------------------------------------- | ---------------------------------------------- |
+| Search for a word          | `index=my_app error`                                  | Events containing `error`                      |
+| Search for an exact phrase | `index=my_app "connection timed out"`                 | Events containing that exact phrase            |
+| Search a field             | `index=my_app status=500`                             | Events whose extracted `status` field is `500` |
+| Combine conditions         | `index=my_app (error OR exception) host="server-01"`  | Errors or exceptions from one host             |
+| Exclude a value            | `index=my_app error NOT "known harmless message"`     | Error events without the excluded phrase       |
+| Limit the time             | `index=my_app earliest=-2h latest=now`                | Events from the last two hours                 |
+| Sample events              | `index=my_app \| head 20`                             | The first 20 matching events                   |
+| Display selected fields    | `index=my_app \| table _time host status message`     | A readable table containing only those fields  |
+| Keep useful fields         | `index=my_app \| fields _time host status message`    | Results with unnecessary fields removed        |
+| Count all matches          | `index=my_app error \| stats count`                   | One total event count                          |
+| Count by a field           | `index=my_app error \| stats count by host`           | Event count for each host                      |
+| Find common values         | `index=my_app \| top limit=10 status`                 | The ten most common status values              |
+| Find unusual values        | `index=my_app \| rare limit=10 status`                | The ten least common status values             |
+| Trend over time            | `index=my_app error \| timechart span=5m count`       | Error counts in five-minute buckets            |
+| Sort highest first         | `index=my_app \| stats count by host \| sort - count` | Hosts ordered from most events to least        |
+| Remove duplicates          | `index=my_app \| dedup request_id`                    | One event for each request ID                  |
+| Show slow events           | `index=my_app \| where duration_ms > 1000`            | Events whose duration exceeds one second       |
+| Rename a result            | `index=my_app \| stats count as total_events`         | A count labeled `total_events`                 |
+| Count unique values        | `index=my_app \| stats dc(user) as unique_users`      | Number of distinct users                       |
 
-Once these searches feel comfortable, use [[Splunk Cheatsheet]] for GitHub-specific data sources, investigation patterns, correlation guidance, and more advanced SPL.
+## External references
 
+This guide draws on Splunk's official introductory search material and command reference:
+
+- [Splunk Search Tutorial](https://help.splunk.com/en/splunk-enterprise/search/search-tutorial/10.0)
+- [Splunk Search Manual](https://help.splunk.com/en/splunk-enterprise/search/search-manual/10.0)
+- [Splunk SPL Search Reference](https://help.splunk.com/en/splunk-enterprise/search/spl-search-reference/10.0)
+- [Splunk Search Reference: time modifiers](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/SearchTimeModifiers)
+- [Splunk Search Reference: stats](https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/Stats)
