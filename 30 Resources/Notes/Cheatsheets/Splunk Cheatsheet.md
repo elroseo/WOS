@@ -344,6 +344,105 @@ index=prod-quoroner earliest=-15m latest=+15m
 | sort _time
 ```
 
+### Unicorn burst and worker-pressure candidates
+
+Use this to rank actors whose requests arrive in concentrated 10-second windows and whose aggregate request time exceeds the same 10-second window.
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_unicorn gh_actor_login!=nil earliest=-7d latest=now
+| bin _time span=10s
+| stats count AS short_count
+    sum(elapsed) AS short_elapsed
+    avg(elapsed) AS short_avg_elapsed
+    BY gh_actor_login _time
+| eval burst=if(short_count >= <MAX_CONNECTIONS_IN_10S>, 1, 0)
+| eval total_load=short_count * short_avg_elapsed
+| eval critical=if(burst=1 AND total_load > 10, 1, 0)
+| stats sum(short_count) AS count
+    sum(short_elapsed) AS total_elapsed
+    avg(short_avg_elapsed) AS avg_elapsed
+    sum(burst) AS burst
+    sum(critical) AS critical
+    BY gh_actor_login
+| eval chance=if(burst > 0, round((critical / burst) * 100, 2), 0)
+| sort - critical - burst - count
+```
+
+Replace `<MAX_CONNECTIONS_IN_10S>` before running. A practical starting value is the configured Unicorn worker count, or the maximum number of connections in 10 seconds considered acceptable for the appliance. Confirm the worker count from bundle diagnostics and configuration metadata; do not copy a threshold from another appliance.
+
+Interpretation:
+
+- `burst` counts 10-second windows where the actor met or exceeded the selected threshold.
+- `total_load` is the aggregate request time in that window because `count * avg(elapsed)` equals the sum of elapsed time.
+- `critical` counts burst windows with more than 10 request-seconds of aggregate work.
+- `chance` is the percentage of that actor's burst windows that also crossed the aggregate-work threshold.
+
+This query identifies workload-concentration candidates. It does not prove that an actor caused worker exhaustion, failover, or an outage. Confirm the units of `elapsed`, compare the windows with Unicorn queue depth and worker availability, and corroborate with CPU, input/output, HAProxy queueing, and customer-visible latency.
+
+For a top result, inspect whether actor names represent one application split across numbered or regional credentials. Aggregate the naming family when separate tokens may hide the application's combined load.
+
+### BabelD workload concentration by organization and repository
+
+Start broad to determine whether Git traffic is concentrated in one organization. Verify that `repo` and `duration_ms` are extracted and that `repo` uses the `owner/repository` shape.
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_babeld repo="*/*" earliest=-7d latest=now
+| eval org=mvindex(split(repo, "/"), 0)
+| stats count AS request_count
+    sum(duration_ms) AS total_duration_ms
+    avg(duration_ms) AS avg_duration_ms
+    perc95(duration_ms) AS p95_duration_ms
+    max(duration_ms) AS max_duration_ms
+    BY org
+| sort - request_count
+```
+
+Then rank repositories by total time spent servicing Git traffic:
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_babeld repo="*/*" earliest=-7d latest=now
+| stats count AS request_count
+    sum(duration_ms) AS total_duration_ms
+    avg(duration_ms) AS avg_duration_ms
+    perc95(duration_ms) AS p95_duration_ms
+    max(duration_ms) AS max_duration_ms
+    BY repo
+| sort - total_duration_ms
+```
+
+Review both dimensions:
+
+- **High volume, low latency:** frequent fetch or polling behavior can still consume substantial aggregate disk and Git service time.
+- **Lower volume, high latency:** large repositories, clones, monorepositories, or expensive operations can dominate total service time.
+- **Naming signals:** development, quality-assurance, test, shared-library, and core repository names are prompts for validation, not conclusions.
+- **Fork-heavy workflows:** determine whether large repositories are repeatedly forked when a branch-based workflow could meet the same need.
+- **Repeated shared dependencies:** check whether automation repeatedly fetches a stable shared library without an appropriate cache.
+
+BabelD may not expose a reliable end-user identity for each Git operation. If actor attribution is required, inspect the available fields first and correlate with a stable request ID, source address, or another service that records authenticated identity. Do not invent an actor field.
+
+### API integration and polling drilldown
+
+After identifying a high-impact `gh_actor_login`, inspect sample events to confirm the extracted request-path and user-agent field names for that GHES version:
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_unicorn gh_actor_login="<actor>" earliest=-2h latest=now
+| table _time gh_actor_login elapsed *agent* *target* *path* _raw
+| head 20
+```
+
+Then aggregate using the confirmed fields:
+
+```spl
+index=prod-esbtools host="<host>" sourcetype=esb_unicorn gh_actor_login="<actor>" earliest=-7d latest=now
+| stats count AS request_count
+    sum(elapsed) AS total_elapsed
+    avg(elapsed) AS avg_elapsed
+    BY <request_path_field> <user_agent_field>
+| sort - total_elapsed
+```
+
+Look for repeated polling of the same pull request or endpoint, multiple integration versions, and one application spread across many credentials. Potential mitigations include staggering scripts, caching stable data, using webhooks instead of frequent polling, updating an integration after vendor review, and pausing non-production automation against the production appliance. Treat these as customer-side options to validate, not proof that a named vendor or integration is defective.
+
 ## Field-tested query patterns
 
 These sanitized patterns were found in recent Slack troubleshooting threads and Zendesk investigations. Treat them as starting points, not permanent schemas. Confirm the index, field names, data residency, and retention before relying on a result.
