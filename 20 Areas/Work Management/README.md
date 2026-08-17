@@ -59,10 +59,13 @@ This area defines how I capture, prioritize, review, and complete work. The task
 - Keep ongoing standards and recurring responsibilities in `20 Areas/`.
 - Move reusable instructions, methods, and references into `30 Resources/`.
 
+## How this system works
+
+- [[How I Use WOS-PARA]] - a concise explanation of the second-brain approach, PARA organization, search, linking, and supporting tools.
+
 ## Related
 
 - [[20 Areas/CRE Operations/README|CRE Operations]]
 - [[20 Areas/Professional Development/1-1 Prep - Learning and Growth Areas|Professional Development]]
 - [[30 Resources/Environment/Index|Environment and Tooling]]
 - [[PARA Guide]]
-
