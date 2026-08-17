@@ -26,7 +26,7 @@ Then `source ~/.zshrc` (or open a new terminal).
 ## Use
 ```sh
 cre-ls                                   # list managed accounts
-cre acme                                 # open the persistent Copilot session for Acme
+cre globex                               # open the persistent Copilot session for Globex
 cre-new globex "Globex Inc" 001ABC "glx" # scaffold + register a new account
 ```
 
@@ -53,6 +53,3 @@ cre-new globex "Globex Inc" 001ABC "glx" # scaffold + register a new account
 - **Governance:** decide what live business data (Salesforce/Gong/email/Teams) is allowed
   to persist in this vault. Default: store your notes, decisions, IDs, and links - not
   copied transcripts or full commercial reports.
-
-`acme-corp/` is a **placeholder** for review. Replace it with a real account via `cre-new`,
-then delete the folder and its registry entry.
