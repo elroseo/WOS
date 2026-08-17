@@ -637,6 +637,7 @@ Apply the general investigation and escalation judgment in [[Investigation and E
 - [[Kusto-KQL Cheatsheet]]
 - [[GHES Cheatsheet]]
 - [[Health Check Runbook]] - repeatable multi-pillar evidence collection using these Splunk patterns.
+- [[GHES API Workload Analysis Method]] - reusable interpretation workflow for actor, controller, endpoint, capacity, and burst analysis.
 - [[Investigation and Escalation Judgment]]
 - `data-explorers/splunk-data-explorer/schema-cache/README.md`
 - `data-explorers/splunk-data-explorer/telemetry-maps/babeld-telemetry.md`

@@ -27,9 +27,9 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] 
 - [ ] Review [[CRE Assistant]] setup once I have assigned accounts (bundle/GHEC health + monthly reports) 📅 2026-08-31
 
-- [ ] Consolidate Splunk course notes for Pooja Reddypalle 📅 2026-08-17
+- [x] Consolidate Splunk course notes for Pooja Reddypalle 📅 2026-08-17 ✅ 2026-08-17
 	- 📝 Use [[Splunk Cheatsheet]] as the reusable reference.
-- [ ] Share the completed Splunk notes with Pooja Reddypalle 📅 2026-08-17
+- [x] Share the completed Splunk notes with Pooja Reddypalle 📅 2026-08-17 ✅ 2026-08-17
 
 - [ ] Review GitHub Enterprise Server cluster architecture and build practical troubleshooting knowledge 🔽 📅 2027-02-13
 	- 📝 Long-term learning goal. Cover cluster topology, node roles, replication, failover, health checks, and common support-bundle signals.

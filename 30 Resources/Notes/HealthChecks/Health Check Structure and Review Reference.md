@@ -1,6 +1,6 @@
 # Health Check Structure and Review Reference
 
-> For repeatable technical evidence-collection steps (commands, queries, validation), see [[Health Check Runbook]] in `30 Resources/Notes/Cheatsheets`.
+> For repeatable technical evidence-collection steps (commands, queries, validation), see [[Health Check Runbook]] in this folder.
 
 ## Evidence reviewed
 

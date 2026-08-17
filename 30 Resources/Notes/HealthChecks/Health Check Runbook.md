@@ -117,6 +117,7 @@ Apply the general investigation and escalation judgment in [[Investigation and E
 ## Related notes and authoritative docs
 
 - [[Health Check 101]] - end-to-end Health Check workflow, scope confirmation, and report structure.
+- [[GHES API Workload Analysis Method]] - detailed API capacity, actor, controller, endpoint, and burst analysis.
 - [[Health Check Structure and Review Reference]] - report template, review checklist, and reviewer patterns (report-writing judgment, not evidence collection).
 - [[Support Bundles Cheatsheet]] - bundle investigation methodology this runbook reuses.
 - [[ESB Support Bundle Workflow]] - accessing an extracted bundle through ESB Tools.

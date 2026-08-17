@@ -18,7 +18,7 @@ This vault is organized by actionability using PARA.
 
 ## Work
 
-- [[Task Dashboard - Work|Task dashboard]]
+- [[Task Dashboard - Filtered|Task dashboard]]
 - [[Task Inbox|Task inbox]]
 - [[10 Projects/Certifications/GitHub_Foundations/00_Plan/Study Plan|GitHub Foundations study plan]]
 
