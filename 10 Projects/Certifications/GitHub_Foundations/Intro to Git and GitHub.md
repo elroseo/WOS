@@ -1,6 +1,6 @@
 # Domain 1 - Introduction to Git and GitHub
 
-> Exam weight: ~the foundation everything else builds on. Pairs with [[2026-06-22_core_workflow]] (hands-on Git workflow).
+> Exam weight: ~the foundation everything else builds on. Pairs with [[Core Git Workflow]] for hands-on practice.
 
 ## What is Git?
 

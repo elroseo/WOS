@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "qmd": {
+      "command": "qmd",
+      "args": [
+        "mcp"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "graphify": {
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--from",
+        "graphifyy",
+        "graphify-mcp",
+        "graphify-out/graph.json"
+      ],
+      "tools": [
+        "*"
+      ]
+    }
+  }
+}
