@@ -1,6 +1,6 @@
 # Investigation and Escalation Judgment
 
-Reusable lessons from the August 13, 2026 mentoring session with Carlos Naranjo.
+Reusable lessons from the August 14, 2026 mentoring session with Carlos Naranjo.
 
 ## Treat escalation thresholds as heuristics
 
@@ -73,7 +73,7 @@ Before submitting an escalation, confirm:
 
 ## Related
 
-- [[Carlos Naranjo - 2026-08-13]]
+- [[Carlos Naranjo - 2026-08-14]]
 - [[Splunk Cheatsheet]]
 - [[Support Bundles Cheatsheet]]
 - [[1-1 Prep - Learning and Growth Areas]]

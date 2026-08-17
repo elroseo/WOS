@@ -1,4 +1,4 @@
-# Meeting with Carlos Naranjo - 2026-08-13
+# Meeting with Carlos Naranjo - 2026-08-14
 
 **Time:** 4:05 PM to 4:50 PM ET
 **Subject:** Ellie / Carlos - CRE related topics
@@ -47,7 +47,7 @@
 - Carlos described the decision to keep investigating or involve engineering as situational rather than a strict rule.
 - A useful general heuristic from his onboarding is to escalate when an investigation is likely to require more than a couple of hours.
 - For an urgent or high-priority ticket, if about 30 minutes of investigation plus consultation with colleagues produces no direction, involve engineering rather than continuing without a clear path.
-- Non-blocking escalations may move more slowly. Set expectations based on customer impact and urgency.
+- Non-blocking escalations may move more slowly. Continue following up and set expectations based on customer impact and urgency.
 
 ### Evidence and investigation workflow
 
@@ -76,6 +76,7 @@
 
 - Consult on-shift peers after the initial investigation when the next step is unclear; peer consultation can either unblock the work or strengthen the case for escalation.
 - Structure an escalation with the customer's evidence first, followed by Support's research, request IDs, findings, and a clear question or requested action for engineering.
+- Carlos is developing guidance about evidence gathering and escalation preparation. Review it when available.
 
 ## Decisions
 

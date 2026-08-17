@@ -24,7 +24,6 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-08-05 ✅ 2026-08-17
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-29 ✅ 2026-08-05
 - [x] Update 1:1 repo issue with questions/notes (mid-morning) 🔁 every week on Wednesday 📅 2026-07-27 ✅ 2026-07-27
-- [ ] 
 - [ ] Review [[CRE Assistant]] setup once I have assigned accounts (bundle/GHEC health + monthly reports) 📅 2026-08-31
 
 - [x] Consolidate Splunk course notes for Pooja Reddypalle 📅 2026-08-17 ✅ 2026-08-17
@@ -35,6 +34,8 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 	- 📝 Long-term learning goal. Cover cluster topology, node roles, replication, failover, health checks, and common support-bundle signals.
 
 - [ ] Practice a secondary rate-limit investigation from query result to ownership decision
-	- 📝 Use [[Account Monitoring and Ownership Discovery]] and [[Tanya Sheoran - 2026-08-13 Mentoring]].
+	- 📝 Use [[Account Monitoring and Ownership Discovery]] and [[Tanya Sheoran - 2026-08-14 Mentoring]].
 - [ ] Learn to create and validate a query-based operational alert
 - [ ] Find a hands-on ticket or account investigation where I can own the evidence-gathering step
+- [ ] Explore whether Grafana can be accessed or scoped outside the support-bundle workflow
+	- 📝 Follow-up from [[Dell Health Check - 2026-08-15]].

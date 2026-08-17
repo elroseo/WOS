@@ -1,6 +1,6 @@
-# Tanya Sheoran - Mentoring - 2026-08-13
+# Tanya Sheoran - Mentoring - 2026-08-14
 
-**Date:** August 13, 2026
+**Date:** August 14, 2026
 **Time:** 2:00 PM to 3:00 PM ET
 **Subject:** Ellie/Tanya
 **Role:** Customer Reliability Engineer III
@@ -95,6 +95,8 @@ Melanie recommended learning from Tanya's organization and note-taking practices
 - The demonstrated workflow was: run the query, validate the result, save it as an alert, set cadence and thresholds, then deliver actionable results to Slack.
 - Useful recurring account signals include primary and secondary API rate limits, rate-limit increase requests, upgrade readiness, and major infrastructure changes.
 - Alert thresholds must be based on a validated signal and customer context, not copied blindly from another account.
+- An alert with no recent matches may be operating correctly. Rerun the underlying search over the alert's time window before treating silence as a configuration failure.
+- Concrete execution activity, such as an upgrade combined with infrastructure changes, is a stronger risk signal than repeatedly postponed upgrade intentions.
 
 ### Finding unfamiliar information and owners
 

@@ -1,6 +1,6 @@
 # Account Monitoring and Ownership Discovery
 
-Reusable lessons from the August 13, 2026 mentoring session with Tanya Sheoran.
+Reusable lessons from the August 14, 2026 mentoring session with Tanya Sheoran.
 
 ## Distinguish noise from risk
 
@@ -62,7 +62,7 @@ A rate-limit workflow may use recent response codes, rate-limit fields, and API 
 
 ## Related
 
-- [[Tanya Sheoran - 2026-08-13 Mentoring]]
+- [[Tanya Sheoran - 2026-08-14 Mentoring]]
 - [[Kusto-KQL Cheatsheet]]
 - [[Splunk Cheatsheet]]
 - [[Health Check Structure and Review Reference]]

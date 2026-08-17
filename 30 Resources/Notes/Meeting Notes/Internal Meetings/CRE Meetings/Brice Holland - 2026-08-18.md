@@ -12,6 +12,12 @@
 
 ## Suggested talking points
 
+### Priority questions
+
+1. **Can you walk me through a recent ambiguous ticket or customer problem, from the first read to deciding on the next action?** What signals changed your hypothesis, and how did you know when to keep investigating, ask for help, or escalate?
+2. **What personal system helps you turn daily ticket and account work into reusable knowledge?** What do you capture, where do you keep it, and how do you decide whether something should become documentation, automation, or guidance for others?
+3. **If you were ramping as a CRE today, which kinds of cases would you deliberately seek out over the next 90 days?** What would you ask a senior CRE to critique after each investigation so that your judgment improves quickly?
+
 ### Brice's experience
 
 - What has helped you most in progressing to Staff CRE?

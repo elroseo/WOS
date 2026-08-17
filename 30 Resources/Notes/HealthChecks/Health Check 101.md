@@ -144,6 +144,17 @@ A strong report normally contains:
 
 Use the complete template and review checklist in [[Health Check Structure and Review Reference]].
 
+#### Practical completion workflow
+
+1. Generate the standard Health Check report and keep it as the source of truth.
+2. Fill every required placeholder using verified evidence.
+3. Add and interpret required Grafana screenshots for CPU, memory, load, and other relevant trends.
+4. Compare against a prior Health Check when equivalent evidence exists.
+5. Concentrate interpretation effort on the executive summary and prioritized recommendations.
+6. Open the pull request only after the report structure, evidence, images, and customer-facing actions are complete.
+
+Artificial intelligence can help compare periods, identify trends, fill placeholders, and draft summary language. Constrain it to the existing report structure and review its output for unsupported assumptions, unrelated context, invented sections, and customer-data leakage.
+
 ### 7. Perform self-review
 
 Before requesting review, verify:

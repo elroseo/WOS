@@ -42,6 +42,16 @@ no due date
 
 ---
 
+### 📥 Open Tasks (No Date)
+
+```tasks
+not done
+no due date
+priority is not high
+```
+
+---
+
 ### ✅ Recently Completed
 
 ```tasks

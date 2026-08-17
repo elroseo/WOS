@@ -4,6 +4,7 @@
 
 - `Internal Meetings/1-on-1s/` for manager and skip-level meetings.
 - `Internal Meetings/CRE Meetings/` for mentoring, peer syncs, team discussions, and internal CRE learning sessions.
+- `Internal Meetings/Support Delivery Meetings/` for Support Delivery learning and collaboration.
 - `Customer Meetings/` for customer-facing calls and account meetings.
 
 ## Filename format
@@ -15,6 +16,6 @@ Put the person or customer first so notes group naturally when browsing:
 
 Examples:
 
-- `Tanya Sheoran - 2026-08-13 Mentoring.md`
-- `Melanie King - 2026-08-10 Weekly.md`
+- `Tanya Sheoran - 2026-08-14 Mentoring.md`
+- `Melanie King - 2026-08-11 Weekly.md`
 - `Example Corp - 2026-08-20 Health Review.md`

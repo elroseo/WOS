@@ -4,7 +4,7 @@ role: Customer Reliability Engineer III
 team: Customer Reliability Engineering
 manager: Melanie King
 github: tanyasheoran
-last_updated: 2026-08-13
+last_updated: 2026-08-14
 ---
 
 # Tanya Sheoran
@@ -25,11 +25,11 @@ last_updated: 2026-08-13
 
 ## Notes from recent interactions
 
-- Mentoring session held August 13, 2026.
+- Mentoring session held August 14, 2026.
 - Demonstrated a secondary rate-limit investigation and alert workflow.
 - Encouraged moving from passive shadowing toward hands-on ticket and account participation.
 
 ## Action items
 
-- See [[Tanya Sheoran - 2026-08-13 Mentoring]] for meeting notes.
+- See [[Tanya Sheoran - 2026-08-14 Mentoring]] for meeting notes.
 - Ask for a follow-up walkthrough from alert detection through resolution.

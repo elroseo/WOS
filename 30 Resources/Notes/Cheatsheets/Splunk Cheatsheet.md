@@ -447,6 +447,26 @@ Look for repeated polling of the same pull request or endpoint, multiple integra
 
 These sanitized patterns were found in recent Slack troubleshooting threads and Zendesk investigations. Treat them as starting points, not permanent schemas. Confirm the index, field names, data residency, and retention before relying on a result.
 
+### Turn a validated search into a Slack alert
+
+Tanya demonstrated this workflow with a secondary rate-limit search. The transcript captured the workflow but not the exact cadence, threshold, channel, or notification field list. Choose those values from the account's validated baseline and operational needs rather than copying another alert.
+
+1. Run the bounded search manually and confirm that matching events represent the condition you intend to monitor.
+2. Inspect sample results and retain useful ownership pivots such as the API route, response status, request count, and search window.
+3. In Splunk Web, save the validated search as an alert.
+4. Configure a recurring schedule and a search time range appropriate for the expected traffic pattern.
+5. Trigger only when the result count crosses a customer-specific threshold that has been validated against normal behavior.
+6. Add the approved Slack alert action and select the destination channel used by the account team.
+7. Include enough result context for the recipient to understand the affected route, magnitude, and time window without rerunning the search immediately.
+8. Save the alert, test it against a known matching period, and confirm that the Slack message is understandable and actionable.
+
+If an alert appears inactive, rerun the underlying search over the same time range. Zero matching events may mean the monitored condition is absent, not that scheduling or Slack delivery is broken.
+
+> [!warning]
+> Creating or changing a Splunk alert is a write operation in Splunk Web. Use an authorized account, validate the search first, and avoid sending raw customer identifiers or sensitive event fields to Slack.
+
+Source: [[Tanya Sheoran - 2026-08-14 Mentoring]]
+
 ### Primary rate-limit headroom over time
 
 Use the primary rate-limit key when you need to see how close an installation or other principal came to exhausting its allowance.
