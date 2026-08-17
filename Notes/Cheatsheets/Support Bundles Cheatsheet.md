@@ -5,7 +5,7 @@ tags:
   - support-bundles
   - cheatsheet
 audience: CRE
-updated: 2026-08-13
+updated: 2026-08-17
 ---
 
 # Support Bundles Cheatsheet
@@ -164,6 +164,22 @@ The primary supported interface for bundle investigation is CLI-based (SSH into 
 | `exceptions.log*` | Often reaches further back | Slow requests, slow queries, exceptions |
 | collectd RRDs | Longer history, downsampled | Confirm incident window and system mechanism |
 | Diagnostics | Point-in-time snapshot | Instance profile and state near bundle creation |
+
+
+### Top-down workload pressure review
+
+When an appliance shows recurring load, disk latency, request queueing, and broad GitHub Actions or continuous integration activity, stay at the system-and-workload level until evidence justifies a narrower trace.
+
+1. Review one to two weeks of retained metrics when available. Mark repeated pressure windows before zooming into one exception or repair event.
+2. Correlate load with CPU utilization, disk latency, input/output throughput, Unicorn queue depth, and request latency. A virtualization plateau near a fixed percentage can indicate host scheduling or throttling, but the graph alone does not prove the hypervisor caused the incident.
+3. Confirm the configured Unicorn worker count from diagnostics or configuration metadata. More workers are not a safe default mitigation when CPU or memory is already constrained.
+4. Use [[Splunk Cheatsheet#Unicorn burst and worker-pressure candidates]] to rank concentrated API actors. Treat the output as candidate workload pressure, then compare the exact windows with worker queueing and system metrics.
+5. Use [[Splunk Cheatsheet#BabelD workload concentration by organization and repository]] to separate high-volume Git traffic from individually expensive repository operations.
+6. Drill into integrations only after concentration is demonstrated. Check repeated endpoint polling, user-agent versions, token naming families, development or quality-assurance traffic against production, caching opportunities, and webhook alternatives.
+7. Prefer workload reductions that the customer can validate: stagger automation, reduce polling, cache stable dependencies, pause unnecessary non-production jobs, prefer branches over repeated large forks, and reduce clone frequency for large repositories.
+8. Ask for a fresh bundle when the recommendation depends on current actors, repositories, or integration behavior. Old bundle data supports historical findings only.
+
+Do not equate a graph correlation, a high actor count, or an expensive repository with root cause. State what was observed, the mechanism it could pressure, the alternative hypotheses considered, and the evidence needed to confirm impact. Screenshots are useful for communicating ranked outliers, but preserve the query, time window, host, row count, and units in the investigation notes.
 
 ## State that must be checked before making claims
 

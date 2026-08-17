@@ -5,7 +5,7 @@ tags:
   - health-check
   - cheatsheet
 audience: CRE
-updated: 2026-08-13
+updated: 2026-08-17
 ---
 
 # Health Check Runbook
@@ -56,6 +56,18 @@ Every step below is read-only: reading an already-captured bundle, read-only `gh
 6. **Check coverage before trusting a quiet pillar.** Confirm bundle creation/upload time, standard vs extended retention, log-specific retention, and correct node(s). See [[Support Bundles Cheatsheet#2. Confirm the bundle can cover the incident]]. A pillar with no events is not automatically healthy.
 7. **Establish a baseline.** Compare typical vs peak values, and this period vs the previous Health Check when a prior report exists. See [[Health Check 101#3. Establish a baseline]].
 8. **Label confidence.** Use the evidence-confidence scale in [[Support Bundles Cheatsheet#Evidence and confidence]] for anything that will become a finding.
+
+
+### Workload concentration drilldown
+
+For a GitHub Enterprise Server performance review with API and Git pressure, add these pivots after the seven-pillar collection:
+
+- Rank concentrated API actors with [[Splunk Cheatsheet#Unicorn burst and worker-pressure candidates]]. Set the 10-second threshold from the appliance's configured Unicorn worker count or an explicitly chosen acceptable connection level.
+- Rank Git activity by organization and by repository with [[Splunk Cheatsheet#BabelD workload concentration by organization and repository]]. Compare request volume, total service time, average latency, and tail latency rather than sorting on one metric alone.
+- For high-impact integrations, use [[Splunk Cheatsheet#API integration and polling drilldown]] to confirm repeated endpoint polling, user-agent versions, and credentials that belong to one naming family.
+- Pair every workload result with system evidence from the same window. At minimum, check Unicorn queue depth or worker availability, CPU, disk input/output or latency, and customer-visible response time.
+
+A useful recommendation names the observed workload pattern and a measurable reduction experiment. Examples include staggering a script, replacing polling with a webhook, caching a shared dependency, pausing development or quality-assurance automation against production, reducing repeated clones, or using branches instead of large fork trees. Re-run the same query after the change to measure whether burst count, aggregate elapsed time, or Git total duration decreased.
 
 ## GUI procedure
 
