@@ -1,5 +1,0 @@
-{
-  "$schema_notes": "CRE account registry. One entry per managed account. 'slug' is the folder name and the seed for 'session_uuid' (deterministic uuid5). Add/edit entries with 20 Areas/Accounts/bin/cre.sh -> `cre-new`, or by hand. sf_id must be the canonical Salesforce (parent) account id so account360/revenue-mcp queries hit the right account.",
-  "namespace_uuid": "08d5946b-44c2-5557-a653-eaa23d8769e9",
-  "accounts": []
-}

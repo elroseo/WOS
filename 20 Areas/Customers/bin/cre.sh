@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# CRE account launcher — source this file from your shell rc:
-#   source "/Users/elroseo/WOS-PARA/20 Areas/Accounts/bin/cre.sh"
+# CRE customer launcher. Source this file from your shell rc:
+#   source "/Users/elroseo/WOS-PARA/20 Areas/Customers/bin/cre.sh"
 #
 # Provides:
 #   cre <alias>                          open a persistent, customer-scoped Copilot session
@@ -17,8 +17,8 @@
 #   containing &, |, /, quotes, etc. are handled safely, and the registry is updated
 #   atomically (temp file + os.replace) only after files are written successfully.
 
-# Root of the Accounts area (override with CRE_ACCOUNTS_DIR).
-: "${CRE_ACCOUNTS_DIR:=/Users/elroseo/WOS-PARA/20 Areas/Accounts}"
+# Root of the Customers area. CRE_ACCOUNTS_DIR is retained for shell compatibility.
+: "${CRE_ACCOUNTS_DIR:=/Users/elroseo/WOS-PARA/20 Areas/Customers}"
 export CRE_ACCOUNTS_DIR
 
 _cre_registry() { printf '%s/_registry.json' "$CRE_ACCOUNTS_DIR"; }

@@ -1,0 +1,5 @@
+{
+  "$schema_notes": "CRE customer registry. One entry per managed customer. 'slug' is the folder name and the seed for 'session_uuid' (deterministic uuid5). Add or edit entries with 20 Areas/Customers/bin/cre.sh using `cre-new`, or by hand. sf_id must be the canonical Salesforce parent account id so account360 and revenue queries use the correct customer.",
+  "namespace_uuid": "08d5946b-44c2-5557-a653-eaa23d8769e9",
+  "accounts": []
+}
