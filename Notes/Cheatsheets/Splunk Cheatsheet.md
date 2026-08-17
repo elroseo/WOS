@@ -5,24 +5,18 @@ tags:
   - troubleshooting
   - cheatsheet
 audience: CRE
-updated: 2026-08-13
+updated: 2026-08-17
 ---
 
 # Splunk Cheatsheet
 
 ## What and when
 
-Splunk searches machine-generated events with Search Processing Language (SPL). Use it when you need to search GHEC staff telemetry, a GHES support bundle uploaded to `prod-esbtools`, or customer-forwarded GHES logs. For GitHub investigations, the most important habits are simple: confirm the platform, choose the correct data source, constrain time and scope early, inspect sample events, then aggregate.
+Splunk searches machine-generated events with Search Processing Language (SPL). The most important habits are simple: confirm the platform, choose the correct data source, constrain time and scope early, inspect sample events, then aggregate.
 
-## Prerequisites and auth
-
-- Tailscale VPN connection and a valid Splunk bearer token (`python3 tools/splunk_auth.py`). Regenerate with the repository's Splunk auth tooling if a query returns an auth error.
-- The `splunk-capability-generate-tokens` entitlement is required to mint tokens.
-- For data-resident (Proxima) stamps, confirm the regional Splunk endpoint before querying; the default Staffship endpoint is US-based. See the Proxima data-residency guidance in the repository's investigation instructions before querying a non-US stamp.
 
 ## Platform scope
 
-Do not treat all GitHub logs as one dataset.
 
 | Context | Starting point | Important distinction |
 | ------- | -------------- | --------------------- |
