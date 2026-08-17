@@ -1,0 +1,6 @@
+{
+  "folder": "20 Areas/Daily",
+  "template": "90 System/Templates/Journal Entry.md",
+  "format": "YYYY-MM-DD",
+  "autorun": false
+}

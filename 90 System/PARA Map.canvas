@@ -1,0 +1,98 @@
+{
+  "nodes": [
+    {
+      "id": "0000000000000001",
+      "type": "file",
+      "x": 0,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "file": "00 Inbox/Index.md",
+      "color": "3"
+    },
+    {
+      "id": "0000000000000002",
+      "type": "file",
+      "x": 400,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "file": "10 Projects/Index.md",
+      "color": "1"
+    },
+    {
+      "id": "0000000000000003",
+      "type": "file",
+      "x": 800,
+      "y": 0,
+      "width": 300,
+      "height": 180,
+      "file": "20 Areas/Index.md",
+      "color": "4"
+    },
+    {
+      "id": "0000000000000004",
+      "type": "file",
+      "x": 400,
+      "y": 300,
+      "width": 300,
+      "height": 180,
+      "file": "30 Resources/Index.md",
+      "color": "5"
+    },
+    {
+      "id": "0000000000000005",
+      "type": "file",
+      "x": 800,
+      "y": 300,
+      "width": 300,
+      "height": 180,
+      "file": "40 Archives/Index.md",
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "1000000000000001",
+      "fromNode": "0000000000000001",
+      "toNode": "0000000000000002",
+      "toEnd": "arrow",
+      "label": "active outcome"
+    },
+    {
+      "id": "1000000000000002",
+      "fromNode": "0000000000000001",
+      "toNode": "0000000000000003",
+      "toEnd": "arrow",
+      "label": "ongoing responsibility"
+    },
+    {
+      "id": "1000000000000003",
+      "fromNode": "0000000000000001",
+      "toNode": "0000000000000004",
+      "toEnd": "arrow",
+      "label": "reusable knowledge"
+    },
+    {
+      "id": "1000000000000004",
+      "fromNode": "0000000000000002",
+      "toNode": "0000000000000005",
+      "toEnd": "arrow",
+      "label": "completed"
+    },
+    {
+      "id": "1000000000000005",
+      "fromNode": "0000000000000003",
+      "toNode": "0000000000000005",
+      "toEnd": "arrow",
+      "label": "inactive"
+    },
+    {
+      "id": "1000000000000006",
+      "fromNode": "0000000000000004",
+      "toNode": "0000000000000005",
+      "toEnd": "arrow",
+      "label": "inactive"
+    }
+  ]
+}

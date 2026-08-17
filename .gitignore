@@ -1,0 +1,10 @@
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/plugins/obsidian-local-rest-api/data.json
+.trash/
+.DS_Store
+graphify-out/
+.qmd/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
