@@ -1,3 +1,5 @@
 {
-  "cssTheme": "Cupertino"
+  "cssTheme": "Minimal",
+  "accentColor": "#e13792",
+  "translucency": true
 }
