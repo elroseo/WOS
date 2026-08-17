@@ -75,5 +75,4 @@ Model Context Protocol (MCP) servers extend Copilot with live access to external
 
 ## Related
 
-- [[dev-environment-setup]]
 - [[Custom Agents]] · [[Custom Skills]]

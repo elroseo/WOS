@@ -133,6 +133,5 @@ Quick reference for the project skills and agents in the `github/llm-assist` rep
 ## Related
 
 - [[LLM Assist in CLI]]
-- [[dev-environment-setup]]
 - [[MCP Servers]]
 - Full index in the repo: `skills/README.md`, `agents/README.md`

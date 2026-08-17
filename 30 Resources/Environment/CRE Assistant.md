@@ -45,4 +45,4 @@ copilot -p "Start my CRE morning routine"
 
 ## Related
 
-- [[LLM Assist in CLI]] · [[dev-environment-setup]] · [[MCP Servers]]
+- [[LLM Assist in CLI]] · [[MCP Servers]]
