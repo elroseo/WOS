@@ -39,3 +39,5 @@ Quick capture for tasks that don't belong to a specific note yet. These will aut
 - [ ] Find a hands-on ticket or account investigation where I can own the evidence-gathering step
 - [ ] Explore whether Grafana can be accessed or scoped outside the support-bundle workflow
 	- 📝 Follow-up from [[Dell Health Check - 2026-08-15]].
+- [ ] Open a ticket for JIT Stafftools access 📅 2026-08-18
+- [ ] Share the Obsidian videos with IJ 📅 2026-08-18
