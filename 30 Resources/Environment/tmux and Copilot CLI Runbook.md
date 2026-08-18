@@ -17,6 +17,8 @@ Use one tmux session as the persistent workspace, with one tmux window and one C
 
 Create a named tmux session with a main window:
 
+
+
 ```bash
 tmux new-session -s copilot -n main
 ```
