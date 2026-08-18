@@ -1,17 +1,133 @@
 {
-	"nodes":[
-		{"id":"0000000000000002","type":"file","file":"10 Projects/Index.md","x":800,"y":-200,"width":300,"height":180,"color":"1"},
-		{"id":"0000000000000001","type":"file","file":"00 Inbox/Index.md","x":-20,"y":-200,"width":300,"height":180,"color":"3"},
-		{"id":"0000000000000004","type":"file","file":"30 Resources/Index.md","x":-20,"y":340,"width":300,"height":180,"color":"5"},
-		{"id":"0000000000000005","type":"file","file":"40 Archives/Index.md","x":820,"y":340,"width":300,"height":180,"color":"6"},
-		{"id":"0000000000000003","type":"file","file":"20 Areas/Index.md","x":400,"y":60,"width":300,"height":180,"color":"4"}
-	],
-	"edges":[
-		{"id":"1000000000000001","fromNode":"0000000000000001","fromSide":"right","toNode":"0000000000000002","toSide":"left","label":"active outcome"},
-		{"id":"1000000000000002","fromNode":"0000000000000001","fromSide":"right","toNode":"0000000000000003","toSide":"left","label":"ongoing responsibility"},
-		{"id":"1000000000000003","fromNode":"0000000000000001","fromSide":"bottom","toNode":"0000000000000004","toSide":"top","label":"reusable knowledge"},
-		{"id":"1000000000000004","fromNode":"0000000000000002","fromSide":"bottom","toNode":"0000000000000005","toSide":"top","label":"completed"},
-		{"id":"1000000000000005","fromNode":"0000000000000003","fromSide":"bottom","toNode":"0000000000000005","toSide":"top","label":"inactive"},
-		{"id":"1000000000000006","fromNode":"0000000000000004","fromSide":"right","toNode":"0000000000000005","toSide":"left","label":"inactive"}
-	]
+  "nodes": [
+    {
+      "id": "title000000000001",
+      "type": "text",
+      "text": "# PARA Map\nCapture, organize, and retire knowledge with a clear lifecycle.",
+      "x": 40,
+      "y": -340,
+      "width": 560,
+      "height": 120
+    },
+    {
+      "id": "group00000000001",
+      "type": "group",
+      "label": "PARA workspace",
+      "x": -40,
+      "y": -140,
+      "width": 720,
+      "height": 520,
+      "color": "#5F7180"
+    },
+    {
+      "id": "inbox00000000001",
+      "type": "file",
+      "file": "00 Inbox/Index.md",
+      "x": -440,
+      "y": 30,
+      "width": 280,
+      "height": 180,
+      "color": "#6F8794"
+    },
+    {
+      "id": "project0000000001",
+      "type": "file",
+      "file": "10 Projects/Index.md",
+      "x": 20,
+      "y": -80,
+      "width": 280,
+      "height": 180,
+      "color": "#52796F"
+    },
+    {
+      "id": "areas000000000001",
+      "type": "file",
+      "file": "20 Areas/Index.md",
+      "x": 340,
+      "y": -80,
+      "width": 280,
+      "height": 180,
+      "color": "#5E7C8A"
+    },
+    {
+      "id": "resource000000001",
+      "type": "file",
+      "file": "30 Resources/Index.md",
+      "x": 20,
+      "y": 140,
+      "width": 280,
+      "height": 180,
+      "color": "#6C6F91"
+    },
+    {
+      "id": "archive0000000001",
+      "type": "file",
+      "file": "40 Archives/Index.md",
+      "x": 340,
+      "y": 140,
+      "width": 280,
+      "height": 180,
+      "color": "#7C7F84"
+    },
+    {
+      "id": "flow000000000001",
+      "type": "text",
+      "text": "**Lifecycle**\nInbox → PARA → Archive",
+      "x": -420,
+      "y": 250,
+      "width": 240,
+      "height": 100,
+      "color": "#5F7180"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge000000000001",
+      "fromNode": "inbox00000000001",
+      "fromSide": "right",
+      "toNode": "project0000000001",
+      "toSide": "left",
+      "label": "outcome"
+    },
+    {
+      "id": "edge000000000002",
+      "fromNode": "inbox00000000001",
+      "fromSide": "right",
+      "toNode": "areas000000000001",
+      "toSide": "left",
+      "label": "responsibility"
+    },
+    {
+      "id": "edge000000000003",
+      "fromNode": "inbox00000000001",
+      "fromSide": "right",
+      "toNode": "resource000000001",
+      "toSide": "left",
+      "label": "knowledge"
+    },
+    {
+      "id": "edge000000000004",
+      "fromNode": "project0000000001",
+      "fromSide": "bottom",
+      "toNode": "archive0000000001",
+      "toSide": "top",
+      "label": "complete"
+    },
+    {
+      "id": "edge000000000005",
+      "fromNode": "areas000000000001",
+      "fromSide": "bottom",
+      "toNode": "archive0000000001",
+      "toSide": "top",
+      "label": "inactive"
+    },
+    {
+      "id": "edge000000000006",
+      "fromNode": "resource000000001",
+      "fromSide": "right",
+      "toNode": "archive0000000001",
+      "toSide": "left",
+      "label": "retire"
+    }
+  ]
 }
