@@ -32,7 +32,7 @@ last_updated: 2026-08-18
 
 ## Action items
 
-- Review the CRE/OER six human pillars and related expectations.
-- Continue developing Copilot knowledge through customer work and focused study.
-- Follow up on establishing a recurring sync.
+- [ ] Review the CRE/OER six human pillars and related expectations.
+- [ ] Continue developing Copilot knowledge through customer work and focused study.
+- [ ] Follow up on establishing a recurring sync.
 - See [[Brice Holland - 2026-08-18]] for full meeting notes.
