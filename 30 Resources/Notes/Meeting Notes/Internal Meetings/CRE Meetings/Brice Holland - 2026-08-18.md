@@ -50,9 +50,22 @@
 
 ## Notes
 
-- 
+- Stay adaptable and focus on serving current customer demand rather than spending energy on organizational decisions that have already been made.
+- Treat recurring ticket topics as learning signals. If several customers ask about the same feature, use that pattern to guide focused study.
+- Use Copilot and other artificial intelligence tools to accelerate problem solving, documentation, and issue tracking. Use broader reading and research when deeper understanding is needed.
+- Copilot is a valuable specialization because it represents a significant area of customer demand.
+- Develop deeper expertise in areas that align with personal strengths rather than trying to master every domain equally.
+- Build a network of specialists and know whom to ask when work falls outside personal expertise.
+- Use the six human pillars in the CRE/OER framework to assess whether work aligns with role expectations.
+- Focus first on baseline role expectations. Broader contributions, networking, and solving program-wide problems support later career growth.
+- Problems affecting many customers can become opportunities for high-impact work.
+- Brice mentioned IJ Chikwekwem as someone he regularly speaks with during onboarding and growth discussions.
+- No formal decisions were made. The conversation focused on mentorship, onboarding, work practices, and career development.
+- The call ended after connection problems. Ellie asked whether regular future syncs would be possible.
 
 ## Action items
 
-- [ ] Capture any recommended resources, people, or investigation examples.
-- [ ] Record one practical next step for preparing for account ownership.
+- [ ] Review the CRE/OER six human pillars in the wiki and repository guidance.
+- [ ] Use recurring customer questions to choose GitHub product areas for focused study.
+- [ ] Continue developing Copilot and artificial intelligence expertise.
+- [ ] Follow up with Brice about establishing a recurring sync.
