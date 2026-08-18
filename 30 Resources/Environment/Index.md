@@ -1,7 +1,7 @@
 ---
 type: index
 para: resource
-updated: 2026-08-17
+updated: 2026-08-18
 ---
 
 # Environment and Tooling
@@ -13,6 +13,7 @@ Reference material for the tools, integrations, agents, and configuration used i
 - [[CRE Assistant]] - local CRE assistant and onboarding workflow.
 - [[LLM Assist in CLI]] - running the LLM Assist toolkit through Copilot CLI.
 - [[MCP Servers]] - configured data-source and integration servers.
+- [[tmux and Copilot CLI Runbook]] - persistent multi-session workflow and command cheat sheet.
 
 ## Agents and skills
 
@@ -31,4 +32,3 @@ Reference material for the tools, integrations, agents, and configuration used i
 - This folder explains how tools are configured and used.
 - [[20 Areas/Work Management/README|Work Management]] defines how work is captured, prioritized, and reviewed.
 - [[20 Areas/CRE Operations/README|CRE Operations]] defines the ongoing reliability standards those tools support.
-
